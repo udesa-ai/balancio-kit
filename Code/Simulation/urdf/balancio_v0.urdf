@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<robot name="balancio" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <material name="black">
+    <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+  <material name="blue">
+    <color rgba="0.203125 0.23828125 0.28515625 1.0"/>
+  </material>
+  <material name="green">
+    <color rgba="0.0 0.8 0.0 1.0"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.8 0.8 0.8 1.0"/>
+  </material>
+  <material name="orange">
+    <color rgba="1.0 0.423529411765 0.0392156862745 1.0"/>
+  </material>
+  <material name="brown">
+    <color rgba="0.870588235294 0.811764705882 0.764705882353 1.0"/>
+  </material>
+  <material name="red">
+    <color rgba="0.80078125 0.12890625 0.1328125 1.0"/>
+  </material>
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+
+
+ <!-- Base -->
+	<!-- <link name="dummy_link"/>
+
+  <joint name="base_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+		<child link="link_chassis"/>
+    <parent link="dummy_link"/>
+  </joint> -->
+
+  <link name="link_chassis">
+    <!-- pose and inertial -->
+    <pose>0 0 0 0 0 0</pose>
+    <inertial>
+      <mass value="2"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.075" ixy="0" ixz="0" iyy="0.075" iyz="0" izz="0.075"/>
+    </inertial>
+    <!-- body -->
+    <collision name="collision_chassis">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.3 0.6"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.3 0.6"/>
+        <!-- <mesh filename="package://robot_description/stl/Plank.stl" scale="1 1 1"/> -->
+      </geometry>
+      <material name="grey"/>
+    </visual>
+  </link>
+
+
+<!-- Wheels -->
+  <joint name="joint_left_wheel" type="continuous">  <!-- We set revolute with infinite limits as a workaround to sdf conversion problems -->
+    <origin rpy="0 0 0" xyz="0 0.17 -0.3"/>
+    <child link="link_left_wheel"/>
+    <parent link="link_chassis"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+    <limit effort="0.8" velocity="30"/>
+    <!--<limit effort="0.8" velocity="30"/>-->
+    <dynamics damping="0.0005" friction="0.0005"/>  <!-- damping coefficient: [N*m*s/rad] 0.0005-->
+    <safety_controller k_velocity="0.026"/>  <!-- Kv en este caso: Torque/vel (http://wiki.ros.org/pr2_controller_manager/safety_limits) -->
+  </joint>
+
+  <link name="link_left_wheel">
+    <inertial>
+      <mass value="0.2"/>
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.0005" iyz="0" izz="0.0005"/>
+    </inertial>
+    <collision name="link_left_wheel_collision">
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.1"/>
+      </geometry>
+    </collision>
+    <visual name="link_left_wheel_visual">
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.1"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="joint_right_wheel" type="continuous">  <!-- We set revolute with infinite limits as a workaround to sdf conversion problems -->
+    <origin rpy="0 0 0" xyz="0 -0.17 -0.3"/>
+    <child link="link_right_wheel"/>
+    <parent link="link_chassis"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+		<limit effort="0.8" velocity="30"/>
+    <!--<limit effort="0.8" velocity="30"/>-->
+  	<dynamics damping="0.0005" friction="0.0005"/>  <!-- damping coefficient: [N*m*s/rad] -->
+		<safety_controller k_velocity="0.026"/>  <!-- Kv en este caso: Torque/vel (http://wiki.ros.org/pr2_controller_manager/safety_limits) -->
+  </joint>
+
+  <link name="link_right_wheel">
+    <inertial>
+      <mass value="0.2"/>
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.0005" iyz="0" izz="0.0005"/>
+    </inertial>
+    <collision name="link_right_wheel_collision">
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.1"/>
+      </geometry>
+    </collision>
+    <visual name="link_right_wheel_visual">
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.04" radius="0.1"/>
+      </geometry>
+    </visual>
+  </link>
+
+</robot>
