@@ -173,3 +173,4 @@ cython_debug/
 # Personal folders
 My_docs/
 mcu_old/
+.idea/
