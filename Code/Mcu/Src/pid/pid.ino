@@ -29,6 +29,9 @@ float ax, az, gy;
 float accelPitch, pitch;
 float tau=0.98;
 
+bool stop_command=true;
+bool x_down;
+
 void setup() {
   // UART PC connection
   Serial.begin(115200); 
@@ -54,41 +57,51 @@ void IRAM_ATTR onTime() {
 
 void loop() {
 
-
   if (controlFlag){ 
 
-    getAccelGyro(&ax, &az, &gy);
-    accelPitch = atan2(ax, az) * RAD_TO_DEG;
-    pitch = (tau)*(pitch + (-gy)*sampleTime) + (1-tau)*(accelPitch);  
-    currentAngle = pitch * DEG_TO_RAD;
-      
-    error = currentAngle - targetAngle;
-    errorSum += error;  
-    errorSum = constrain(errorSum, -5, 5);
-    pwm = Kp*(error) + Ki*(errorSum)*sampleTime + Kd*(currentAngle-prevAngle)/sampleTime;
-    pwm = constrain(pwm, -255, 255);
-    prevAngle = currentAngle;
-    
-    L_motor(pwm + int(rot*60));
-    R_motor(pwm - int(rot*60));
-
-    if (true){
-      Serial.print("fwd: ");
-      Serial.print(fwd);
-      Serial.print(" rot: ");
-      Serial.print(rot);
-      Serial.print("  Pitch:  ");
-      Serial.print(currentAngle, 4);
-      Serial.print("  PWM:  ");
-      Serial.print(pwm);
-      Serial.print("  Loop time: ");
-      time_ctr = micros()-time_ctr;
-      Serial.println(time_ctr);
-      time_ctr = micros();    
+    x_down = Ps3.event.button_down.cross;
+    if (x_down){
+      stop_command = abs(stop_command -1); 
     }
-    
-  controlFlag=false;
+
+    if (!stop_command){
+      getAccelGyro(&ax, &az, &gy);
+      accelPitch = atan2(ax, az) * RAD_TO_DEG;
+      pitch = (tau)*(pitch + (-gy)*sampleTime) + (1-tau)*(accelPitch);  
+      currentAngle = pitch * DEG_TO_RAD;
+        
+      error = currentAngle - targetAngle;
+      errorSum += error;  
+      errorSum = constrain(errorSum, -5, 5);
+      pwm = Kp*(error) + Ki*(errorSum)*sampleTime + Kd*(currentAngle-prevAngle)/sampleTime;
+      pwm = constrain(pwm, -255, 255);
+      prevAngle = currentAngle;
+      
+      L_motor(pwm + int(rot*60));
+      R_motor(pwm - int(rot*60));
   
+      if (true){
+        Serial.print("fwd: ");
+        Serial.print(fwd);
+        Serial.print(" rot: ");
+        Serial.print(rot);
+        Serial.print("  Pitch:  ");
+        Serial.print(currentAngle, 4);
+        Serial.print("  PWM:  ");
+        Serial.print(pwm);
+        Serial.print("  Loop time: ");
+        time_ctr = micros()-time_ctr;
+        Serial.println(time_ctr);
+        time_ctr = micros();    
+      }
+      
+    }
+    else{
+      stop_motor(); 
+    }
+      
+    controlFlag=false;
+        
   }
   else{
     return;
@@ -104,9 +117,9 @@ void loop() {
   
   fwd = -Ps3.data.analog.stick.ry/128.0;
   rot = Ps3.data.analog.stick.lx/128.0;
-
+  
   targetAngle = fwd*0.05 + zero_targetAngle;
- 
+
 
 }
 
