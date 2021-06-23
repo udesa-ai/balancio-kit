@@ -1,5 +1,8 @@
 #include "dc_motor.h"
 
+#define L_CHANNEL 0 
+#define R_CHANNEL 1 
+
 int PWM_freq = 200;
 
 void motor_init(void){
@@ -13,10 +16,12 @@ void motor_init(void){
   stop_motor();
 
   // PWM
-  ledcAttachPin(ENA, 1);  // (Pin, Channel)
-  ledcAttachPin(ENB, 1);  // (Pin, Channel)
-  ledcSetup(1, PWM_freq, 8);  // (Channel, PWM frequency, bits resolution)
-  ledcWrite(1, 0);  // (channel, bits)
+  ledcAttachPin(ENA, L_CHANNEL);  // (Pin, Channel)
+  ledcAttachPin(ENB, R_CHANNEL);  // (Pin, Channel)
+  ledcSetup(L_CHANNEL, PWM_freq, 8);  // (Channel, PWM frequency, bits resolution)
+  ledcSetup(R_CHANNEL, PWM_freq, 8);  // (Channel, PWM frequency, bits resolution)
+  ledcWrite(L_CHANNEL, 0);  // (channel, bits)
+  ledcWrite(R_CHANNEL, 0);  // (channel, bits)
 }
 
 void stop_motor(void){
@@ -30,7 +35,7 @@ void bwd_L_motor(int pwm){
   // PWM 8 bits int --> [0; 255] 
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
-  ledcWrite(1, pwm);
+  ledcWrite(L_CHANNEL, pwm);
 
 }
 
@@ -38,7 +43,7 @@ void bwd_R_motor(int pwm){
   // PWM 8 bits int --> [0; 255] 
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
-  ledcWrite(1, pwm);
+  ledcWrite(R_CHANNEL, pwm);
 
 }
 
@@ -46,14 +51,14 @@ void fwd_L_motor(int pwm){
   // PWM 8 bits int --> [0; 255].
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
-  ledcWrite(1, pwm);
+  ledcWrite(L_CHANNEL, pwm);
 }
 
 void fwd_R_motor(int pwm){
   // PWM 8 bits int --> [0; 255].
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
-  ledcWrite(1, pwm);
+  ledcWrite(R_CHANNEL, pwm);
 }
 
 void R_motor(int pwm){
