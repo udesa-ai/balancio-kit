@@ -8,9 +8,9 @@
 //#include <DabbleESP32.h>
 #include <Ps3Controller.h>
 
-#define Kp  1200    //1200    //1750
-#define Kd  17.0    //17.0    //25.0
-#define Ki  22000   //22000   //11000  
+#define Kp  2000    // 2000     //1200    //1750
+#define Kd  20.0    // 20.0     //17.0    //25.0
+#define Ki  22000   //22000     //22000   //11000  
 #define sampleTime  0.01  // 100 Hz
 #define zero_targetAngle -0.011  // Calibrated point
 
