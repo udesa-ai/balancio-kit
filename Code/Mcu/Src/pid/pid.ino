@@ -31,7 +31,7 @@ float tau=0.98;
 
 void setup() {
   // UART PC connection
-  Serial.begin(9600); //115200
+  Serial.begin(115200); 
   
   // Motor initialization
   motor_init();
@@ -56,7 +56,7 @@ void loop() {
 
 
   if (controlFlag){ 
- 
+
     getAccelGyro(&ax, &az, &gy);
     accelPitch = atan2(ax, az) * RAD_TO_DEG;
     pitch = (tau)*(pitch + (-gy)*sampleTime) + (1-tau)*(accelPitch);  
@@ -72,16 +72,26 @@ void loop() {
     L_motor(pwm + int(rot*60));
     R_motor(pwm - int(rot*60));
 
-    if (false){
-//      Serial.println(currentAngle, 4);
-//      Serial.println(pwm);
+    if (true){
+      Serial.print("fwd: ");
+      Serial.print(fwd);
+      Serial.print(" rot: ");
+      Serial.print(rot);
+      Serial.print("  Pitch:  ");
+      Serial.print(currentAngle, 4);
+      Serial.print("  PWM:  ");
+      Serial.print(pwm);
+      Serial.print("  Loop time: ");
       time_ctr = micros()-time_ctr;
       Serial.println(time_ctr);
-      time_ctr = micros();
-      
-  }
+      time_ctr = micros();    
+    }
+    
   controlFlag=false;
   
+  }
+  else{
+    return;
   }
 
   // Get joystick commands
@@ -91,17 +101,12 @@ void loop() {
 //  rot = GamePad.getXaxisData();
 //  rot = rot/7.0;
 
+  
   fwd = -Ps3.data.analog.stick.ry/128.0;
   rot = Ps3.data.analog.stick.lx/128.0;
 
   targetAngle = fwd*0.05 + zero_targetAngle;
-
-
-//  Serial.print("fwd: ");
-//  Serial.print(fwd);
-//  Serial.print(" --> Angulo: ");
-//  Serial.println(targetAngle);
-  
+ 
 
 }
 
