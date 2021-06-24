@@ -67,10 +67,6 @@ class MotorModel(object):
 
         actual_torque = motor_torque + friction_torque
 
-        # TODO: Implement backlash.
-        # Backlash
-        # Implementation idea: It might need a new link for the gears. (https://pybullet.org/Bullet/phpBB3/viewtopic.php?t=12134)
-
         return actual_torque
 
     def _convert_to_torque_from_pwm(self, pwm, true_motor_velocity):
