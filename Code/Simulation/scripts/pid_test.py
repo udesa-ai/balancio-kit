@@ -3,9 +3,9 @@ import balancioGymEnv
 
 env = balancioGymEnv.BalancioGymEnv(renders=True)
 
-Kp = -65
-Ki = -2.8
-Kd = -2.0
+Kp = -6.5
+Ki = -0.28
+Kd = -0.20
 tita_target = 0.0
 delta_tita = 0
 previous_delta_tita = 0
@@ -28,7 +28,7 @@ while True:
     pid_d = Kd * ((delta_tita - previous_delta_tita) / 0.005)
     omega = pid_p + pid_i + pid_d
     # print(omega)
-    action = [omega + 2*yaw_rate, omega - 2*yaw_rate]
+    action = [omega + 0.2*yaw_rate, omega - 0.2*yaw_rate]
     normalized_action = env.normalize_action(action)
     tita = env.step(normalized_action)[0][0]
     tita = env.denormalize_observation(tita)

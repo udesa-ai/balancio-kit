@@ -21,6 +21,7 @@ RENDER_HEIGHT = 720
 RENDER_WIDTH = 960
 EPISODE_LENGTH = 500
 
+
 class BalancioGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
 
@@ -48,7 +49,7 @@ class BalancioGymEnv(gym.Env):
 
         # Normalization parameters
         self.obs_norm = np.pi * 0.5
-        self.act_norm = 10 * np.array([1, 1])  # self._robot.max_vel
+        self.act_norm = 1 * np.array([1, 1])  # self._robot.max_vel
 
         observation_high = np.ones(observation_dim)
         if is_discrete:
