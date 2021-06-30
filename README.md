@@ -7,7 +7,7 @@ Proyecto educativo de un robot de autobalanceo de ultra bajo costo, capaz de cor
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
 
-![Balancio v0.4](resources/Balanciov0_4.png?raw=true )
+![Balancio v0.4](resources/Balanciov0_4.jpg?raw=true )
 
 ---
 
