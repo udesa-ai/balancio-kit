@@ -51,7 +51,7 @@ class BalancioGymEnv(gym.Env):
 
         # Normalization parameters
         self.obs_norm = np.pi * 0.5
-        self.act_norm = 1 * np.array([1, 1])  # self._robot.max_vel
+        self.act_norm = 1 * np.array([1, 1])
 
         observation_high = np.ones(observation_dim)
         if is_discrete:
@@ -162,7 +162,7 @@ class BalancioGymEnv(gym.Env):
         return [norm_obs]
 
     def denormalize_observation(self, normalized_obs):
-        # Normalized action -> [-1, 1]
+        # Normalized observation -> [-1, 1]
         obs_normalizer = self.obs_norm
         denorm_obs = normalized_obs * obs_normalizer
         return denorm_obs
