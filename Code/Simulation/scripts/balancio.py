@@ -13,8 +13,6 @@ class Balancio:
 
         self.robotUniqueId = None
         self.backlash = backlash
-        self.max_vel = 10  # rad/s
-        self.max_force = 20
         self.motors_num = 2
         self.joint_name2idx = {'left_gearbox': 0,
                                'left_wheel': 1,
@@ -42,12 +40,7 @@ class Balancio:
                                                             self.joint_name2idx['right_wheel']],
                                               controlMode=self._p.VELOCITY_CONTROL,
                                               targetVelocities=[0, 0],
-                                              forces=[0, 0])
-        # ## DEBUG
-        # self._p.enableJointForceTorqueSensor(1, 0, 1)
-        # self._p.enableJointForceTorqueSensor(1, 1, 1)
-        # self._p.enableJointForceTorqueSensor(1, 2, 1)
-        # self._p.enableJointForceTorqueSensor(1, 3, 1)
+                                              forces=[0, 0])  # Here you can add additional backlash friction.
 
     def get_action_dimension(self):
         return self.motors_num
@@ -72,17 +65,17 @@ class Balancio:
         state = self._p.getJointStates(bodyUniqueId=self.robotUniqueId,
                                        jointIndices=[self.joint_name2idx['left_gearbox'], self.joint_name2idx['right_gearbox']])
 
-        torque = self.motors.convert_to_torque(np.array(motor_commands), np.array([state[0][1], state[1][1]]))
+        torque, static_friction = self.motors.convert_to_torque(np.array(motor_commands), np.array([state[0][1], state[1][1]]))
 
+        # Set static friction (set to 0 when dynamic friction starts acting).
+        self._p.setJointMotorControlArray(bodyUniqueId=self.robotUniqueId,
+                                          jointIndices=[self.joint_name2idx['left_gearbox'],
+                                                        self.joint_name2idx['right_gearbox']],
+                                          controlMode=self._p.VELOCITY_CONTROL,
+                                          targetVelocities=[0, 0],
+                                          forces=[static_friction[0], static_friction[1]])
         # Set torque
         self._p.setJointMotorControlArray(bodyUniqueId=self.robotUniqueId,
                                           jointIndices=[self.joint_name2idx['left_gearbox'], self.joint_name2idx['right_gearbox']],
                                           controlMode=self._p.TORQUE_CONTROL,
                                           forces=[torque[0], torque[1]])
-
-        # ## DEBUG
-        # self._p.applyExternalTorque(1, 0, (0, 0, 3), self._p.LINK_FRAME)
-        # tst = self._p.getJointStates(bodyUniqueId=self.robotUniqueId,
-        #                                jointIndices=[0, 1, 2, 3])
-        # print(tst[0][2][2])
-

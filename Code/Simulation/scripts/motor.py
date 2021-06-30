@@ -14,7 +14,9 @@ NUM_MOTORS = 2
 BACKLASH = 0.0611           # Radians
 DYNAMIC_FRICTION = 0.012    # N.m
 STATIC_FRICTION = 0.035     # N.m
-VEL_DEADBAND = 0.05         # rad/s
+VEL_DEADBAND = 0.5         # rad/s
+
+# TODO: Get max motor torque and clip actual_motor_torque.
 
 
 class MotorModel(object):
@@ -53,6 +55,7 @@ class MotorModel(object):
             to compute back EMF voltage and viscous damping.
         Returns:
           actual_torque: The torque that needs to be applied to the motor.
+          static_friction_torque: Max static friction applied in joint. Only applied if velocity is in dead-band range.
         """
 
         pwm = np.clip(pwm, -1.0, 1.0)
@@ -60,14 +63,15 @@ class MotorModel(object):
 
         # Karnopp friction model
         vel_in_db = (abs(true_motor_velocity) <= VEL_DEADBAND)
-        static_friction_torque = vel_in_db * -1 * np.sign(true_motor_velocity) * (np.minimum(abs(motor_torque), (np.ones(NUM_MOTORS)*STATIC_FRICTION)))
+        # static_friction_torque = vel_in_db * -1 * np.sign(true_motor_velocity) * (np.minimum(abs(motor_torque), (np.ones(NUM_MOTORS)*STATIC_FRICTION)))
+        static_friction_torque = vel_in_db * STATIC_FRICTION
         dynamic_friction_torque = np.invert(vel_in_db) * -1 * np.sign(true_motor_velocity) * np.ones(NUM_MOTORS)*DYNAMIC_FRICTION
 
-        friction_torque = static_friction_torque + dynamic_friction_torque
+        friction_torque = dynamic_friction_torque  # + static_friction_torque
 
         actual_torque = motor_torque + friction_torque
 
-        return actual_torque
+        return actual_torque, static_friction_torque
 
     def _convert_to_torque_from_pwm(self, pwm, true_motor_velocity):
         """Convert the pwm signal to torque.
