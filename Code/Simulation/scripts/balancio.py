@@ -2,7 +2,10 @@
 
 import numpy as np
 import motor
+import os
 
+
+URDF_PATH = os.path.join('/', *os.getcwd().split('/')[:-1], 'urdf', 'balancio_v1.urdf')
 
 class Balancio:
 
@@ -22,7 +25,7 @@ class Balancio:
         self.reset()
 
     def reset(self):
-        robot = self._p.loadURDF("/home/agus/Documents/UdeSA/Balancio_V0/Code/Simulation/urdf/balancio_v1.urdf",
+        robot = self._p.loadURDF(URDF_PATH,
                                  [0, 0, 0.6],
                                  useFixedBase=False)
         self.robotUniqueId = robot
