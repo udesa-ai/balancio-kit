@@ -1,7 +1,7 @@
 import balancioGymEnv
 
 
-env = balancioGymEnv.BalancioGymEnv(renders=True, backlash=True)
+env = balancioGymEnv.BalancioGymEnv(renders=True, normalize=True, backlash=True)
 
 Kp = -6.5
 Ki = -0.28
