@@ -29,7 +29,8 @@ class BalancioGymEnv(gym.Env):
                  action_repeat=1,
                  is_discrete=False,
                  renders=False,
-                 normalize=True):
+                 normalize=True,
+                 backlash=True):
         self._time_step = 0.01
         self._urdf_root = urdf_root
         self._action_repeat = action_repeat
@@ -43,6 +44,7 @@ class BalancioGymEnv(gym.Env):
         else:
             self._p = bullet_client.BulletClient()
 
+        self._backlash = backlash
         self.seed()
         # self.reset()
         observation_dim = 1
@@ -50,8 +52,8 @@ class BalancioGymEnv(gym.Env):
 
         # Normalization parameters
         self.obs_norm = np.pi * 0.5
-        max_act = 10
-        self.act_norm = max_act * np.array([1, 1])  # self._robot.max_vel
+        max_act = 1
+        self.act_norm = max_act * np.array([1, 1])
 
         observation_high = np.ones(observation_dim)
         if not self._normalize:
@@ -80,7 +82,7 @@ class BalancioGymEnv(gym.Env):
         # stadiumobjects = self._p.loadSDF(os.path.join(self._urdfRoot, "stadium.sdf"))
 
         self._p.setGravity(0, 0, -9.81)
-        self._robot = balancio.Balancio(self._p, urdf_root_path=self._urdf_root, time_step=self._time_step)
+        self._robot = balancio.Balancio(self._p, urdf_root_path=self._urdf_root, time_step=self._time_step, backlash=self._backlash)
         self._env_step_counter = 0
         for i in range(100):
             self._p.stepSimulation()

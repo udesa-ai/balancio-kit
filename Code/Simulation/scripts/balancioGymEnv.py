@@ -30,6 +30,7 @@ class BalancioGymEnv(gym.Env):
                  action_repeat=1,
                  is_discrete=False,
                  renders=False,
+                 normalize=True,
                  backlash=True):
         self._time_step = 0.01
         self._urdf_root = urdf_root
@@ -37,6 +38,7 @@ class BalancioGymEnv(gym.Env):
         self._observation = []
         self._env_step_counter = 0
         self._renders = renders
+        self._normalize = normalize
         self._is_discrete = is_discrete
         if self._renders:
             self._p = bullet_client.BulletClient(connection_mode=pybullet.GUI)
@@ -51,14 +53,21 @@ class BalancioGymEnv(gym.Env):
 
         # Normalization parameters
         self.obs_norm = np.pi * 0.5
-        self.act_norm = 1 * np.array([1, 1])
+        max_act = 1
+        self.act_norm = max_act * np.array([1, 1])
 
         observation_high = np.ones(observation_dim)
+        if not self._normalize:
+            observation_high = observation_high * self.obs_norm
+
         if is_discrete:
             self.action_space = spaces.Discrete(9)
         else:
             action_dim = 2
-            self._action_bound = 1
+            if self._normalize:
+                self._action_bound = 1
+            else:
+                self._action_bound = max_act
             action_high = np.array([self._action_bound] * action_dim)
             self.action_space = spaces.Box(-action_high, action_high, dtype=np.float32)
         self.observation_space = spaces.Box(-observation_high, observation_high, dtype=np.float32)
@@ -78,7 +87,10 @@ class BalancioGymEnv(gym.Env):
         self._env_step_counter = 0
         for i in range(100):
             self._p.stepSimulation()
-        self._observation = self.get_normalized_observation()
+        if self._normalize:
+            self._observation = self.get_normalized_observation()
+        else:
+            self._observation = self._robot.get_observation()
         return np.array(self._observation)
 
     def __del__(self):
@@ -94,13 +106,19 @@ class BalancioGymEnv(gym.Env):
         # if (self._renders):
         #   basePos, orn = self._p.getBasePositionAndOrientation(self._racecar.racecarUniqueId)
         #   #self._p.resetDebugVisualizerCamera(1, 30, -40, basePos)
-        denormalized_action = self.denormalize_action(action)
+        if self._normalize:
+            denormalized_action = self.denormalize_action(action)
+        else:
+            denormalized_action = action
         self._robot.apply_action(denormalized_action)
         for i in range(self._action_repeat):
             self._p.stepSimulation()
             if self._renders:
                 time.sleep(self._time_step)
-            self._observation = self.get_normalized_observation()
+            if self._normalize:
+                self._observation = self.get_normalized_observation()
+            else:
+                self._observation = self._robot.get_observation()
 
             if self._termination():
                 break
