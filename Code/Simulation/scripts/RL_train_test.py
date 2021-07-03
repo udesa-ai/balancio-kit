@@ -4,81 +4,99 @@ import balancioGymEnv
 import stable_baselines
 from stable_baselines.common.policies import MlpPolicy
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
-from stable_baselines import PPO2
+from stable_baselines import PPO2, A2C, ACKTR
 from stable_baselines.common.callbacks import EvalCallback, StopTrainingOnRewardThreshold
+from stable_baselines.common import set_global_seeds
 
 import tensorflow as tf
 import os
 
 
 # Policy
-TIMESTEPS = 10000  # 1000000
+TIMESTEPS = 100000  # 1000000
 EVAL_FREQ = 5000
+NUM_CPU = 20  # Number of processes to uses
 # Environment
 NORMALIZE = True
 BACKLASH = True
+SEED = 1354
 # Directories
 training_save_path = os.path.join('Models', 'test')
 training_log_path = os.path.join('Logs', 'test')
 
 
-env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH)
-env = DummyVecEnv([lambda: env])
+def make_env(rank, seed=0):
+    """
+    Utility function for multiprocessed env.
 
-# TEST- S #
-# env = SubprocVecEnv([lambda: balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH) for i in range(2)])
-# TEST- E #
+    :param seed: (int) the inital seed for RNG
+    :param rank: (int) index of the subprocess
+    """
+    def _init():
+        env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH, seed=seed+rank)
+        env.seed(seed + rank)
+        return env
+    set_global_seeds(seed)
+    return _init
 
-eval_callback = EvalCallback(env,
-                             eval_freq=EVAL_FREQ,
-                             best_model_save_path=training_save_path,
-                             verbose=1)
-policy_kwargs = dict(act_fun=tf.nn.relu, net_arch=[16, 16])
-model = PPO2(MlpPolicy, env, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
-model.learn(total_timesteps=TIMESTEPS, callback=eval_callback)
-
-env = balancioGymEnv.BalancioGymEnv(renders=True, normalize=NORMALIZE, backlash=BACKLASH)
-while True:
-    obs = env.reset()
-    done = False
-    while done is False:
-        action, _states = model.predict(obs, deterministic=True)  # deterministic false wtf(?)
-        obs, reward, done, info = env.step(action)
-        env.render()
+# env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH)
+# env = DummyVecEnv([lambda: env])
 
 
-""" Policy Export """
-# with model.graph.as_default():
-#     tf.saved_model.simple_save(model.sess, 'Models/test', inputs={"obs": model.act_model.obs_ph},
-#                                outputs={"action": model.action_ph})  # ._policy_proba / model.action_ph
+if __name__ == '__main__':
 
-# with model.graph.as_default():
-#     tf.saved_model.simple_save(model.sess, 'Models/test', inputs={"obs": model.act_model.obs_ph},
-#                                    outputs={"action": model.act_model._policy_proba})
+    env = SubprocVecEnv([make_env(rank=i, seed=SEED) for i in range(NUM_CPU)])
 
+    # eval_callback = EvalCallback(env,
+    #                              eval_freq=EVAL_FREQ,
+    #                              best_model_save_path=training_save_path,
+    #                              verbose=1)
+    policy_kwargs = dict(act_fun=tf.nn.relu, net_arch=[16, 16])
+    model = PPO2(MlpPolicy, env, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
+    model.learn(total_timesteps=TIMESTEPS)  # , callback=eval_callback)
 
-if False:
-    keras_model = tf.keras.Sequential()
-    keras_model.add(tf.keras.layers.Dense(16, input_dim=1))
-    keras_model.add(tf.keras.layers.Activation('relu'))
-    keras_model.add(tf.keras.layers.Dense(16))
-    keras_model.add(tf.keras.layers.Activation('relu'))
-    keras_model.add(tf.keras.layers.Dense(1))
-
-    params = model.get_parameters()
-    keras_model.layers[0].set_weights([params['model/shared_fc0/w:0'], params['model/shared_fc0/b:0']])
-    keras_model.layers[2].set_weights([params['model/shared_fc1/w:0'], params['model/shared_fc1/b:0']])
-    keras_model.layers[4].set_weights([params['model/pi/w:0'], params['model/pi/b:0']])
-
-    keras_model.save('Models/model.h5')
-
+    env = balancioGymEnv.BalancioGymEnv(renders=True, normalize=NORMALIZE, backlash=BACKLASH)
     while True:
         obs = env.reset()
         done = False
         while done is False:
-            action = keras_model.predict(obs)
-            sb_action = model.predict(obs, deterministic=True)
-            diff = action-sb_action[0]
-            print("Diferencia entre predicciones: ", diff[0][0])
+            action, _states = model.predict(obs, deterministic=True)  # deterministic false wtf(?)
             obs, reward, done, info = env.step(action)
             env.render()
+
+
+    """ Policy Export """
+    # with model.graph.as_default():
+    #     tf.saved_model.simple_save(model.sess, 'Models/test', inputs={"obs": model.act_model.obs_ph},
+    #                                outputs={"action": model.action_ph})  # ._policy_proba / model.action_ph
+
+    # with model.graph.as_default():
+    #     tf.saved_model.simple_save(model.sess, 'Models/test', inputs={"obs": model.act_model.obs_ph},
+    #                                    outputs={"action": model.act_model._policy_proba})
+
+
+    if False:
+        keras_model = tf.keras.Sequential()
+        keras_model.add(tf.keras.layers.Dense(16, input_dim=1))
+        keras_model.add(tf.keras.layers.Activation('relu'))
+        keras_model.add(tf.keras.layers.Dense(16))
+        keras_model.add(tf.keras.layers.Activation('relu'))
+        keras_model.add(tf.keras.layers.Dense(1))
+
+        params = model.get_parameters()
+        keras_model.layers[0].set_weights([params['model/shared_fc0/w:0'], params['model/shared_fc0/b:0']])
+        keras_model.layers[2].set_weights([params['model/shared_fc1/w:0'], params['model/shared_fc1/b:0']])
+        keras_model.layers[4].set_weights([params['model/pi/w:0'], params['model/pi/b:0']])
+
+        keras_model.save('Models/model.h5')
+
+        while True:
+            obs = env.reset()
+            done = False
+            while done is False:
+                action = keras_model.predict(obs)
+                sb_action = model.predict(obs, deterministic=True)
+                diff = action-sb_action[0]
+                print("Diferencia entre predicciones: ", diff[0][0])
+                obs, reward, done, info = env.step(action)
+                env.render()
