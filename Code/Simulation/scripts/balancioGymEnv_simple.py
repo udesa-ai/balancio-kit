@@ -30,7 +30,8 @@ class BalancioGymEnv(gym.Env):
                  is_discrete=False,
                  renders=False,
                  normalize=True,
-                 backlash=True):
+                 backlash=True,
+                 seed=None):
         self._time_step = 0.01
         self._urdf_root = urdf_root
         self._action_repeat = action_repeat
@@ -45,7 +46,7 @@ class BalancioGymEnv(gym.Env):
             self._p = bullet_client.BulletClient()
 
         self._backlash = backlash
-        self.seed()
+        self.seed(seed)
         # self.reset()
         observation_dim = 1
         print("Observation dimension: {}".format(observation_dim))
@@ -84,7 +85,7 @@ class BalancioGymEnv(gym.Env):
         self._p.setGravity(0, 0, -9.81)
         self._robot = balancio.Balancio(self._p, urdf_root_path=self._urdf_root, time_step=self._time_step, backlash=self._backlash)
         self._env_step_counter = 0
-        for i in range(100):
+        for i in range(5):
             self._p.stepSimulation()
         if self._normalize:
             self._observation = self.get_normalized_observation()
@@ -95,8 +96,10 @@ class BalancioGymEnv(gym.Env):
     def __del__(self):
         self._p = 0
 
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
+    def seed(self, seed_init=None):
+        self.np_random, seed = seeding.np_random(seed_init)
+        if seed_init is not None:
+            np.random.seed(seed_init)
         return [seed]
 
     def step(self, action):
