@@ -25,8 +25,11 @@ class Balancio:
         self.reset()
 
     def reset(self):
+        # Randomize initial orientation.
+        orientation_init = self._p.getQuaternionFromEuler([0, np.random.uniform(-0.1, 0.1), 0])
         robot = self._p.loadURDF(URDF_PATH,
-                                 [0, 0, 0.6],
+                                 [0, 0, 0.42],
+                                 orientation_init,
                                  useFixedBase=False)
         self.robotUniqueId = robot
 
