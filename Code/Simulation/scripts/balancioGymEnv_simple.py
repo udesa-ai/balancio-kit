@@ -155,6 +155,9 @@ class BalancioGymEnv(gym.Env):
         rgb_array = rgb_array[:, :, :3]
         return rgb_array
 
+    def close(self):
+        self._p.disconnect()
+
     def _termination(self):
         self.pitch_angle = self._robot.get_observation()[0]
         return self._env_step_counter > EPISODE_LENGTH or abs(self.pitch_angle) > 0.8
