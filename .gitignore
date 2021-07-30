@@ -174,3 +174,6 @@ cython_debug/
 My_docs/
 mcu_old/
 .idea/
+my_logs/
+my_hyperparams/
+my_models/
