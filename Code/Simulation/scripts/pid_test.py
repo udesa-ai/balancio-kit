@@ -1,14 +1,19 @@
+import numpy as np
 import balancioGymEnv
 
 
-env = balancioGymEnv.BalancioGymEnv(renders=True, normalize=True, backlash=True, seed=None)
+LoopFreq = 100  # Hz
+StepPeriod = (1/240) * 1/10  # s
+actions_per_step = int(round((1/LoopFreq)/StepPeriod))  # For Microcontroller loop frequency compatibility
+env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=True, backlash=True, seed=None, algo_mode='PID')
 
-Kp = -6.5
-Ki = -0.28
-Kd = -0.20
+Kp = -2000      # -6.5
+Ki = -22000     # -0.28
+Kd = -20        # -0.20
 tita_target = 0.0
 delta_tita = 0
 previous_delta_tita = 0
+errorSum = 0
 pid_p = 0
 pid_i = 0
 pid_d = 0
@@ -17,18 +22,33 @@ tita = env.reset()[0]
 tita = env.denormalize_observation(tita)
 
 env.add_sliders()
+done = False
+
 
 while True:
+
+    if done:
+        tita = env.reset()[0]
+        tita = env.denormalize_observation(tita)
+        errorSum = 0
+
     tita_target = env.get_slider_tita()
     yaw_rate = env.get_slider_yaw()
     delta_tita = tita_target - tita
 
     pid_p = Kp * delta_tita
-    pid_i += Ki * delta_tita
-    pid_d = Kd * ((delta_tita - previous_delta_tita) / 0.005)
-    omega = pid_p + pid_i + pid_d
+    errorSum += delta_tita * (1/LoopFreq)
+    errorSum = np.clip(errorSum, -5, 5)
+    pid_i = Ki * errorSum
+    pid_d = Kd * ((delta_tita - previous_delta_tita) / (1/LoopFreq))
+    previous_delta_tita = delta_tita
+    pwm = pid_p + pid_i + pid_d
+    pwm = pwm/255
     # print(omega)
-    action = [omega + 0.2*yaw_rate, omega - 0.2*yaw_rate]
+    # omega = 10*tita_target
+    pwm = np.clip(pwm, -1, 1)
+    action = [pwm + 0.2*yaw_rate, pwm - 0.2*yaw_rate]
     normalized_action = env.normalize_action(action)
-    tita = env.step(normalized_action)[0][0]
+    tita, rew, done, _ = env.step(normalized_action)
+    tita = tita[0]
     tita = env.denormalize_observation(tita)
