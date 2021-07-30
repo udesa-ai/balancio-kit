@@ -5,18 +5,17 @@ Source: https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/g
 import numpy as np
 
 
-MOTOR_VOLTAGE = 7.0             # [6.6, 7.4]
-MOTOR_RESISTANCE = 5.3          # +- 0.1
-MOTOR_TORQUE_CONSTANT = 0.1859  # +- 0.02
+MOTOR_VOLTAGE = 28.0             # 40*Kg.Dm²/A.(10.s)³       # 7.0 -> [6.6, 7.4]     V : Kg.M²/A.s³
+MOTOR_RESISTANCE = 21.2          # 40*Kg.Dm²/A².(10.s)³      # 5.3 +- 0.1            Ohm : Kg.M²/A².s³
+MOTOR_TORQUE_CONSTANT = 7.436    # 40*Kg.Dm²/A.(10.s)²       # 0.1859 +- 0.02        N.m/A : Kg.M²/A.s²
+MOTOR_EMF_CONSTANT = 7.436       # 40*Kg.Dm²/A.(10.s)²       # 0.1859 +- 0.02        V.s/rad : Kg.M²/A.s²
 MOTOR_VISCOUS_DAMPING = 0
 NUM_MOTORS = 2
 
-BACKLASH = 0.0611           # Radians
-DYNAMIC_FRICTION = 0.012    # N.m
-STATIC_FRICTION = 0.035     # N.m
-VEL_DEADBAND = 0.5         # rad/s
-
-# TODO: Get max motor torque and clip actual_motor_torque.
+BACKLASH = 0.0611                # Radians
+DYNAMIC_FRICTION = 0.48          # 40*Kg.Dm²/s²             # 0.012 N.m : Kg.M²/s²
+STATIC_FRICTION = 1.40           # 40*Kg.Dm²/s²             # 0.035 N.m : Kg.M²/s²
+VEL_DEADBAND = 0.3               # rad/(10*s)               # 3 rad/s
 
 
 class MotorModel(object):
@@ -31,6 +30,7 @@ class MotorModel(object):
         self._resistance = MOTOR_RESISTANCE
         self._voltage = MOTOR_VOLTAGE
         self._torque_constant = MOTOR_TORQUE_CONSTANT
+        self._EMF_constant = MOTOR_EMF_CONSTANT
         self._viscous_damping = MOTOR_VISCOUS_DAMPING
 
     def set_voltage(self, voltage):
@@ -83,7 +83,7 @@ class MotorModel(object):
           actual_motor_torque: The torque that needs to be applied to the motor.
         """
 
-        voltage_net = pwm * self._voltage - (self._torque_constant + self._viscous_damping) * true_motor_velocity
+        voltage_net = pwm * self._voltage - (self._EMF_constant + self._viscous_damping) * true_motor_velocity
         current = voltage_net / self._resistance
         actual_motor_torque = self._torque_constant * current
 
