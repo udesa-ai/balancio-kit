@@ -5,7 +5,7 @@ import motor
 import os
 
 
-URDF_PATH = os.path.join('/', *os.getcwd().split('/')[:-1], 'urdf', 'balancio_v1.urdf')
+URDF_PATH = os.path.join('/', *os.getcwd().split('/')[:-1], 'urdf', 'balancio_v3.urdf')  # 'balancio_v1_backlash_debug.urdf'
 
 class Balancio:
 
@@ -19,8 +19,8 @@ class Balancio:
         self.motors_num = 2
         self.joint_name2idx = {'left_gearbox': 0,
                                'left_wheel': 1,
-                               'right_gearbox': 2,
-                               'right_wheel': 3}
+                               'right_gearbox': 2,  # 2 for original 4 for debug urdf.
+                               'right_wheel': 3}    # 3 for original 5 for debug urdf.
         self.motors = motor.MotorModel()
         self.reset()
 
@@ -28,7 +28,7 @@ class Balancio:
         # Randomize initial orientation.
         orientation_init = self._p.getQuaternionFromEuler([0, np.random.uniform(-0.1, 0.1), 0])
         robot = self._p.loadURDF(URDF_PATH,
-                                 [0, 0, 0.42],
+                                 [0, 0, 1.1],
                                  orientation_init,
                                  useFixedBase=False)
         self.robotUniqueId = robot
