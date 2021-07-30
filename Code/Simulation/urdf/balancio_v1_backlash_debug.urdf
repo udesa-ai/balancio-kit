@@ -97,7 +97,7 @@
   </link>
 
   <joint name="joint_left_wheel" type="revolute">  <!-- We set revolute with infinite limits as a workaround to sdf conversion problems -->
-    <limit lower="-0.03055" upper="0.03055" />
+    <limit lower="-0.2" upper="0.2" />
     <origin rpy="0 0 0" xyz="0 0.04 0"/>
     <child link="link_left_wheel"/>
     <parent link="link_left_gb"/>
@@ -222,7 +222,7 @@
   </link>
 
   <joint name="joint_right_wheel" type="revolute">  <!-- We set revolute with infinite limits as a workaround to sdf conversion problems -->
-    <limit lower="-0.03055" upper="0.03055" />
+    <limit lower="-0.2" upper="0.2" />
     <origin rpy="0 0 0" xyz="0 -0.04 0"/>
     <child link="link_right_wheel"/>
     <parent link="link_right_gb"/>
