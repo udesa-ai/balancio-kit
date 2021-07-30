@@ -1,3 +1,4 @@
+
 #include "dc_motor.h"
 #include "imu.h"
 #include "timer.h"
@@ -12,7 +13,7 @@
 #define Kd  20.0    // 20.0     //17.0    //25.0
 #define Ki  22000   //22000     //22000   //11000  
 #define sampleTime  0.01  // 100 Hz
-#define zero_targetAngle -0.011  // Calibrated point
+#define zero_targetAngle 0.01  // Calibrated point
 
 float targetAngle=0.0;
 float currentAngle=0.0, prevAngle=0.0, error=0.0, prevError=0.0, errorSum=0.0;
@@ -25,7 +26,7 @@ float rot=0;
 unsigned long pid_count = 0;
 
 int time_ctr=0;
-float ax, az, gy;
+float ay, az, gx;
 float accelPitch, pitch;
 float tau=0.98;
 
@@ -65,10 +66,10 @@ void loop() {
     }
 
     if (!stop_command){
-      getAccelGyro(&ax, &az, &gy);
-      accelPitch = atan2(ax, az) * RAD_TO_DEG;
-      pitch = (tau)*(pitch + (-gy)*sampleTime) + (1-tau)*(accelPitch);  
-      currentAngle = pitch * DEG_TO_RAD;
+      getAccelGyro(&ay, &az, &gx);
+      accelPitch = atan2(ay, az) * RAD_TO_DEG;
+      pitch = (tau)*(pitch + (gx)*sampleTime) + (1-tau)*(accelPitch);  
+      currentAngle = - pitch * DEG_TO_RAD;
         
       error = currentAngle - targetAngle;
       errorSum += error;  

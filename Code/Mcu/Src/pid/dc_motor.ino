@@ -33,8 +33,8 @@ void stop_motor(void){
 
 void bwd_L_motor(int pwm){
   // PWM 8 bits int --> [0; 255] 
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
   ledcWrite(L_CHANNEL, pwm);
 
 }
@@ -49,8 +49,8 @@ void bwd_R_motor(int pwm){
 
 void fwd_L_motor(int pwm){
   // PWM 8 bits int --> [0; 255].
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
   ledcWrite(L_CHANNEL, pwm);
 }
 
