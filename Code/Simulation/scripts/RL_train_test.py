@@ -1,6 +1,9 @@
 import balancioGymEnv_simple
 import balancioGymEnv
 
+import tensorflow as tf
+# tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 import stable_baselines
 from stable_baselines.common.policies import MlpPolicy
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
@@ -8,18 +11,18 @@ from stable_baselines import PPO2, A2C, ACKTR
 from stable_baselines.common.callbacks import EvalCallback, StopTrainingOnRewardThreshold
 from stable_baselines.common import set_global_seeds
 
-import tensorflow as tf
 import os
 
 
 # Policy
-TIMESTEPS = 100000  # 1000000
+TIMESTEPS = 1000000  # 1000000
 EVAL_FREQ = 5000
-NUM_CPU = 20  # Number of processes to uses
+NUM_CPU = 10  # Number of processes to uses -> More implies more samples per time, but less efficiency.
+NET_LAYERS = [32, 32]
 # Environment
 NORMALIZE = True
 BACKLASH = True
-SEED = 1354
+SEED = 5
 # Directories
 training_save_path = os.path.join('Models', 'test')
 training_log_path = os.path.join('Logs', 'test')
@@ -46,14 +49,17 @@ def make_env(rank, seed=0):
 if __name__ == '__main__':
 
     env = SubprocVecEnv([make_env(rank=i, seed=SEED) for i in range(NUM_CPU)])
+    eval_env = DummyVecEnv([lambda: balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH)])
 
-    # eval_callback = EvalCallback(env,
-    #                              eval_freq=EVAL_FREQ,
-    #                              best_model_save_path=training_save_path,
-    #                              verbose=1)
-    policy_kwargs = dict(act_fun=tf.nn.relu, net_arch=[16, 16])
-    model = PPO2(MlpPolicy, env, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
-    model.learn(total_timesteps=TIMESTEPS)  # , callback=eval_callback)
+    eval_callback = EvalCallback(eval_env,
+                                 eval_freq=EVAL_FREQ,
+                                 best_model_save_path=training_save_path,
+                                 verbose=1)
+    policy_kwargs = dict(act_fun=tf.nn.relu, net_arch=NET_LAYERS)
+    # model = PPO2(MlpPolicy, env, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
+    model = A2C(MlpPolicy, env, gamma=0.9, n_steps=16, ent_coef=3.2155672659533806e-05, max_grad_norm=0.6, vf_coef=0.4439617266032203,
+                learning_rate=0.004030614464204483, alpha=0.9, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
+    model.learn(total_timesteps=TIMESTEPS, callback=eval_callback)
 
     env = balancioGymEnv.BalancioGymEnv(renders=True, normalize=NORMALIZE, backlash=BACKLASH)
     while True:
