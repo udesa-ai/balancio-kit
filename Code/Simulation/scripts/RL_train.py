@@ -15,7 +15,7 @@ import os
 
 
 # Policy
-TIMESTEPS = 1000000  # 1000000
+TIMESTEPS = 500000  # 1000000
 EVAL_FREQ = 5000
 NUM_CPU = 10  # Number of processes to uses -> More implies more samples per time, but less efficiency.
 NET_LAYERS = [32, 32]
@@ -24,8 +24,12 @@ NORMALIZE = True
 BACKLASH = True
 SEED = 5
 # Directories
-training_save_path = os.path.join('Models', 'test')
-training_log_path = os.path.join('Logs', 'test')
+training_save_path = os.path.join('Models', 'my_models')
+training_log_path = os.path.join('Logs', 'my_logs')
+
+LoopFreq = 100  # Hz
+StepPeriod = (1/240) * 1/10  # s
+actions_per_step = int(round((1/LoopFreq)/StepPeriod))  # For Microcontroller loop frequency compatibility
 
 
 def make_env(rank, seed=0):
@@ -36,7 +40,7 @@ def make_env(rank, seed=0):
     :param rank: (int) index of the subprocess
     """
     def _init():
-        env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH, seed=seed+rank)
+        env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE, backlash=BACKLASH, seed=seed+rank, algo_mode='RL')
         env.seed(seed + rank)
         return env
     set_global_seeds(seed)
@@ -49,7 +53,7 @@ def make_env(rank, seed=0):
 if __name__ == '__main__':
 
     env = SubprocVecEnv([make_env(rank=i, seed=SEED) for i in range(NUM_CPU)])
-    eval_env = DummyVecEnv([lambda: balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH)])
+    eval_env = DummyVecEnv([lambda: balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE, backlash=BACKLASH, algo_mode='RL')])
 
     eval_callback = EvalCallback(eval_env,
                                  eval_freq=EVAL_FREQ,
@@ -61,7 +65,7 @@ if __name__ == '__main__':
                 learning_rate=0.004030614464204483, alpha=0.9, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
     model.learn(total_timesteps=TIMESTEPS, callback=eval_callback)
 
-    env = balancioGymEnv.BalancioGymEnv(renders=True, normalize=NORMALIZE, backlash=BACKLASH)
+    env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE, backlash=BACKLASH, algo_mode='RL')
     while True:
         obs = env.reset()
         done = False
@@ -69,40 +73,3 @@ if __name__ == '__main__':
             action, _states = model.predict(obs, deterministic=True)  # deterministic false wtf(?)
             obs, reward, done, info = env.step(action)
             env.render()
-
-
-    """ Policy Export """
-    # with model.graph.as_default():
-    #     tf.saved_model.simple_save(model.sess, 'Models/test', inputs={"obs": model.act_model.obs_ph},
-    #                                outputs={"action": model.action_ph})  # ._policy_proba / model.action_ph
-
-    # with model.graph.as_default():
-    #     tf.saved_model.simple_save(model.sess, 'Models/test', inputs={"obs": model.act_model.obs_ph},
-    #                                    outputs={"action": model.act_model._policy_proba})
-
-
-    if False:
-        keras_model = tf.keras.Sequential()
-        keras_model.add(tf.keras.layers.Dense(16, input_dim=1))
-        keras_model.add(tf.keras.layers.Activation('relu'))
-        keras_model.add(tf.keras.layers.Dense(16))
-        keras_model.add(tf.keras.layers.Activation('relu'))
-        keras_model.add(tf.keras.layers.Dense(1))
-
-        params = model.get_parameters()
-        keras_model.layers[0].set_weights([params['model/shared_fc0/w:0'], params['model/shared_fc0/b:0']])
-        keras_model.layers[2].set_weights([params['model/shared_fc1/w:0'], params['model/shared_fc1/b:0']])
-        keras_model.layers[4].set_weights([params['model/pi/w:0'], params['model/pi/b:0']])
-
-        keras_model.save('Models/model.h5')
-
-        while True:
-            obs = env.reset()
-            done = False
-            while done is False:
-                action = keras_model.predict(obs)
-                sb_action = model.predict(obs, deterministic=True)
-                diff = action-sb_action[0]
-                print("Diferencia entre predicciones: ", diff[0][0])
-                obs, reward, done, info = env.step(action)
-                env.render()
