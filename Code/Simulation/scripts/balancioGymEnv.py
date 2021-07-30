@@ -19,7 +19,7 @@ os.sys.path.insert(0, parentdir)
 
 RENDER_HEIGHT = 720
 RENDER_WIDTH = 960
-EPISODE_LENGTH = 500
+EPISODE_LENGTH = 5000
 
 
 class BalancioGymEnv(gym.Env):
@@ -32,8 +32,10 @@ class BalancioGymEnv(gym.Env):
                  renders=False,
                  normalize=True,
                  backlash=True,
-                 seed=None):
-        self._time_step = 0.01
+                 seed=None,
+                 algo_mode='RL'  # 'RL' or 'PID'
+                 ):
+        self._time_step = 1/240  # 0.01
         self._urdf_root = urdf_root
         self._action_repeat = action_repeat
         self._observation = []
@@ -48,6 +50,7 @@ class BalancioGymEnv(gym.Env):
 
         self._backlash = backlash
         self.seed(seed)
+        self._algo_mode = algo_mode
         # self.reset()
         observation_dim = 1
         print("Observation dimension: {}".format(observation_dim))
@@ -80,10 +83,11 @@ class BalancioGymEnv(gym.Env):
         self._p.resetSimulation()
         #p.setPhysicsEngineParameter(numSolverIterations=300)
         self._p.setTimeStep(self._time_step)
+        # self._p.setPhysicsEngineParameter(numSolverIterations=300, numSubSteps=200)
         self._p.loadURDF(os.path.join(self._urdf_root, "plane.urdf"))
         # stadiumobjects = self._p.loadSDF(os.path.join(self._urdfRoot, "stadium.sdf"))
 
-        self._p.setGravity(0, 0, -9.81)
+        self._p.setGravity(0, 0, -0.981)  # Gravity: 0.981 dm/(10.s)^2
         self._robot = balancio.Balancio(self._p, urdf_root_path=self._urdf_root, time_step=self._time_step, backlash=self._backlash)
         self._env_step_counter = 0
         for i in range(5):
@@ -113,18 +117,22 @@ class BalancioGymEnv(gym.Env):
             denormalized_action = self.denormalize_action(action)
         else:
             denormalized_action = action
-        self._robot.apply_action(denormalized_action)
+        # self._robot.apply_action(denormalized_action)
         for i in range(self._action_repeat):
+            self._robot.apply_action(denormalized_action)
             self._p.stepSimulation()
             if self._renders:
-                time.sleep(self._time_step)
+                time.sleep(self._time_step/10)
             if self._normalize:
                 self._observation = self.get_normalized_observation()
             else:
                 self._observation = self._robot.get_observation()
 
             if self._termination():
-                break
+                if self._algo_mode == 'RL':
+                    break
+                elif self._algo_mode == 'PID':
+                    pass
             self._env_step_counter += 1
         reward = self._reward()
         done = self._termination()
@@ -154,6 +162,9 @@ class BalancioGymEnv(gym.Env):
         rgb_array = np.array(px)
         rgb_array = rgb_array[:, :, :3]
         return rgb_array
+
+    def close(self):
+        self._p.disconnect()
 
     def _termination(self):
         self.pitch_angle = self._robot.get_observation()[0]
