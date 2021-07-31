@@ -5,7 +5,7 @@ FOLDER_NAME = "A2C_best"
 
 path2folder = os.getcwd() + "/Models/my_models/" + FOLDER_NAME
 converter = tf.lite.TFLiteConverter.from_keras_model_file(path2folder + "/model.h5")
-converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_SIZE]
+# converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_SIZE]
 tflite_model = converter.convert()
 
 if not os.path.exists(path2folder + "/Lite"):
