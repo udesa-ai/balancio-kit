@@ -99,12 +99,37 @@ Quaternion q;           // [w, x, y, z]         quaternion container
 VectorFloat gravity;    // [x, y, z]            gravity vector
 //float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
+// gyro,accel and euler vars 
+int16_t ax_b, ay_b, az_b, gx_b, gy_b, gz_b;
+
 // Local Function Prototypes
 void readFifoBuffer_(void);
 
 
 // Functions
-void imu_setup(void) {
+void imu_setup(void){
+  // join I2C bus (I2Cdev library doesn't do this automatically)
+  Wire.begin(SDA, SCL, 400000);
+  
+  // initialize device
+  Serial.println(F("Initializing I2C devices..."));
+  mpu.initialize();
+
+  // verify connection
+  Serial.println(F("Testing device connections..."));
+  Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+
+  // supply your own offsets here.
+  mpu.setXAccelOffset(776);
+  mpu.setYAccelOffset(-1297);
+  mpu.setZAccelOffset(193);
+  mpu.setXGyroOffset(81);
+  mpu.setYGyroOffset(-61);
+  mpu.setZGyroOffset(6);
+}
+
+
+void imu_setup_dmp(void) {
   // join I2C bus (I2Cdev library doesn't do this automatically)
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
   Wire.begin(SDA, SCL, 400000);
@@ -145,13 +170,13 @@ void imu_setup(void) {
   devStatus = mpu.dmpInitialize();
 
   // supply your own gyro offsets here, scaled for min sensitivity
-
-  mpu.setXAccelOffset(764);
-  mpu.setYAccelOffset(-1307);
-  mpu.setZAccelOffset(200);
-  mpu.setXGyroOffset(84);
-  mpu.setYGyroOffset(-52);
-  mpu.setZGyroOffset(16);
+  
+  mpu.setXAccelOffset(776);
+  mpu.setYAccelOffset(-1297);
+  mpu.setZAccelOffset(193);
+  mpu.setXGyroOffset(81);
+  mpu.setYGyroOffset(-61);
+  mpu.setZGyroOffset(6);
   
   // make sure it worked (returns 0 if so)
   if (devStatus == 0) {
@@ -204,10 +229,38 @@ void readFifoBuffer_() {
   mpu.getFIFOBytes(fifoBuffer, packetSize);
 }
 
-void getEulerAngles(float *angles){
+void getEulerAngles_dmp(float *angles){
   readFifoBuffer_();
   mpu.dmpGetQuaternion(&q, fifoBuffer);
   mpu.dmpGetGravity(&gravity, &q);
   mpu.dmpGetYawPitchRoll(angles, &q, &gravity);
 }
+
+
+//double getTilt(void){
+//  mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b);  // gyro (+/- 250 deg/s) accel (+/- 2g)
+//  ax = 4*(ax_b/65535.0);  // g 
+//  ay = 4*(ay_b/65535.0);  // g 
+//  az = 4*(az_b/65535.0);  // g 
+//  gx = 2*250*(gx_b/(65535.0));  // deg/s
+//  gy = 2*250*(gy_b/(65535.0));  // deg/s
+//  gz = 2*250*(gz_b/(65535.0));  // deg/s
+//
+//  // Complementary filter
+//  accelPitch = atan2(ax, az) * RAD_TO_DEG;
+//
+//  pitch = (tau)*(pitch + (-gy)*0.05) + (1-tau)*(accelPitch);
+//   
+//  return pitch;
+//   
+//}
+
+void getAccelGyro(float* ay, float* az, float* gx){
+  mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b);  // gyro (+/- 250 deg/s) accel (+/- 2g)
+  ay[0] = 4*(ay_b/65535.0);  // g 
+  az[0] = 4*(az_b/65535.0);  // g 
+  gx[0] = 2*250*(gx_b/(65535.0));  // deg/s
+   
+}
+
   
