@@ -11,8 +11,8 @@ import os
 
 
 # Params
-CONVERT2KERAS = True    # Save Stable Baselines model to Keras, and evaluate it.
-MODEL_NAME = 'test'     # Folder name where best_model.zip is held.
+CONVERT2KERAS = False    # Save Stable Baselines model to Keras, and evaluate it.
+MODEL_NAME = 'A2C_Pitch_PWM_Memory_1'     # Folder name where best_model.zip is held.
 NET_LAYERS = [32, 32]
 # Environment
 NORMALIZE = True
