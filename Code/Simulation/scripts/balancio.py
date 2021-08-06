@@ -7,6 +7,7 @@ import os
 
 URDF_PATH = os.path.join('/', *os.getcwd().split('/')[:-1], 'urdf', 'balancio_v3.urdf')  # 'balancio_v1_backlash_debug.urdf'
 
+
 class Balancio:
 
     def __init__(self, bullet_client, urdf_root_path='', time_step=0.01, backlash=True):
@@ -21,6 +22,9 @@ class Balancio:
                                'left_wheel': 1,
                                'right_gearbox': 2,  # 2 for original 4 for debug urdf.
                                'right_wheel': 3}    # 3 for original 5 for debug urdf.
+        self.gravity = 0.981  # Gravity: 0.981 dm/(10.s)^2
+        self.previous_linear_vel = np.array([0, 0, 0])
+        self.linear_accel = [0, 0, 0]
         self.motors = motor.MotorModel()
         self.reset()
 
@@ -28,7 +32,7 @@ class Balancio:
         # Randomize initial orientation.
         orientation_init = self._p.getQuaternionFromEuler([0, np.random.uniform(-0.1, 0.1), 0])
         robot = self._p.loadURDF(URDF_PATH,
-                                 [0, 0, 1.1],
+                                 [0, 0, 0.8],
                                  orientation_init,
                                  useFixedBase=False)
         self.robotUniqueId = robot
@@ -51,17 +55,65 @@ class Balancio:
     def get_action_dimension(self):
         return self.motors_num
 
-    def get_observation_dimension(self):
-        return len(self.get_observation())
-
-    def get_observation(self):
-        observation = []
+    def get_pitch(self):
+        pitch = []
         pos, orn = self._p.getBasePositionAndOrientation(self.robotUniqueId)
 
-        orn_euler = self._p.getEulerFromQuaternion(orn)  # Pitch
-        observation.extend([orn_euler[1]])
+        orn_euler = self._p.getEulerFromQuaternion(orn)  # [Roll, Pitch, Yaw]
+        pitch.extend([orn_euler[1]])
+        return pitch
 
-        return observation
+    def get_yaw(self):
+        yaw = []
+        pos, orn = self._p.getBasePositionAndOrientation(self.robotUniqueId)
+
+        orn_euler = self._p.getEulerFromQuaternion(orn)  # [Roll, Pitch, Yaw]
+        yaw.extend([orn_euler[2]])
+        return yaw
+
+    def get_angular_vel(self):
+        # Get angular velocity relative to global frame, in cartesian global coordinates.
+        angular_vel_b = np.array(self._p.getBaseVelocity(self.robotUniqueId)[1])
+
+        # Transform angular velocity, to base coordinates.
+        _, orn = self._p.getBasePositionAndOrientation(self.robotUniqueId)
+        rot_matrix = self._p.getMatrixFromQuaternion(orn)
+        rot_matrix_b2r = np.array([rot_matrix[:3], rot_matrix[3:6], rot_matrix[6:9]])
+        rot_matrix_r2b = np.linalg.inv(rot_matrix_b2r)
+        angular_vel_r = np.matmul(rot_matrix_r2b, angular_vel_b)
+
+        # Transform angular velocity to real IMU coordinates (based on orientation on real robot).
+        angular_vel_imu = [-angular_vel_r[1], angular_vel_r[0], angular_vel_r[2]]
+
+        return angular_vel_imu
+
+    def linear_accel_update(self):
+        # Get linear velocity relative to global frame, in cartesian global coordinates.
+        linear_vel_b = np.array(self._p.getBaseVelocity(self.robotUniqueId)[0])
+
+        # Transform linear velocity, to base coordinates.
+        _, orn = self._p.getBasePositionAndOrientation(self.robotUniqueId)
+        rot_matrix = self._p.getMatrixFromQuaternion(orn)
+        rot_matrix_b2r = np.array([rot_matrix[:3], rot_matrix[3:6], rot_matrix[6:9]])
+        rot_matrix_r2b = np.linalg.inv(rot_matrix_b2r)
+        linear_vel_r = np.matmul(rot_matrix_r2b, linear_vel_b)
+
+        # Calculate linear acceleration, in base coordinates.
+        linear_accel_r = (linear_vel_r - self.previous_linear_vel)/self.time_step
+        self.previous_linear_vel = linear_vel_r
+        # Gravity addition for IMU simulation
+        linear_accel_r += np.matmul(rot_matrix_r2b, np.array([0, 0, self.gravity]))
+
+        # Transform linear acceleration to real IMU coordinates (based on orientation on real robot).
+        self.linear_accel[0] = -linear_accel_r[1]  # IMU X = SIM -Y
+        self.linear_accel[1] = linear_accel_r[0]   # IMU Y = SIM  X
+        self.linear_accel[2] = linear_accel_r[2]   # IMU Z = SIM  Z
+
+    def get_linear_accel(self):
+        return self.linear_accel
+
+    def linear_accel_reset(self):
+        self.previous_linear_vel = np.array([0, 0, 0])
 
     def apply_action(self, motor_commands):
         """Args:
