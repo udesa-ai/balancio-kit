@@ -1,11 +1,12 @@
 import numpy as np
 import balancioGymEnv
+import matplotlib.pyplot as plt
 
 
 LoopFreq = 100  # Hz
 StepPeriod = (1/240) * 1/10  # s
 actions_per_step = int(round((1/LoopFreq)/StepPeriod))  # For Microcontroller loop frequency compatibility
-env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=True, backlash=True, seed=None, algo_mode='PID')
+env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=True, backlash=True, real_imu=False, seed=None, algo_mode='PID', memory_buffer=1, policy_feedback=True, only_pitch=False)
 
 Kp = -2000      # -6.5
 Ki = -22000     # -0.28
@@ -19,17 +20,19 @@ pid_i = 0
 pid_d = 0
 
 tita = env.reset()[0]
-tita = env.denormalize_observation(tita)
+tita = env.normalizer_denormalize(tita)[0]
 
 env.add_sliders()
 done = False
 
+# Buffer for mean and std deviation estimation.
+buffer = []
 
 while True:
 
     if done:
         tita = env.reset()[0]
-        tita = env.denormalize_observation(tita)
+        tita = env.normalizer_denormalize(tita)[0]
         errorSum = 0
 
     tita_target = env.get_slider_tita()
@@ -50,5 +53,9 @@ while True:
     action = [pwm + 0.2*yaw_rate, pwm - 0.2*yaw_rate]
     normalized_action = env.normalize_action(action)
     tita, rew, done, _ = env.step(normalized_action)
+
+    # buffer.append(tita)
+
     tita = tita[0]
-    tita = env.denormalize_observation(tita)
+    # print(tita)
+    tita = env.normalizer_denormalize(tita)[0]
