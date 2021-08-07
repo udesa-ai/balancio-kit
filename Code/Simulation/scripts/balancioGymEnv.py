@@ -12,6 +12,7 @@ import random
 from pybullet_utils import bullet_client
 import pybullet_data
 from pkg_resources import parse_version
+from collections import deque
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(os.path.dirname(currentdir))
@@ -32,8 +33,12 @@ class BalancioGymEnv(gym.Env):
                  renders=False,
                  normalize=True,
                  backlash=True,
+                 real_imu=False,
                  seed=None,
-                 algo_mode='RL'  # 'RL' or 'PID'
+                 algo_mode='RL',  # 'RL' or 'PID'
+                 memory_buffer=1,
+                 only_pitch=True,
+                 policy_feedback=False
                  ):
         self._time_step = 1/240  # 0.01
         self._urdf_root = urdf_root
@@ -49,20 +54,57 @@ class BalancioGymEnv(gym.Env):
             self._p = bullet_client.BulletClient()
 
         self._backlash = backlash
+        self._real_imu = real_imu
+        self.filter_tau = 0.98
+        self.pitch_ri = 0
         self.seed(seed)
         self._algo_mode = algo_mode
+        self._memory_buffer = memory_buffer
+        self._only_pitch = only_pitch
+        self._policy_feedback = policy_feedback
+
+        self.pitch_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.ax_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.ay_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.az_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.gx_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.gy_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.gz_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.pwmL_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.pwmR_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+
         # self.reset()
-        observation_dim = 1
+        if self._only_pitch:
+            if self._policy_feedback:
+                observation_dim = 3 * self._memory_buffer
+            else:
+                observation_dim = 1 * self._memory_buffer
+        else:  # pitch, ax, ay, az, gx, gy, gz
+            if self._policy_feedback:
+                observation_dim = 9 * self._memory_buffer
+            else:
+                observation_dim = 7 * self._memory_buffer
+
+        self.observation_dim = observation_dim
         print("Observation dimension: {}".format(observation_dim))
 
         # Normalization parameters
-        self.obs_norm = np.pi * 0.5
+        # Observation vector: [pitch, ax, ay, az, gx, gy, gz, pwmL, pwmR]  -> Varies depending on observation_dim
+        # HARD-CODED MEAN AND ST-DEV
+        self.norm_mean = np.array([0, 0,  0, 1.05682576e+00,  0,  0,  0, 0, 0])
+        self.norm_std = np.array([0.06519447, 3.0353326, 1.81746345, 5.0081295, 0.09617138, 0.03410039, 0.26264516, 0.32308017, 0.32999594])
+        # self.norm_mean = np.zeros(int(observation_dim/self._memory_buffer))
+        # self.norm_std = np.ones(int(observation_dim/self._memory_buffer))
+        self.norm_ctr = 0
+        self.norm_var = np.ones(int(observation_dim/self._memory_buffer))
+        self.mean_diff = np.zeros(int(observation_dim/self._memory_buffer))
+
         max_act = 1
         self.act_norm = max_act * np.array([1, 1])
 
         observation_high = np.ones(observation_dim)
-        if not self._normalize:
-            observation_high = observation_high * self.obs_norm
+        # if not self._normalize:
+        #     observation_high = self.obs_norm
 
         if is_discrete:
             self.action_space = spaces.Discrete(9)
@@ -90,13 +132,29 @@ class BalancioGymEnv(gym.Env):
         self._p.setGravity(0, 0, -0.981)  # Gravity: 0.981 dm/(10.s)^2
         self._robot = balancio.Balancio(self._p, urdf_root_path=self._urdf_root, time_step=self._time_step, backlash=self._backlash)
         self._env_step_counter = 0
+
+        self.pitch_ri = 0
+        self._robot.linear_accel_reset()
+
+        self.pitch_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.ax_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.ay_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.az_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.gx_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.gy_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.gz_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.pwmL_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+        self.pwmR_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
+
+        # if self._normalize:
+        #     self.normalizer_reset()
+
         for i in range(5):
             self._p.stepSimulation()
-        if self._normalize:
-            self._observation = self.get_normalized_observation()
-        else:
-            self._observation = self._robot.get_observation()
-        return np.array(self._observation)
+            self._robot.linear_accel_update()
+        self._observation = self.get_observation_UPDATE()
+
+        return self._observation
 
     def __del__(self):
         self._p = 0
@@ -113,21 +171,25 @@ class BalancioGymEnv(gym.Env):
         # if (self._renders):
         #   basePos, orn = self._p.getBasePositionAndOrientation(self._racecar.racecarUniqueId)
         #   #self._p.resetDebugVisualizerCamera(1, 30, -40, basePos)
+        if self._policy_feedback:
+            self.pwmL_buffer.appendleft(action[0])
+            self.pwmR_buffer.appendleft(action[1])
+
         if self._normalize:
             denormalized_action = self.denormalize_action(action)
         else:
             denormalized_action = action
+
         # self._robot.apply_action(denormalized_action)
         for i in range(self._action_repeat):
             self._robot.apply_action(denormalized_action)
             self._p.stepSimulation()
             if self._renders:
                 time.sleep(self._time_step/10)
-            if self._normalize:
-                self._observation = self.get_normalized_observation()
-            else:
-                self._observation = self._robot.get_observation()
 
+            self._robot.linear_accel_update()
+            if i == self._action_repeat-1:
+                self._observation = self.get_observation_UPDATE()
             if self._termination():
                 if self._algo_mode == 'RL':
                     break
@@ -138,7 +200,7 @@ class BalancioGymEnv(gym.Env):
         done = self._termination()
         #print("len=%r" % len(self._observation))
 
-        return np.array(self._observation), reward, done, {}
+        return self._observation, reward, done, {}
 
     def render(self, mode='human', close=False):
         if mode != "rgb_array":
@@ -167,11 +229,11 @@ class BalancioGymEnv(gym.Env):
         self._p.disconnect()
 
     def _termination(self):
-        self.pitch_angle = self._robot.get_observation()[0]
+        self.pitch_angle = self._robot.get_pitch()[0]
         return self._env_step_counter > EPISODE_LENGTH or abs(self.pitch_angle) > 0.8
 
     def _reward(self):
-        self.pitch_angle = self._robot.get_observation()[0]
+        self.pitch_angle = self._robot.get_pitch()[0]
         reward = - np.square(self.pitch_angle)
         return reward
 
@@ -187,16 +249,87 @@ class BalancioGymEnv(gym.Env):
         denorm_action = np.array(normalized_action) * action_normalizer
         return denorm_action
 
-    def get_normalized_observation(self):
-        obs = self._robot.get_observation()[0]
-        obs_normalizer = self.obs_norm
-        norm_obs = obs/obs_normalizer
-        return [norm_obs]
+    def get_observation_UPDATE(self):
+        # Observation vector: [pitch, ax, ay, az, gx, gy, gz, pwmL, pwmR]  -> Varies depending on observation_dim
 
-    def denormalize_observation(self, normalized_obs):
+        sensor_obs = []
+
+        pitch = self._robot.get_pitch()
+        sensor_obs.extend(pitch)
+        if not self._only_pitch:
+            linear_accel = self._robot.get_linear_accel()  # Update it before calling this method!
+            sensor_obs.extend(linear_accel)
+            angular_vel = self._robot.get_angular_vel()
+            sensor_obs.extend(angular_vel)
+        if self._policy_feedback:
+            sensor_obs.extend([0])  # We do not want to normalize the pwm feedback
+            sensor_obs.extend([0])
+
+        if self._real_imu:
+            ay = sensor_obs[2]
+            az = sensor_obs[3]
+            gx = sensor_obs[4]
+            accel_pitch = np.arctan2(ay, az)
+            self.pitch_ri = self.filter_tau * (self.pitch_ri - gx * self._time_step * self._action_repeat) + (1 - self.filter_tau) * accel_pitch
+            sensor_obs[0] = self.pitch_ri
+
+        # TODO: Select State Normalizer.
+        if self._normalize:
+            # self.normalizer_update(np.array(sensor_obs))
+            sensor_obs = self.normalizer_normalize(np.array(sensor_obs))
+
+        self.pitch_buffer.appendleft(sensor_obs[0])
+        if not self._only_pitch:
+            self.ax_buffer.appendleft(sensor_obs[1])
+            self.ay_buffer.appendleft(sensor_obs[2])
+            self.az_buffer.appendleft(sensor_obs[3])
+            self.gx_buffer.appendleft(sensor_obs[4])
+            self.gy_buffer.appendleft(sensor_obs[5])
+            self.gz_buffer.appendleft(sensor_obs[6])
+
+        full_obs = []
+        full_obs.extend(self.pitch_buffer)
+        if not self._only_pitch:
+            full_obs.extend(self.ax_buffer)
+            full_obs.extend(self.ay_buffer)
+            full_obs.extend(self.az_buffer)
+            full_obs.extend(self.gx_buffer)
+            full_obs.extend(self.gy_buffer)
+            full_obs.extend(self.gz_buffer)
+        if self._policy_feedback:
+            full_obs.extend(self.pwmL_buffer)
+            full_obs.extend(self.pwmR_buffer)
+        return full_obs
+
+    def normalizer_update(self, sensor_obs):
+        # alfa = 0.05
+        self.norm_ctr += 1
+        alfa = 1/self.norm_ctr
+        last_mean = self.norm_mean.copy()
+
+        # Running Average
+        self.norm_mean = (1-alfa)*self.norm_mean + alfa*sensor_obs
+
+        # used to compute variance
+        self.mean_diff += (sensor_obs - last_mean) * (sensor_obs - self.norm_mean)
+        # Variance
+        self.norm_var = (alfa * self.mean_diff).clip(min=1e-2)
+        # Standard Deviation
+        self.norm_std = np.sqrt(self.norm_var)
+
+    def normalizer_reset(self):
+        self.norm_ctr = 0
+        self.norm_mean = np.zeros(int(self.observation_dim/self._memory_buffer))
+        self.mean_diff = np.zeros(int(self.observation_dim/self._memory_buffer))
+
+    def normalizer_normalize(self, sensor_obs):
+        state_mean = self.norm_mean
+        state_std = self.norm_std
+        return (sensor_obs - state_mean) / state_std
+
+    def normalizer_denormalize(self, normalized_obs):
         # Normalized observation -> [-1, 1]
-        obs_normalizer = self.obs_norm
-        denorm_obs = normalized_obs * obs_normalizer
+        denorm_obs = normalized_obs * self.norm_std + self.norm_mean
         return denorm_obs
 
     def add_sliders(self):
