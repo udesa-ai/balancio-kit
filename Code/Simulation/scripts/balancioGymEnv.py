@@ -13,6 +13,8 @@ from pybullet_utils import bullet_client
 import pybullet_data
 from pkg_resources import parse_version
 from collections import deque
+import matplotlib.pyplot as plt
+
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(os.path.dirname(currentdir))
@@ -21,6 +23,9 @@ os.sys.path.insert(0, parentdir)
 RENDER_HEIGHT = 720
 RENDER_WIDTH = 960
 EPISODE_LENGTH = 5000
+
+# For data plotting (used for debugging)
+PLOT_DATA = True
 
 
 class BalancioGymEnv(gym.Env):
@@ -121,6 +126,25 @@ class BalancioGymEnv(gym.Env):
 
         self.pitch_angle = 0
 
+        self.last_frame_time = time.time()
+
+        # Data plotting
+        if PLOT_DATA:
+            self.fig, self.ax = plt.subplots(1, 1)
+            self.ax.set_xlim(0, 100)
+            self.ax.set_ylim(-2, 2)
+            self.fig_background = self.fig.canvas.copy_from_bbox(self.ax.bbox)
+            self.fig_points1 = self.ax.plot([0], [0], '--', animated=True)[0]
+            self.fig_points1.set_color('gray')
+            self.fig_points1.set_label('Real Pitch')
+            self.fig_points2 = self.ax.plot([0], [0], '-', animated=True)[0]
+            self.fig_points2.set_label('Complementary Filter Pitch')
+            self.ax.legend()
+            plt.show(block=False)
+            plt.pause(0.01)
+            self.real_pitch_buffer = deque(maxlen=100)
+            self.filter_pitch_buffer = deque(maxlen=100)
+
     def reset(self):
         self._p.resetSimulation()
         #p.setPhysicsEngineParameter(numSolverIterations=300)
@@ -185,7 +209,10 @@ class BalancioGymEnv(gym.Env):
             self._robot.apply_action(denormalized_action)
             self._p.stepSimulation()
             if self._renders:
-                time.sleep(self._time_step/10)
+                elapsed_time = time.time() - self.last_frame_time
+                if elapsed_time < self._time_step/10:
+                    time.sleep(self._time_step/10 - elapsed_time)
+                self.last_frame_time = time.time()
 
             self._robot.linear_accel_update()
             if i == self._action_repeat-1:
@@ -270,8 +297,21 @@ class BalancioGymEnv(gym.Env):
             az = sensor_obs[3]
             gx = sensor_obs[4]
             accel_pitch = np.arctan2(ay, az)
-            self.pitch_ri = self.filter_tau * (self.pitch_ri - gx * self._time_step * self._action_repeat) + (1 - self.filter_tau) * accel_pitch
+            self.pitch_ri = self.filter_tau * (self.pitch_ri - gx * self._time_step * self._action_repeat) + (1 - self.filter_tau) * (-accel_pitch)
             sensor_obs[0] = self.pitch_ri
+
+        if PLOT_DATA:
+            self.real_pitch_buffer.append(pitch[0])
+            self.filter_pitch_buffer.append(self.pitch_ri)
+            # self.filter_pitch_buffer.append(accel_pitch)
+            self.fig.canvas.restore_region(self.fig_background)
+            self.fig_points1.set_data(np.arange(len(self.real_pitch_buffer)), self.real_pitch_buffer)
+            self.fig_points2.set_data(np.arange(len(self.filter_pitch_buffer)), self.filter_pitch_buffer)
+            self.ax.draw_artist(self.fig_points1)
+            self.ax.draw_artist(self.fig_points2)
+            self.fig.canvas.blit(self.ax.bbox)
+            self.fig.canvas.flush_events()
+            plt.pause(0.001)
 
         # TODO: Select State Normalizer.
         if self._normalize:
