@@ -37,6 +37,11 @@ class Balancio:
                                  useFixedBase=False)
         self.robotUniqueId = robot
 
+        # TODO: Define this parametrers → (restitution, contactDamping, contactStiffness)
+        # This seems to improve noise in acceleration. Smoothens contact forces (?)
+        # self._p.changeDynamics(self.robotUniqueId, 1, contactDamping=100, contactStiffness=100)#, contactDamping=0.6, contactStiffness=0.5)
+        # self._p.changeDynamics(self.robotUniqueId, 3, contactDamping=100, contactStiffness=100)#, contactDamping=0.6, contactStiffness=0.5)
+
         # Disable default velocity control (Necessary for torque control)
         self._p.setJointMotorControlArray(bodyUniqueId=self.robotUniqueId,
                                           jointIndices=[self.joint_name2idx['left_gearbox'],
