@@ -34,13 +34,13 @@ class Balancio:
         robot = self._p.loadURDF(URDF_PATH,
                                  [0, 0, 0.8],
                                  orientation_init,
-                                 useFixedBase=False)
+                                 useFixedBase=False,
+                                 flags=self._p.URDF_USE_INERTIA_FROM_FILE)
         self.robotUniqueId = robot
 
-        # TODO: Define this parametrers → (restitution, contactDamping, contactStiffness)
-        # This seems to improve noise in acceleration. Smoothens contact forces (?)
-        # self._p.changeDynamics(self.robotUniqueId, 1, contactDamping=100, contactStiffness=100)#, contactDamping=0.6, contactStiffness=0.5)
-        # self._p.changeDynamics(self.robotUniqueId, 3, contactDamping=100, contactStiffness=100)#, contactDamping=0.6, contactStiffness=0.5)
+        # This seems to improve noise in acceleration, smoothening contact forces. (Empirical values)
+        self._p.changeDynamics(self.robotUniqueId, self.joint_name2idx['left_wheel'], contactDamping=400, contactStiffness=1200)
+        self._p.changeDynamics(self.robotUniqueId, self.joint_name2idx['right_wheel'], contactDamping=400, contactStiffness=1200)
 
         # Disable default velocity control (Necessary for torque control)
         self._p.setJointMotorControlArray(bodyUniqueId=self.robotUniqueId,
