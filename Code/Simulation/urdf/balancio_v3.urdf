@@ -115,10 +115,10 @@
       <inertia ixx="0.02544" ixy="0" ixz="0" iyy="0.04484" iyz="0" izz="0.02544"/>
     </inertial>
     <collision name="link_left_wheel_collision">
-      <origin rpy="3.14159 0 1.5707" xyz="0 0 0"/>
+      <origin rpy="0 1.5707 1.5707" xyz="0 0.125 0"/>
       <geometry>
-        <!-- <cylinder length="0.005" radius="0.02"/> -->
-        <mesh filename="package://Code/Simulation/stl/Wheel.stl" scale="10 10 10"/>
+        <cylinder length="0.25" radius="0.325"/>
+        <!-- <mesh filename="package://Code/Simulation/stl/Wheel.stl" scale="10 10 10"/> -->
       </geometry>
     </collision>
     <visual name="link_left_wheel_visual">
@@ -181,10 +181,10 @@
       <inertia ixx="0.02544" ixy="0" ixz="0" iyy="0.04484" iyz="0" izz="0.02544"/>
     </inertial>
     <collision name="link_right_wheel_collision">
-      <origin rpy="0 0 -1.5707" xyz="0 0 0"/>
+      <origin rpy="0 1.5707 1.5707" xyz="0 -0.125 0"/>
       <geometry>
-        <!-- <cylinder length="0.005" radius="0.02"/> -->
-        <mesh filename="package://Code/Simulation/stl/Wheel.stl" scale="10 10 10"/>
+        <cylinder length="0.25" radius="0.325"/>
+        <!-- <mesh filename="package://Code/Simulation/stl/Wheel.stl" scale="10 10 10"/> -->
       </geometry>
     </collision>
     <visual name="link_right_wheel_visual">
