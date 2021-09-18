@@ -65,6 +65,32 @@
   </link>
 
 
+<!-- IMU -->
+
+<joint name="joint_IMU" type="fixed">
+  <origin rpy="0 0 0" xyz="0 0 -0.328"/>
+  <child link="link_IMU"/>
+  <parent link="link_chassis"/>
+</joint>
+
+<link name="link_IMU">
+  <!-- pose and inertial -->
+  <pose>0 0 0 0 0 0</pose>
+  <inertial>
+    <mass value="0.2"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <inertia ixx="0.0004" ixy="0" ixz="0" iyy="0.0006" iyz="0" izz="0.001"/>
+  </inertial>
+  <!-- body -->
+  <collision name="collision_chassis">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <geometry>
+      <box size="0.21 0.16 0.02"/>
+    </geometry>
+  </collision>
+</link>
+
+
 <!--Gearbox and Wheels -->
 <!-- Left -->
 
