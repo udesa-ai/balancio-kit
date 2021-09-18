@@ -98,6 +98,13 @@ class BalancioGymEnv(gym.Env):
         # HARD-CODED MEAN AND ST-DEV
         self.norm_mean = np.array([0, 0,  0, 1.05682576e+00,  0,  0,  0, 0, 0])
         self.norm_std = np.array([0.06519447, 3.0353326, 1.81746345, 5.0081295, 0.09617138, 0.03410039, 0.26264516, 0.32308017, 0.32999594])
+        if self._only_pitch and self._policy_feedback:
+            self.norm_mean = np.array([self.norm_mean[0], self.norm_mean[-2], self.norm_mean[-1]])
+            self.norm_std = np.array([self.norm_std[0], self.norm_std[-2], self.norm_std[-1]])
+        else:
+            self.norm_mean = self.norm_mean[:int(observation_dim/self._memory_buffer)]
+            self.norm_std = self.norm_std[:int(observation_dim/self._memory_buffer)]
+
         # self.norm_mean = np.zeros(int(observation_dim/self._memory_buffer))
         # self.norm_std = np.ones(int(observation_dim/self._memory_buffer))
         self.norm_ctr = 0
@@ -157,7 +164,7 @@ class BalancioGymEnv(gym.Env):
         self._robot = balancio.Balancio(self._p, urdf_root_path=self._urdf_root, time_step=self._time_step, backlash=self._backlash)
         self._env_step_counter = 0
 
-        self.pitch_ri = 0
+        self.pitch_ri = self._robot.orientation_init_pitch
         self._robot.linear_accel_reset()
 
         self.pitch_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
@@ -283,19 +290,20 @@ class BalancioGymEnv(gym.Env):
 
         pitch = self._robot.get_pitch()
         sensor_obs.extend(pitch)
+
+        linear_accel = self._robot.get_linear_accel()  # Update it before calling this method!
+        angular_vel = self._robot.get_angular_vel()
         if not self._only_pitch:
-            linear_accel = self._robot.get_linear_accel()  # Update it before calling this method!
             sensor_obs.extend(linear_accel)
-            angular_vel = self._robot.get_angular_vel()
             sensor_obs.extend(angular_vel)
         if self._policy_feedback:
             sensor_obs.extend([0])  # We do not want to normalize the pwm feedback
             sensor_obs.extend([0])
 
         if self._real_imu:
-            ay = sensor_obs[2]
-            az = sensor_obs[3]
-            gx = sensor_obs[4]
+            ay = linear_accel[1]
+            az = linear_accel[2]
+            gx = angular_vel[0]
             accel_pitch = np.arctan2(ay, az)
             self.pitch_ri = self.filter_tau * (self.pitch_ri - gx * self._time_step * self._action_repeat) + (1 - self.filter_tau) * (-accel_pitch)
             sensor_obs[0] = self.pitch_ri
