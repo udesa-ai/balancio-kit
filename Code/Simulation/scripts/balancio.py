@@ -18,10 +18,11 @@ class Balancio:
         self.robotUniqueId = None
         self.backlash = backlash
         self.motors_num = 2
-        self.joint_name2idx = {'left_gearbox': 0,
-                               'left_wheel': 1,
-                               'right_gearbox': 2,  # 2 for original 4 for debug urdf.
-                               'right_wheel': 3}    # 3 for original 5 for debug urdf.
+        self.joint_name2idx = {'left_gearbox': 1,
+                               'left_wheel': 2,
+                               'right_gearbox': 3,  # 3 for original 4 for debug urdf.
+                               'right_wheel': 4,    # 4 for original 5 for debug urdf.
+                               'imu': 0}
         self.gravity = 0.981  # Gravity: 0.981 dm/(10.s)^2
         self.previous_linear_vel = np.array([0, 0, 0])
         self.linear_accel = [0, 0, 0]
@@ -30,7 +31,8 @@ class Balancio:
 
     def reset(self):
         # Randomize initial orientation.
-        orientation_init = self._p.getQuaternionFromEuler([0, np.random.uniform(-0.1, 0.1), 0])
+        self.orientation_init_pitch = np.random.uniform(-0.1, 0.1)
+        orientation_init = self._p.getQuaternionFromEuler([0, self.orientation_init_pitch, 0])
         robot = self._p.loadURDF(URDF_PATH,
                                  [0, 0, 0.8],
                                  orientation_init,
@@ -39,8 +41,8 @@ class Balancio:
         self.robotUniqueId = robot
 
         # This seems to improve noise in acceleration, smoothening contact forces. (Empirical values)
-        self._p.changeDynamics(self.robotUniqueId, self.joint_name2idx['left_wheel'], contactDamping=400, contactStiffness=1200)
-        self._p.changeDynamics(self.robotUniqueId, self.joint_name2idx['right_wheel'], contactDamping=400, contactStiffness=1200)
+        self._p.changeDynamics(self.robotUniqueId, self.joint_name2idx['left_wheel'], lateralFriction=1, rollingFriction=0.005, contactDamping=300, contactStiffness=800)
+        self._p.changeDynamics(self.robotUniqueId, self.joint_name2idx['right_wheel'], lateralFriction=1, rollingFriction=0.005, contactDamping=300, contactStiffness=800)
 
         # Disable default velocity control (Necessary for torque control)
         self._p.setJointMotorControlArray(bodyUniqueId=self.robotUniqueId,
@@ -93,8 +95,10 @@ class Balancio:
         return angular_vel_imu
 
     def linear_accel_update(self):
-        # Get linear velocity relative to global frame, in cartesian global coordinates.
-        linear_vel_b = np.array(self._p.getBaseVelocity(self.robotUniqueId)[0])
+        # Get linear velocity of base relative to global frame, in cartesian global coordinates.
+        # linear_vel_b = np.array(self._p.getBaseVelocity(self.robotUniqueId)[0])
+        # Get linear velocity of imu relative to global frame, in cartesian global coordinates.
+        linear_vel_b = self._p.getLinkState(self.robotUniqueId, self.joint_name2idx['imu'], computeLinkVelocity=True)[-2]
 
         # Transform linear velocity, to base coordinates.
         _, orn = self._p.getBasePositionAndOrientation(self.robotUniqueId)
