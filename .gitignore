@@ -171,6 +171,7 @@ dmypy.json
 cython_debug/
 
 # Personal folders
+.vscode/
 My_docs/
 mcu_old/
 .idea/
