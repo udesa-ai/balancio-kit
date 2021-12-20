@@ -1,7 +1,7 @@
 """ Balancio: Pybullet self-balancing robot"""
 
 import numpy as np
-import motor
+from Code.Simulation.scripts.Robot import motor
 import os
 
 

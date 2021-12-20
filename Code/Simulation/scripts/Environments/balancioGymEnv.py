@@ -1,14 +1,12 @@
 import os
 import inspect
-import math
 import gym
 import time
 from gym import spaces
 from gym.utils import seeding
 import numpy as np
 import pybullet
-import balancio
-import random
+from Code.Simulation.scripts.Robot import balancio
 from pybullet_utils import bullet_client
 import pybullet_data
 from pkg_resources import parse_version

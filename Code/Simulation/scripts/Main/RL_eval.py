@@ -1,6 +1,4 @@
-import numpy as np
-import balancioGymEnv_simple
-import balancioGymEnv
+from Code.Simulation.scripts.Environments import balancioGymEnv
 
 import tensorflow as tf
 # tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)

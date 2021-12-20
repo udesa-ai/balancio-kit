@@ -1,5 +1,4 @@
-import balancioGymEnv_simple
-import balancioGymEnv
+from Code.Simulation.scripts.Environments import balancioGymEnv
 
 import tensorflow as tf
 # tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
@@ -40,7 +39,7 @@ def make_env(rank, seed=0):
     :param rank: (int) index of the subprocess
     """
     def _init():
-        env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE, backlash=BACKLASH, seed=seed+rank, algo_mode='RL')
+        env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE, backlash=BACKLASH, seed=seed + rank, algo_mode='RL')
         env.seed(seed + rank)
         return env
     set_global_seeds(seed)

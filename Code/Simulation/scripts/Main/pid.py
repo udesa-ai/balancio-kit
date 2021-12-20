@@ -1,7 +1,5 @@
 import numpy as np
-import balancioGymEnv
-import matplotlib.pyplot as plt
-
+from Code.Simulation.scripts.Environments import balancioGymEnv
 
 LoopFreq = 100  # Hz
 StepPeriod = (1/240) * 1/10  # s

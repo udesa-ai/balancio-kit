@@ -2,8 +2,7 @@ import pickle as pkl
 from typing import Any, Dict
 import gym
 
-import balancioGymEnv_simple
-import balancioGymEnv
+from Code.Simulation.scripts.Environments import balancioGymEnv
 
 import stable_baselines
 from stable_baselines.common.policies import MlpPolicy
@@ -48,7 +47,7 @@ def make_env(rank, seed=0):
     :param rank: (int) index of the subprocess
     """
     def _init():
-        env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH, seed=seed+rank)
+        env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH, seed=seed + rank)
         env.seed(seed + rank)
         return env
     set_global_seeds(seed)
