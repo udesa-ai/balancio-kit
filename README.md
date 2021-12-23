@@ -9,9 +9,11 @@ Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capa
 
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
+<p float="left">
 <img src="resources/Balanciov0_4.jpg" width="130">
 <img src="resources/balanciov3.jpg" width="120">
 <img src="resources/balancio_gif.gif" width="75">
+</p>
 
 ## Ensamble :wrench:
 El balancio-kit consta de los siguientes componentes:
