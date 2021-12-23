@@ -1,13 +1,85 @@
-# Balacio Kit
+# Balacio-Kit
 
 ## Infomación
 
-Proyecto educativo de un robot de autobalanceo de ultra bajo costo, capaz de correr una red neuronal para mantener el equibrio y de ser controlado remotamente de manera inalámbrica.
+Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capaz de correr una red neuronal para mantener el equibrio y de ser controlado remotamente de manera inalámbrica  :trackball:.
 
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
 
 ![Balancio v0.4](resources/Balanciov0_4.jpg?raw=true )
+
+## Ensamble :wrench:
+El balancio-kit consta de los siguientes componentes:
+- Placa base (impresa en 3D o hecha con algún otro material) 
+- Microcontrolador NodeMCU ESP32
+- IMU MPU 6050
+- 2 motorreductores de 6v
+- Puente-H L298N
+- 2 baterias 18650 con su correspondiente porta-pilas
+
+## Instalación :floppy_disk:
+
+En primer lugar, se debe clonar el respositorio. Esto se puede realizar tanto descargando el mismo
+como un .ZIP, o ejecutando `git clone https://github.com/UDESA-AI/balancio-kit.git` en consola.
+
+La instalación consta de 3 módulos principales: Microcontrolador, simulación y aplicación.
+Éstos son fundamentales para el funcionamiento completo del proyecto, pero la isntalación
+de cada uno de ellos se puede realizar en distinto orden.
+
+### Microcontrolador
+
+Para programar y compilar el NodeMCU ESP32 usaremos la IDE de Arduino. Para esto se
+debe instalar la misma siguiendo los pasos que se especifican en el siguiente 
+[link](https://www.arduino.cc/en/software).
+
+Una vez instalada la IDE, se debe habilitar el microcontrolador que vamos a usar.
+Para esto se deben seguir los siguientes pasos:
+1. En la IDE, ir a 'File' (Archivos) → 'Preferences' (Preferencias)
+2. En el campo "Additional Boars Manager URLs", agregar lo siguiente: https://dl.espressif.com/dl/package_esp32_index.json. (Luego clickear 'OK').
+3. Ir a 'Tools' → 'Board: ' → 'Boards Manager…' 
+4. Buscar "esp32", e instalar "esp32 by Espressif Systems" presionando el boton 'Install'.
+5. Indicarle a la IDE que vamos a utilizar un esp32. Ir a 'Tools' → 'Board:' → 'ESP32 Arduino' → 'NodeMCU-32S'
+6. En 'Tools' → 'Port', seleccionar el puerto correspondiente a donde está conectado el microcontrolador.
+
+Luego procederemos a instalar las librerias de arduino que vamos a utilizar:
+- Para eso ir a 'Sketch' → 'Include Library' → 'Manage Libraries…'
+- Buscar e instalar las siguientes librerias, especificando la version correspondiente:
+    - MPU6050 by Electronic Cats (version 0.5.0)
+    - PS3 Controller Host by Jeffrey van Pernis (version 1.1.0)
+    - EloquentTinyML by Simone Salerno (version 0.0.7)
+
+Para comprobar la instalación, ejecutaremos un ejemplo de prueba:
+- ir a 'File' → 'Examples' → 'WiFi' → 'WiFiScan'
+- En el sketch generado, presionar el boton de carga ('Upload')  :calling:
+- Si todo funcionó correctamente, debe aparecer un mensaje 'Done uploading' en la consola.
+
+Posibles errores:
+- Si no se puede cargar el programa al microcontrolador, intentar mantener presionado el boton "boot" presente en la placa, mientras se realiza la carga. Esto se debería realizar solo la primera vez.
+
+
+### Simulación
+
+La simulación corre en Python :snake:, y utiliza diversos paquetes. Para facilitar la instalacion de los mismos, utilizaremos [Conda](https://docs.conda.io/en/latest/).
+
+Se debe seguir con los siguientes pasos:
+
+1. Para el uso e instalacion de conda, descargaremos miniconda (también se puede isntalar [Anaconda](https://docs.anaconda.com/anaconda/install/index.html)), siguiendo con los pasos que se especifican en el siguiente [link](https://docs.conda.io/en/latest/miniconda.html#installing).
+2. Crearemos un 'Environment' de conda, donde alojaremos nuestros paquetes. 
+   Esto se puede realizar tanto desde la consola (en el caso de haber descargado Miniconda) o desde una GUI (en caso de haber descargado Anaconda). Respectivamente:
+    - Miniconda: Ejectutar el siguiente comando en la consola: `conda env create -f requirements.yml`. Donde 'requierments.yml' es el [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.txt) que se encuentra dentro del repositorio y ya fue descargado.
+    - Anaconda: En la GUI de Anaconda: .........
+3. Activar el environment creado, llamado balancio:
+    - Miniconda: Ejecutar en terminal `conda activate balancio`
+    - Anaconda: ......
+4. Dentro del environment activado, ejecutar el archivo [setup.py](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/simulation/balancio_lib/setup.py):
+    `python setup.py`
+5. Probar la instalación, corriendo el siguiente [script](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/simulation/pid.py):
+    `python pid.py`
+
+### Aplicación
+
+
 
 ## Calibración
 
@@ -35,6 +107,8 @@ Estas instrucciones asumen conocimiento de el uso de la IDE arduino
 
 3. Probar las constantes, si se sacó el jumper se puede probar incluso con el cable conectado **cuidado al hacer esto!**
 ---
+
+## Uso
 
 ## TODO:
 
