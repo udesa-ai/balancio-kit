@@ -25,7 +25,7 @@ El balancio-kit consta de los siguientes componentes:
 - 2 baterias 18650 con su correspondiente porta-pilas
 
 <p align="center">
-    <img src="resources/Balancio_plano.png" width="300">
+    <img src="resources/Balancio_plano.png" width="530">
 </p>
 
 ## Instalación :floppy_disk:
@@ -80,7 +80,9 @@ Se debe seguir con los siguientes pasos:
     - Miniconda: Ejectutar el siguiente comando en la consola: `conda env create -f requirements.yml`. Donde `requierments.yml` es el [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.yml) que se encuentra dentro del repositorio y ya fue descargado.
     - Anaconda: En la GUI de Anaconda: En la pestaña environments, hacer clik en import y especificar [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.yml) en file
 
+<p align="center">
     <img src="resources/env_anaconda.png" width="300">
+</p>
 
 3. Activar el environment creado, llamado balancio:
     - Miniconda: Ejecutar en terminal `conda activate balancio`
