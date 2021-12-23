@@ -1,13 +1,17 @@
 # Balacio-Kit
 
+
+
+
 ## Infomación
 
 Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capaz de correr una red neuronal para mantener el equibrio y de ser controlado remotamente de manera inalámbrica  :trackball:.
 
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
-
-![Balancio v0.4](resources/Balanciov0_4.jpg?raw=true )
+<img src="resources/Balanciov0_4.jpg" width="130">
+<img src="resources/balanciov3.jpg" width="120">
+<img src="resources/balancio_gif.gif" width="75">
 
 ## Ensamble :wrench:
 El balancio-kit consta de los siguientes componentes:
@@ -17,6 +21,8 @@ El balancio-kit consta de los siguientes componentes:
 - 2 motorreductores de 6v
 - Puente-H L298N
 - 2 baterias 18650 con su correspondiente porta-pilas
+
+<img src="resources/Balancio_plano.png" width="300">
 
 ## Instalación :floppy_disk:
 
@@ -67,30 +73,43 @@ Se debe seguir con los siguientes pasos:
 1. Para el uso e instalacion de conda, descargaremos miniconda (también se puede isntalar [Anaconda](https://docs.anaconda.com/anaconda/install/index.html)), siguiendo con los pasos que se especifican en el siguiente [link](https://docs.conda.io/en/latest/miniconda.html#installing).
 2. Crearemos un 'Environment' de conda, donde alojaremos nuestros paquetes. 
    Esto se puede realizar tanto desde la consola (en el caso de haber descargado Miniconda) o desde una GUI (en caso de haber descargado Anaconda). Respectivamente:
-    - Miniconda: Ejectutar el siguiente comando en la consola: `conda env create -f requirements.yml`. Donde 'requierments.yml' es el [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.txt) que se encuentra dentro del repositorio y ya fue descargado.
-    - Anaconda: En la GUI de Anaconda: .........
+    - Miniconda: Ejectutar el siguiente comando en la consola: `conda env create -f requirements.yml`. Donde 'requierments.yml' es el [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.yml) que se encuentra dentro del repositorio y ya fue descargado.
+    - Anaconda: En la GUI de Anaconda: En la pestaña environments, hacer clik en import y especificar [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.yml) en file
+    ![Balancio v0.3](resources/env_anaconda.png?raw=true)
 3. Activar el environment creado, llamado balancio:
     - Miniconda: Ejecutar en terminal `conda activate balancio`
-    - Anaconda: ......
+    - Anaconda: En la pestaña environments, hacer clik en el ambiente que se quiere activar
 4. Dentro del environment activado, ejecutar el archivo [setup.py](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/simulation/balancio_lib/setup.py):
     `python setup.py`
 5. Probar la instalación, corriendo el siguiente [script](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/simulation/pid.py):
     `python pid.py`
 
 ### Aplicación
+la aplicación está creada en [MIT App Inventor](https://appinventor.mit.edu/).
 
+Simplemente entar al website y importar el .aia en `Balancio-kit/app/app.aia` luego se puesde usar la aplicación me diante bluethooth desde un celular.
 
 
 ## Calibración
 
 Estas instrucciones asumen conocimiento de el uso de la IDE arduino
 ### Compensación IMU
-1. Abrir `Balancio-kit/Code/Mcu/Src/imu_calibration/imu_calibration.ino` con el IDE Arduino
+1. Abrir `Balancio-kit/Mcu/Src/imu_calibration/imu_calibration.ino` con el IDE Arduino
 2. poner la IMU paralela al piso y mantenerla firme
 
 3. subir el programa a la placa y usar el monitor serial para obtener las compensaciones de la IMU
 
-4. modificar las copensaciones en el archivo `PID.ino`
+4. modificar las copensaciones en el archivo `imu.ino` en:
+```c++
+mpu.setXAccelOffset(-3831);
+mpu.setYAccelOffset(1437);
+mpu.setZAccelOffset(1156);
+mpu.setXGyroOffset(-12);
+mpu.setYGyroOffset(-50);
+mpu.setZGyroOffset(-19);
+```
+
+
 ### Calibrar angulo de equilibrio
 1. Abrir `Balancio-kit/Code/Mcu/Src/pid/pid.ino`
 
@@ -98,28 +117,40 @@ Estas instrucciones asumen conocimiento de el uso de la IDE arduino
 
 3. subir el programa a la placa y usar el monitor serial para obtener las compensaciones de angulo
 
-4. modificar en angulo de quilibrio en el archivo `PID.ino`
-
+4. modificar en angulo de quilibrio en el archivo `PID.ino` en la linea:
+```c++
+#define zero_targetAngle 0.01  // Calibrated point
+```
 ### Calibracion constantes PID
 1. Sacar el jumper de 12v en el driver 
 
 2. Elegir parametros por algun método como Zigler-Nichols
 
 3. Probar las constantes, si se sacó el jumper se puede probar incluso con el cable conectado **cuidado al hacer esto!**
+
+4. modificar las constantes del PID en el archivo `PID.ino` en las lineas:
+```c++
+#define Kp  2000
+#define Kd  20.0
+#define Ki  22000
+```
 ---
 
 ## Uso
 
-## TODO:
+Se lo puede controlar con un joystick de Ps3 y con una app mediante Bluethooth Classic, hay que cambiar los flags correspondintes en el código.
+
+---
+## TODO
 
 - [x] initial commit
-- [ ] Desarrollar aplicación bluetooth
-- [ ] Crear agente RL
-- [ ] Diseño mecánico
+- [x] Desarrollar aplicación bluetooth
+- [x] Crear agente RL
+- [x] Diseño mecánico
 - [ ] Publicar STEP del diseño mecánico
 - [ ] Crear diagrama electrónico
 
-## Bugs conocidos:
+## Bugs conocidos
 
 - Wheel spins on sturtup
 
