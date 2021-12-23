@@ -81,7 +81,7 @@ Se debe seguir con los siguientes pasos:
     - Anaconda: En la GUI de Anaconda: En la pestaña environments, hacer clik en import y especificar [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.yml) en file
 
 <p align="center">
-    <img src="resources/env_anaconda.png" width="300">
+    <img src="resources/env_anaconda.png" width="500">
 </p>
 
 3. Activar el environment creado, llamado balancio:
