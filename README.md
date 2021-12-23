@@ -1,16 +1,17 @@
 # Balacio-Kit
 
+
+
+
 ## Infomación
 
 Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capaz de correr una red neuronal para mantener el equibrio y de ser controlado remotamente de manera inalámbrica  :trackball:.
 
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
-
-
-<img src="resources/Balanciov0_4.jpg" width="330">
-<img src="resources/balanciov3.jpg" width="300">
-
+<img src="resources/Balanciov0_4.jpg" width="130">
+<img src="resources/balanciov3.jpg" width="120">
+<img src="resources/balancio_gif.gif" width="75">
 
 ## Ensamble :wrench:
 El balancio-kit consta de los siguientes componentes:
@@ -21,7 +22,7 @@ El balancio-kit consta de los siguientes componentes:
 - Puente-H L298N
 - 2 baterias 18650 con su correspondiente porta-pilas
 
-![Balancio v0.3](resources/Balancio_plano.png?raw=true)
+<img src="resources/Balancio_plano.png" width="300">
 
 ## Instalación :floppy_disk:
 
@@ -86,7 +87,7 @@ Se debe seguir con los siguientes pasos:
 ### Aplicación
 la aplicación está creada en [MIT App Inventor](https://appinventor.mit.edu/).
 
-Simplemente entar al website y importar el .aia en `Balancio-kit/App/app.aia` luego se puesde usar la aplicación me diante bluethooth desde un celular.
+Simplemente entar al website y importar el .aia en `Balancio-kit/app/app.aia` luego se puesde usar la aplicación me diante bluethooth desde un celular.
 
 
 ## Calibración
