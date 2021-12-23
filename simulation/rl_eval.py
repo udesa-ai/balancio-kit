@@ -7,12 +7,21 @@ import tensorflow as tf
 from stable_baselines import A2C
 
 import os
+import argparse
+
+
+# Instantiate the parser
+parser = argparse.ArgumentParser(description='Script to evaluate RL agents')
+parser.add_argument("-mn", "--modelName", action='store', default='model',  type=str, help="Name of the model to be evaluated [Default: model]")
+args = parser.parse_args()
 
 
 # Params
 CONVERT2KERAS = False    # Save Stable Baselines model to Keras, and evaluate it.
-MODEL_NAME = 'A2C_ver2'     # Folder name where best_model.zip is held.
+MODEL_NAME = args.modelName     # Folder name where best_model.zip is held.
 NET_LAYERS = [32, 32]
+MEMORY_BUFFER = 1
+
 # Environment
 NORMALIZE = True
 BACKLASH = True
@@ -28,7 +37,7 @@ actions_per_step = int(round((1/LoopFreq)/StepPeriod))  # For Microcontroller lo
 
 
 model = A2C.load(os.path.join(training_save_path, MODEL_NAME, 'best_model'))
-env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE, backlash=BACKLASH, algo_mode='RL')
+env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE, backlash=BACKLASH, algo_mode='RL', memory_buffer=MEMORY_BUFFER)
 
 
 if CONVERT2KERAS:

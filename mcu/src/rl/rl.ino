@@ -67,8 +67,8 @@ void loop() {
 //    Input Normalization (for neural net compatibility). 
 //    WARNING: This must be the same normalization used during training.
       diffAngle = currentAngle - targetAngle;
-//      diffAngle /= 1.5708;
-      diffAngle /= 0.06519447;
+      diffAngle /= 1.5708;
+//       diffAngle /= 0.06519447;
       diffAngle = constrain(diffAngle, -1, 1);
       
       float input[1] = { diffAngle };

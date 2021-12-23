@@ -96,7 +96,8 @@ class BalancioGymEnv(gym.Env):
         # Observation vector: [pitch, ax, ay, az, gx, gy, gz, pwmL, pwmR]  -> Varies depending on observation_dim
         # HARD-CODED MEAN AND ST-DEV
         self.norm_mean = np.array([0, 0,  0, 1.05682576e+00,  0,  0,  0, 0, 0])
-        self.norm_std = np.array([0.06519447, 3.0353326, 1.81746345, 5.0081295, 0.09617138, 0.03410039, 0.26264516, 0.32308017, 0.32999594])
+        # self.norm_std = np.array([0.06519447, 3.0353326, 1.81746345, 5.0081295, 0.09617138, 0.03410039, 0.26264516, 0.32308017, 0.32999594])
+        self.norm_std = np.array([1.5, 3.0353326, 1.81746345, 5.0081295, 0.09617138, 0.03410039, 0.26264516, 0.32308017, 0.32999594])
         if self._only_pitch and self._policy_feedback:
             self.norm_mean = np.array([self.norm_mean[0], self.norm_mean[-2], self.norm_mean[-1]])
             self.norm_std = np.array([self.norm_std[0], self.norm_std[-2], self.norm_std[-1]])
