@@ -15,7 +15,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/balancio_gif.gif" width="124">
 </p>
 
-## Ensamble :wrench:
+## Ensamblaje :wrench:
 El balancio-kit consta de los siguientes componentes:
 - Placa base (impresa en 3D o hecha con algún otro material) 
 - Microcontrolador NodeMCU ESP32
