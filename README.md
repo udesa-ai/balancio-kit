@@ -1,6 +1,7 @@
 # Balacio-Kit
 
-
+![license_MIT](https://img.shields.io/github/license/udesa-ai/balancio-kit)
+![stars](https://img.shields.io/github/stars/udesa-ai/balancio-kit)
 
 
 ## Infomación
