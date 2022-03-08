@@ -120,12 +120,12 @@ void imu_setup(void){
   Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
 
   // supply your own offsets here.
-  mpu.setXAccelOffset(-3831);
-  mpu.setYAccelOffset(1437);
-  mpu.setZAccelOffset(1156);
-  mpu.setXGyroOffset(-12);
-  mpu.setYGyroOffset(-50);
-  mpu.setZGyroOffset(-19);
+  mpu.setXAccelOffset(-1775);
+  mpu.setYAccelOffset(756);
+  mpu.setZAccelOffset(2706);
+  mpu.setXGyroOffset(181);
+  mpu.setYGyroOffset(77);
+  mpu.setZGyroOffset(60);
 }
 
 
@@ -171,12 +171,12 @@ void imu_setup_dmp(void) {
 
   // supply your own gyro offsets here, scaled for min sensitivity
   
-  mpu.setXAccelOffset(-3831);
-  mpu.setYAccelOffset(1437);
-  mpu.setZAccelOffset(1156);
-  mpu.setXGyroOffset(-12);
-  mpu.setYGyroOffset(-50);
-  mpu.setZGyroOffset(-19);
+  mpu.setXAccelOffset(-1775);
+  mpu.setYAccelOffset(756);
+  mpu.setZAccelOffset(2706);
+  mpu.setXGyroOffset(181);
+  mpu.setYGyroOffset(77);
+  mpu.setZGyroOffset(60);
   
   // make sure it worked (returns 0 if so)
   if (devStatus == 0) {
@@ -255,11 +255,12 @@ void getEulerAngles_dmp(float *angles){
 //   
 //}
 
-void getAccelGyro(float* ay, float* az, float* gx){
+void getAccelGyro(float* ay, float* az, float* gx, float* gz){
   mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b);  // gyro (+/- 250 deg/s) accel (+/- 2g)
   ay[0] = 4*(ay_b/65535.0);  // g 
   az[0] = 4*(az_b/65535.0);  // g 
   gx[0] = 2*250*(gx_b/(65535.0));  // deg/s
+  gz[0] = 2*250*(gz_b/(65535.0));  // deg/s
    
 }
 
