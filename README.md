@@ -1,6 +1,7 @@
 # Balacio-Kit
 
-
+![license_MIT](https://img.shields.io/github/license/udesa-ai/balancio-kit)
+![stars](https://img.shields.io/github/stars/udesa-ai/balancio-kit)
 
 
 ## Infomación
@@ -9,11 +10,13 @@ Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capa
 
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
-<img src="resources/Balanciov0_4.jpg" width="130">
-<img src="resources/balanciov3.jpg" width="120">
-<img src="resources/balancio_gif.gif" width="75">
+<p align="center">
+    <img src="resources/balanciov3.jpg" width="200">
+    <img src="resources/Balanciov0_4.jpg" width="219">
+    <img src="resources/balancio_gif.gif" width="124">
+</p>
 
-## Ensamble :wrench:
+## Ensamblaje :wrench:
 El balancio-kit consta de los siguientes componentes:
 - Placa base (impresa en 3D o hecha con algún otro material) 
 - Microcontrolador NodeMCU ESP32
@@ -22,7 +25,9 @@ El balancio-kit consta de los siguientes componentes:
 - Puente-H L298N
 - 2 baterias 18650 con su correspondiente porta-pilas
 
-<img src="resources/Balancio_plano.png" width="300">
+<p align="center">
+    <img src="resources/Balancio_plano.png" width="530">
+</p>
 
 ## Instalación :floppy_disk:
 
@@ -73,9 +78,13 @@ Se debe seguir con los siguientes pasos:
 1. Para el uso e instalacion de conda, descargaremos miniconda (también se puede isntalar [Anaconda](https://docs.anaconda.com/anaconda/install/index.html)), siguiendo con los pasos que se especifican en el siguiente [link](https://docs.conda.io/en/latest/miniconda.html#installing).
 2. Crearemos un 'Environment' de conda, donde alojaremos nuestros paquetes. 
    Esto se puede realizar tanto desde la consola (en el caso de haber descargado Miniconda) o desde una GUI (en caso de haber descargado Anaconda). Respectivamente:
-    - Miniconda: Ejectutar el siguiente comando en la consola: `conda env create -f requirements.yml`. Donde 'requierments.yml' es el [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.yml) que se encuentra dentro del repositorio y ya fue descargado.
+    - Miniconda: Ejectutar el siguiente comando en la consola: `conda env create -f requirements.yml`. Donde `requierments.yml` es el [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.yml) que se encuentra dentro del repositorio y ya fue descargado.
     - Anaconda: En la GUI de Anaconda: En la pestaña environments, hacer clik en import y especificar [archivo](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/requirements.yml) en file
-    ![Balancio v0.3](resources/env_anaconda.png?raw=true)
+
+<p align="center">
+    <img src="resources/env_anaconda.png" width="500">
+</p>
+
 3. Activar el environment creado, llamado balancio:
     - Miniconda: Ejecutar en terminal `conda activate balancio`
     - Anaconda: En la pestaña environments, hacer clik en el ambiente que se quiere activar
