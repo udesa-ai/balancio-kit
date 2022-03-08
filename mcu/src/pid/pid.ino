@@ -11,12 +11,13 @@
 
 #define Kp  2000    // 2000     //1200    //1750
 #define Kd  20.0    // 20.0     //17.0    //25.0
-#define Ki  22000   //22000     //22000   //11000  
+#define Ki  22000   //22000     //22000   //11000
+#define Kyaw 0.03
 #define sampleTime  0.01  // 100 Hz
-#define zero_targetAngle 0.01  // Calibrated point
+#define zero_targetAngle -0.04  // Calibrated point
 
-float targetAngle=0.0;
-float currentAngle=0.0, prevAngle=0.0, error=0.0, prevError=0.0, errorSum=0.0;
+float targetAngle=0.0, angle_limit=0.5;
+float currentAngle=0.0, prevAngle=0.0, error=0.0, prevError=0.0, errorSum=0.0, yaw=0.0, targetYaw=0.0, yawCommand=0.0;
 int pwm=0;
 volatile bool controlFlag=false;
 
@@ -26,7 +27,7 @@ float rot=0;
 unsigned long pid_count = 0;
 
 int time_ctr=0;
-float ay, az, gx;
+float ay, az, gx, gz;
 float accelPitch, pitch;
 float tau=0.98;
 
@@ -66,7 +67,7 @@ void loop() {
     }
 
     if (true){
-      getAccelGyro(&ay, &az, &gx);
+      getAccelGyro(&ay, &az, &gx, &gz);
       accelPitch = atan2(ay, az) * RAD_TO_DEG;
       pitch = (tau)*(pitch + (gx)*sampleTime) + (1-tau)*(accelPitch);  
       currentAngle = - pitch * DEG_TO_RAD;
@@ -77,6 +78,14 @@ void loop() {
       pwm = Kp*(error) + Ki*(errorSum)*sampleTime + Kd*(currentAngle-prevAngle)/sampleTime;
       pwm = constrain(pwm, -255, 255);
       prevAngle = currentAngle;
+
+      yaw = yaw + gz * DEG_TO_RAD;
+      rot = Kyaw * (yaw - targetYaw) + 0.4*yawCommand;
+
+      if ( (currentAngle > angle_limit) || (currentAngle < -angle_limit) ){
+        pwm = 0.0;
+        rot = 0.0;
+      }
       
       L_motor(pwm + int(rot*60));
       R_motor(pwm - int(rot*60));
@@ -117,7 +126,9 @@ void loop() {
 
   
   fwd = -Ps3.data.analog.stick.ry/128.0;
-  rot = Ps3.data.analog.stick.lx/128.0;
+  //rot = Ps3.data.analog.stick.lx/128.0;
+  yawCommand = Ps3.data.analog.stick.lx/64.0;
+  targetYaw -= yawCommand;
   
   targetAngle = fwd*0.05 + zero_targetAngle;
 
@@ -127,7 +138,8 @@ void loop() {
 void ps3_setup(void){
 //    Ps3.attach(notify);
     Ps3.attachOnConnect(onConnect);
-    Ps3.begin("8c:7c:b5:97:58:48");
+//    Ps3.begin("8c:7c:b5:97:58:48");
+    Ps3.begin("08:d2:3e:45:6f:18");
 
     Serial.println("Ready.");
 }
