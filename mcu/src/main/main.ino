@@ -107,7 +107,7 @@ void loop() {
 
   
   fwd = -Ps3.data.analog.stick.ry/128.0;
-  yawCommand = Ps3.data.analog.stick.lx/64.0;
+  yawCommand = Ps3.data.analog.stick.lx/40.0;
   targetYaw -= yawCommand;
   
   targetAngle = fwd*0.05 + STATIC_ANGLE;

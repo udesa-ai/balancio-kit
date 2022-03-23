@@ -7,9 +7,9 @@
 #define KD  20.0    // 20.0     //17.0    //25.0
 
 // P constant for yaw cotrol
-#define KP_YAW 10.0  // 1.8
+#define KP_YAW 5.0  
 #define KI_YAW 0.0
-#define KD_YAW 0.0
+#define KD_YAW 0.05
 
 // Loop period in seconds
 #define LOOP_PERIOD  0.01  // 100 Hz
