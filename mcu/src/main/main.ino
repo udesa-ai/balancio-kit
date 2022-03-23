@@ -14,12 +14,15 @@ int pwmL=0, pwmR=0;
 volatile bool controlFlag=false;
 float fwd=0;
 float rot=0;
-// unsigned long pid_count = 0;
 int time_ctr=0;
 bool stop_command=true;
 bool x_down;
 
-PID pitch_pid = PID(KP, KI, KD, 5.0, 255.0);
+// PID
+// PID pitch_pid = PID(KP, KI, KD, 5.0, 255.0);
+// RL
+RlSingleInput pitch_rl = RlSingleInput();
+
 PID yaw_pid = PID(KP_YAW, KI_YAW, KD_YAW, 5.0, 255.0);
 
 void setup() {
@@ -60,12 +63,19 @@ void loop() {
       currentAngle = updatePitch(currentAngle);
       yaw = updateYaw(yaw);
 
-      pitch_pid.update(currentAngle, targetAngle);
-      pwmL = pitch_pid.output;
-      pwmR = pitch_pid.output;
+      // Pitch control
+      // PID
+      // pitch_pid.update(currentAngle, targetAngle);
+      // pwmL = pitch_pid.output;
+      // pwmR = pitch_pid.output;
 
+      // RL
+      pitch_rl.update(currentAngle, targetAngle);
+      pwmL = pitch_rl.pwmL;
+      pwmR = pitch_rl.pwmR;
+      
+      // Yaw control
       yaw_pid.update(yaw, targetYaw);
-      // rot = K_YAW * (yaw - targetYaw) + 24*yawCommand;
       rot = yaw_pid.output;
 
       if ( (currentAngle > angle_limit) || (currentAngle < -angle_limit) ){

@@ -5,29 +5,25 @@
 #include <EloquentTinyML.h>
 
 
-// /* Neural network related variables */
-// #define NUMBER_OF_INPUTS 1
-// #define NUMBER_OF_OUTPUTS 2
-// // You may need to tweak this value. It's a trial and error process
-// #define TENSOR_ARENA_SIZE 16*1024
+/* Neural network related variables */
+#define NUMBER_OF_INPUTS 1
+#define NUMBER_OF_OUTPUTS 2
+// You may need to tweak this value. It's a trial and error process
+#define TENSOR_ARENA_SIZE 16*1024
+#define RL_INPUT_NORMALIZATION 0.06519447  //1.5708  // 0.06519447
 
-// class controllers
-// {
-// private:
-//     float error;
-//     float errorSum = 0.0;
-//     float prev_angle = 0.0;
-//     int pwm;
-//     Eloquent::TinyML::TfLite<NUMBER_OF_INPUTS, NUMBER_OF_OUTPUTS, TENSOR_ARENA_SIZE> ml;
+class RlSingleInput
+{
+private:
+    float error;
+    Eloquent::TinyML::TfLite<NUMBER_OF_INPUTS, NUMBER_OF_OUTPUTS, TENSOR_ARENA_SIZE> ml;
     
-// public:
-//     int pwmL, pwmR;
-//     controllers(void);
-//     void pid(float current_angle, float target_angle);
-//     void rl(float current_angle, float target_angle);
-// };
+public:
+    int pwmL, pwmR;
+    RlSingleInput(void);
+    void update(float current_angle, float target_angle);
+};
 
-/* -------------------------------------------------- */
 
 class PID
 {
