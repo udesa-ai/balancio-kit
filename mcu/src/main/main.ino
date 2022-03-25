@@ -18,12 +18,10 @@ int time_ctr=0;
 bool stop_command=true;
 bool x_down;
 
-// PID
-// PID pitch_pid = PID(KP, KI, KD, 5.0, 255.0);
-// RL
-RlSingleInput pitch_rl = RlSingleInput();
+String control_algo(CONTROL_ALGO);
+PID* yaw_control;
+Controller* pitch_control;
 
-PID yaw_pid = PID(KP_YAW, KI_YAW, KD_YAW, 5.0, 255.0);
 
 void setup() {
   // UART PC connection
@@ -40,6 +38,11 @@ void setup() {
 
   // Timer init. (ISR at 1/LOOP_PERIOD Hz)
   timer_init();
+
+  // Controllers init
+  pitch_control = Controller::init_algo(control_algo);
+  yaw_control = new PID(KP_YAW, KI_YAW, KD_YAW, 5.0, 255.0);
+
 }
 
 
@@ -60,33 +63,41 @@ void loop() {
 
     if (true){
 
+      // Get pitch and yaw angles.
       currentAngle = updatePitch(currentAngle);
       yaw = updateYaw(yaw);
 
-      // Pitch control
-      // PID
-      // pitch_pid.update(currentAngle, targetAngle);
-      // pwmL = pitch_pid.output;
-      // pwmR = pitch_pid.output;
-
-      // RL
-      pitch_rl.update(currentAngle, targetAngle);
-      pwmL = pitch_rl.pwmL;
-      pwmR = pitch_rl.pwmR;
+      // Pitch control.
+      if (control_algo.equals("PID")){
+        // PID control.
+        pitch_control->update(currentAngle, targetAngle);
+        pwmL = ((PID*) pitch_control) -> output;
+        pwmR = ((PID*) pitch_control) -> output;
+      }
+      else if (control_algo.equals("RL"))
+      {
+        // RL control.
+        pitch_control->update(currentAngle, targetAngle);
+        pwmL = ((RlSingleInput*) pitch_control) -> pwmL;
+        pwmR = ((RlSingleInput*) pitch_control) -> pwmR;
+      }
       
-      // Yaw control
-      yaw_pid.update(yaw, targetYaw);
-      rot = yaw_pid.output;
+      // Yaw control.
+      yaw_control -> update(yaw, targetYaw);
+      rot = yaw_control -> output;
 
+      // Stop motors when pitch exceeds limit.
       if ( (currentAngle > angle_limit) || (currentAngle < -angle_limit) ){
         pwmL = 0;
         pwmR = 0;
         rot = 0.0;
       }
       
+      // Pass PWM commands to motors.
       L_motor(pwmL + int(rot));
       R_motor(pwmR - int(rot));
-  
+
+      // Print relevant data.
       if (true){
         Serial.print("fwd: ");
         Serial.print(fwd);

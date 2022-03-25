@@ -4,6 +4,24 @@
 #include <EloquentTinyML.h>
 
 
+/* Controller Abstract Class*/
+
+Controller* Controller::init_algo(String algo) {
+    // Control algorithm initialization
+    if (algo.equals("PID")){
+        // PID
+        return new PID(KP, KI, KD, 5.0, 255.0);
+    }
+    else if (algo.equals("RL")){
+        // RL
+        return new RlSingleInput();
+    }
+    else{
+        Serial.println("Error loading control algorithm");
+    }
+}
+
+
 /*RL Single Input Class*/
 
 RlSingleInput::RlSingleInput(void)

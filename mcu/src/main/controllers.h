@@ -12,7 +12,16 @@
 #define TENSOR_ARENA_SIZE 16*1024
 #define RL_INPUT_NORMALIZATION 0.06519447  //1.5708  // 0.06519447
 
-class RlSingleInput
+
+class Controller
+{   public:
+        virtual void update(float current_angle, float target_angle) = 0;
+        
+        static Controller* init_algo(String algo);
+};
+
+
+class RlSingleInput: public Controller
 {
 private:
     float error;
@@ -21,11 +30,11 @@ private:
 public:
     int pwmL, pwmR;
     RlSingleInput(void);
-    void update(float current_angle, float target_angle);
+    void update(float current_angle, float target_angle) override;
 };
 
 
-class PID
+class PID: public Controller
 {
 private:
     float error;
@@ -37,7 +46,7 @@ private:
 public:
     int output;
     PID(float kp_init, float ki_init, float kd_init, float sum_constraint_init, float output_constraint_init);
-    void update(float current_angle, float target_angle);
+    void update(float current_angle, float target_angle) override;
 };
 
 #endif
