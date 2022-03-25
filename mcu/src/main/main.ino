@@ -4,8 +4,7 @@
 #include "imu.h"
 #include "timer.h"
 #include "Wire.h"
-#include <Ps3Controller.h>
-
+#include "commander.h"
 
 
 float currentAngle=0.0, targetAngle=0.0, angle_limit=0.5;
@@ -56,10 +55,10 @@ void loop() {
 
   if (controlFlag){ 
 
-    x_down = Ps3.event.button_down.cross;
-    if (x_down){
-      stop_command = abs(stop_command -1); 
-    }
+    //x_down = Ps3.event.button_down.cross;
+    //if (x_down){
+      //stop_command = abs(stop_command -1); 
+    //}
 
     if (true){
 
@@ -125,27 +124,7 @@ void loop() {
     return;
   }
 
+  targetAngle = get_pitch_command();
+  targetYaw = get_yaw_command(targetYaw);
 
-  
-  fwd = -Ps3.data.analog.stick.ry/128.0;
-  yawCommand = Ps3.data.analog.stick.lx/40.0;
-  targetYaw -= yawCommand;
-  
-  targetAngle = fwd*0.05 + STATIC_ANGLE;
-
-
-}
-
-
-void ps3_setup(void){
-//    Ps3.attach(notify);
-    Ps3.attachOnConnect(onConnect);
-//    Ps3.begin("8c:7c:b5:97:58:48");
-    Ps3.begin("08:d2:3e:45:6f:18");
-
-    Serial.println("Ready.");
-}
-
-void onConnect(){
-    Serial.println("Connected.");
 }
