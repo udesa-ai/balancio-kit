@@ -20,6 +20,8 @@ bool x_down;
 String control_algo(CONTROL_ALGO);
 PID* yaw_control;
 Controller* pitch_control;
+std::vector<float> pwm;
+std::vector<float> rot_v;
 
 
 void setup() {
@@ -40,7 +42,7 @@ void setup() {
 
   // Controllers init
   pitch_control = Controller::init_algo(control_algo);
-  yaw_control = new PID(KP_YAW, KI_YAW, KD_YAW, 5.0, 255.0);
+  yaw_control = new PID(KP_YAW, KI_YAW, KD_YAW, 5.0);
 
 }
 
@@ -69,28 +71,32 @@ void loop() {
       // Pitch control.
       if (control_algo.equals("PID")){
         // PID control.
-        pitch_control->update(currentAngle, targetAngle);
-        pwmL = ((PID*) pitch_control) -> output;
-        pwmR = ((PID*) pitch_control) -> output;
+        pwm = pitch_control->update(currentAngle, targetAngle);
+        pwmL = pwm.at(0);
+        pwmR = pwm.at(0);
       }
       else if (control_algo.equals("RL"))
       {
         // RL control.
-        pitch_control->update(currentAngle, targetAngle);
-        pwmL = ((RlSingleInput*) pitch_control) -> pwmL;
-        pwmR = ((RlSingleInput*) pitch_control) -> pwmR;
+        pwm = pitch_control->update(currentAngle, targetAngle);
+        pwmL = 255.0 * pwm.at(0);
+        pwmR = 255.0 * pwm.at(1);
       }
       
       // Yaw control.
-      yaw_control -> update(yaw, targetYaw);
-      rot = yaw_control -> output;
+      rot_v = yaw_control -> update(yaw, targetYaw);
+      rot = rot_v.at(0);
+
 
       // Stop motors when pitch exceeds limit.
       if ( (currentAngle > angle_limit) || (currentAngle < -angle_limit) ){
         pwmL = 0;
         pwmR = 0;
         rot = 0.0;
-      }
+      } 
+
+      pwmL = constrain(pwmL, -255.0, 255.0);
+      pwmR = constrain(pwmR, -255.0, 255.0);
       
       // Pass PWM commands to motors.
       L_motor(pwmL + int(rot));

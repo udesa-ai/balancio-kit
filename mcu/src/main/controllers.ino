@@ -2,6 +2,7 @@
 #include "controllers.h"
 #include "rl_model.h"
 #include <EloquentTinyML.h>
+#include <vector>
 
 
 /* Controller Abstract Class*/
@@ -10,7 +11,7 @@ Controller* Controller::init_algo(String algo) {
     // Control algorithm initialization
     if (algo.equals("PID")){
         // PID
-        return new PID(KP, KI, KD, 5.0, 255.0);
+        return new PID(KP, KI, KD, 5.0);
     }
     else if (algo.equals("RL")){
         // RL
@@ -25,14 +26,16 @@ Controller* Controller::init_algo(String algo) {
 /*RL Single Input Class*/
 
 RlSingleInput::RlSingleInput(void)
-{
+{   
     /* Neural Network */
     ml = Eloquent::TinyML::TfLite<NUMBER_OF_INPUTS, NUMBER_OF_OUTPUTS, TENSOR_ARENA_SIZE>();
     ml.begin(rl_model);
 }
 
-void RlSingleInput::update(float current_angle, float target_angle)
-{
+std::vector<float> RlSingleInput::update(float current_angle, float target_angle)
+{   
+    std::vector<float> output;
+
     // Input Normalization (for neural net compatibility). 
     // WARNING: This must be the same normalization used during training.
     error = current_angle - target_angle;
@@ -42,32 +45,34 @@ void RlSingleInput::update(float current_angle, float target_angle)
     float input[1] = { error };
     float predicted[2]= {0};
     ml.predict(input, predicted);
-    pwmL = (predicted[0] * 255.0);
-    pwmL = constrain(pwmL, -255, 255);
-    pwmR = (predicted[1] * 255.0);
-    pwmR = constrain(pwmR, -255, 255);
 
+    output.push_back(predicted[0]);
+    output.push_back(predicted[1]);
+
+    return output;
 }
 
 
 /*PID Class*/
 
-PID::PID(float kp_init, float ki_init, float kd_init, float sum_constraint_init, float output_constraint_init)
+PID::PID(float kp_init, float ki_init, float kd_init, float sum_constraint_init)
 {
     kp = kp_init;
     ki = ki_init;
     kd = kd_init;
     sum_constraint = sum_constraint_init;  // 5
-    output_constraint = output_constraint_init;   // 255
 }
 
-void PID::update(float current_angle, float target_angle)
-{
+std::vector<float> PID::update(float current_angle, float target_angle)
+{   
+    std::vector<float> output;
+
     error = current_angle - target_angle;
     errorSum += error;  
     errorSum = constrain(errorSum, -sum_constraint, sum_constraint);
-    output = kp*(error) + ki*(errorSum)*LOOP_PERIOD + kd*(current_angle-prev_angle)/LOOP_PERIOD;
-    output = constrain(output, -output_constraint, output_constraint);
+    out = kp*(error) + ki*(errorSum)*LOOP_PERIOD + kd*(current_angle-prev_angle)/LOOP_PERIOD;
     prev_angle = current_angle;
 
+    output.push_back(out);
+    return output;
 }

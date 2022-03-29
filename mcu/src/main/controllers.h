@@ -15,7 +15,7 @@
 
 class Controller
 {   public:
-        virtual void update(float current_angle, float target_angle) = 0;
+        virtual std::vector<float> update(float current_angle, float target_angle) = 0;
         
         static Controller* init_algo(String algo);
 };
@@ -24,13 +24,13 @@ class Controller
 class RlSingleInput: public Controller
 {
 private:
+    // static int NUMBER_OF_INPUTS = 1;
     float error;
     Eloquent::TinyML::TfLite<NUMBER_OF_INPUTS, NUMBER_OF_OUTPUTS, TENSOR_ARENA_SIZE> ml;
     
 public:
-    int pwmL, pwmR;
     RlSingleInput(void);
-    void update(float current_angle, float target_angle) override;
+    std::vector<float> update(float current_angle, float target_angle) override;
 };
 
 
@@ -41,12 +41,12 @@ private:
     float errorSum = 0.0;
     float prev_angle = 0.0;
     float kp, ki, kd;
-    float sum_constraint, output_constraint;
+    float sum_constraint;
+    int out;
     
 public:
-    int output;
-    PID(float kp_init, float ki_init, float kd_init, float sum_constraint_init, float output_constraint_init);
-    void update(float current_angle, float target_angle) override;
+    PID(float kp_init, float ki_init, float kd_init, float sum_constraint_init);
+    std::vector<float> update(float current_angle, float target_angle) override;
 };
 
 #endif
