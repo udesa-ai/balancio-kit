@@ -12,8 +12,8 @@ int pwmL = 0, pwmR = 0;
 volatile bool controlFlag = false;
 float fwd = 0;
 float rot = 0;
-int time_ctr = 0;
-bool stop_command = true;
+int time_ctr = 0, time_ctr2 = 0;
+bool stop_command = false;
 bool x_down;
 
 String control_algo(CONTROL_ALGO);
@@ -59,12 +59,14 @@ void loop()
   if (controlFlag)
   {
 
-    // x_down = Ps3.event.button_down.cross;
-    // if (x_down){
-    // stop_command = abs(stop_command -1);
-    //}
+    x_down = x_button_pressed();
+    if (x_down and (millis() - time_ctr2)>=500)
+    {
+      stop_command = abs(stop_command - 1);
+      time_ctr2 = millis();
+    }
 
-    if (true)
+    if (!stop_command)
     {
 
       // Get pitch and yaw angles.
@@ -100,22 +102,22 @@ void loop()
       }
 
       // Pass PWM commands to motors.
-      L_motor(pwmL + int(rot));  // -255 to 255
-      R_motor(pwmR - int(rot));  // -255 to 255
+      L_motor(pwmL + int(rot)); // -255 to 255
+      R_motor(pwmR - int(rot)); // -255 to 255
 
       // Print relevant data.
       if (true)
-      { 
+      {
         Serial.print("  targetAngle: ");
         Serial.print(targetAngle);
         Serial.print("  targetYaw: ");
         Serial.print(targetYaw);
         Serial.print(" pitch: ");
         Serial.print(currentAngle);
-        Serial.print("  PWM: "); 
+        Serial.print("  PWM: ");
         Serial.print(pwmL);
         Serial.print(" Loop time: ");
-        Serial.println(micros()- time_ctr);
+        Serial.println(micros() - time_ctr);
         time_ctr = micros();
       }
     }

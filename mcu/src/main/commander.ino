@@ -29,3 +29,9 @@ float get_yaw_command(float prev_target){
     float targetYaw = prev_target - yawCommand;
     return targetYaw;
 }
+
+bool x_button_pressed(void)
+{
+    bool x_down = Ps3.event.button_down.cross;
+    return x_down;
+}
