@@ -13,11 +13,18 @@
 #define RL_INPUT_NORMALIZATION 0.06519447  //1.5708  // 0.06519447
 
 
+struct controller_data_t{
+  float kp;
+  float ki;
+  float kd;
+};  
+
+
 class Controller
 {   public:
         virtual std::vector<float> update(float current_angle, float target_angle) = 0;
         
-        static Controller* init_algo(String algo);
+        static Controller* init_algo(String algo, controller_data_t controller_data);
 };
 
 

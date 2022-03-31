@@ -7,11 +7,11 @@
 
 /* Controller Abstract Class*/
 
-Controller* Controller::init_algo(String algo) {
+Controller* Controller::init_algo(String algo, controller_data_t controller_data) {
     // Control algorithm initialization
     if (algo.equals("PID")){
         // PID
-        return new PID(KP, KI, KD, 5.0);
+        return new PID(controller_data.kp, controller_data.ki, controller_data.kd, 5.0);
     }
     else if (algo.equals("RL")){
         // RL

@@ -62,6 +62,7 @@ void fwd_R_motor(int pwm){
 }
 
 void R_motor(int pwm){
+  pwm = constrain(pwm, -255.0, 255.0);
   if (pwm>=0){
     fwd_R_motor(pwm);
   }
@@ -71,6 +72,7 @@ void R_motor(int pwm){
 }
 
 void L_motor(int pwm){
+  pwm = constrain(pwm, -255.0, 255.0);
   if (pwm>=0){
     fwd_L_motor(pwm);
   }
