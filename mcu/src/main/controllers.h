@@ -5,14 +5,6 @@
 #include <EloquentTinyML.h>
 
 
-/* Neural network related variables */
-#define NUMBER_OF_INPUTS 1
-#define NUMBER_OF_OUTPUTS 2
-// You may need to tweak this value. It's a trial and error process
-#define TENSOR_ARENA_SIZE 16*1024
-#define RL_INPUT_NORMALIZATION 0.06519447  //1.5708  // 0.06519447
-
-
 struct controller_data_t{
   float kp;
   float ki;
@@ -54,6 +46,7 @@ private:
 public:
     PID(float kp_init, float ki_init, float kd_init, float sum_constraint_init);
     std::vector<float> update(float current_angle, float target_angle) override;
+    void reset(float previous_angle);
 };
 
 #endif

@@ -46,8 +46,8 @@ std::vector<float> RlSingleInput::update(float current_angle, float target_angle
     float predicted[2]= {0};
     ml.predict(input, predicted);
 
-    output.push_back(predicted[0]);
-    output.push_back(predicted[1]);
+    output.push_back(RL_OUTPUT_DENORMALIZATION * predicted[0]);
+    output.push_back(RL_OUTPUT_DENORMALIZATION * predicted[1]);
 
     return output;
 }
@@ -75,4 +75,10 @@ std::vector<float> PID::update(float current_angle, float target_angle)
 
     output.push_back(out);
     return output;
+}
+
+void PID::reset(float previous_angle)
+{
+    errorSum = 0.0;
+    prev_angle = previous_angle;
 }

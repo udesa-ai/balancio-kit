@@ -58,7 +58,7 @@ void loop()
 
   if (controlFlag)
   {
-
+    // Get if X button was pressed
     x_down = x_button_pressed();
     if (x_down and (millis() - time_ctr2)>=500)
     {
@@ -66,13 +66,29 @@ void loop()
       time_ctr2 = millis();
     }
 
-    if (!stop_command)
+    // Get pitch and yaw angles.
+    currentAngle = updatePitch(currentAngle);
+    yaw = updateYaw(yaw);
+
+    
+    if (stop_command || (currentAngle > angle_limit) || (currentAngle < -angle_limit))
     {
+      // Stop motors
+      stop_motor();
 
-      // Get pitch and yaw angles.
-      currentAngle = updatePitch(currentAngle);
-      yaw = updateYaw(yaw);
+      // Reset yaw command
+      targetYaw = yaw;
 
+      // Reset PID
+      if (control_algo.equals("PID"))
+      {
+        ((PID*) pitch_control)->reset(0.0);
+      }
+
+      ((PID*) yaw_control)->reset(targetYaw);
+    }
+    else
+    {
       // Pitch control.
       if (control_algo.equals("PID"))
       {
@@ -85,21 +101,13 @@ void loop()
       {
         // RL control.
         pwm = pitch_control->update(currentAngle, targetAngle);
-        pwmL = 255.0 * pwm.at(0);
-        pwmR = 255.0 * pwm.at(1);
+        pwmL = pwm.at(0);
+        pwmR = pwm.at(1);
       }
 
       // Yaw control.
       rot_v = yaw_control->update(yaw, targetYaw);
       rot = rot_v.at(0);
-
-      // Stop motors when pitch exceeds limit.
-      if ((currentAngle > angle_limit) || (currentAngle < -angle_limit))
-      {
-        pwmL = 0;
-        pwmR = 0;
-        rot = 0.0;
-      }
 
       // Pass PWM commands to motors.
       L_motor(pwmL + int(rot)); // -255 to 255
@@ -120,10 +128,7 @@ void loop()
         Serial.println(micros() - time_ctr);
         time_ctr = micros();
       }
-    }
-    else
-    {
-      stop_motor();
+      
     }
 
     controlFlag = false;
