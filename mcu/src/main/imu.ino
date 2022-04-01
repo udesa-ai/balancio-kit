@@ -66,7 +66,7 @@
 // AD0 low = 0x68 (default for SparkFun breakout and InvenSense evaluation board)
 // AD0 high = 0x69
 MPU6050 mpu;
-//MPU6050 mpu(0x69); // <-- use for AD0 high
+// MPU6050 mpu(0x69); // <-- use for AD0 high
 
 /* =========================================================================
    NOTE: In addition to connection 3.3v, GND, SDA, and SCL, this sketch
@@ -86,7 +86,6 @@ MPU6050 mpu;
    http://code.google.com/p/arduino/issues/detail?id=958
    ========================================================================= */
 
-
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
 uint8_t mpuIntStatus;   // holds actual interrupt status byte from MPU
@@ -96,28 +95,28 @@ uint16_t fifoCount;     // count of all bytes currently in FIFO
 uint8_t fifoBuffer[64]; // FIFO storage buffer
 
 // orientation/motion vars
-Quaternion q;           // [w, x, y, z]         quaternion container
-VectorFloat gravity;    // [x, y, z]            gravity vector
-//float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
+Quaternion q;        // [w, x, y, z]         quaternion container
+VectorFloat gravity; // [x, y, z]            gravity vector
+// float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
-// gyro,accel and euler vars 
+// gyro,accel and euler vars
 int16_t ax_b, ay_b, az_b, gx_b, gy_b, gz_b;
 
 // Pitch calculator vars
 float ay, az, gx, gz;
 float accelPitch, pitch_deg, pitch_rad;
-float tau=0.98;
+float tau = 0.98;
 float newYaw;
 
 // Local Function Prototypes
 void readFifoBuffer_(void);
 
-
 // Functions
-void imu_setup(void){
+void imu_setup(void)
+{
   // join I2C bus (I2Cdev library doesn't do this automatically)
   Wire.begin(SDA, SCL, 400000);
-  
+
   // initialize device
   Serial.println(F("Initializing I2C devices..."));
   mpu.initialize();
@@ -135,8 +134,8 @@ void imu_setup(void){
   mpu.setZGyroOffset(Z_GYRO_OFFSET);
 }
 
-
-void imu_setup_dmp(void) {
+void imu_setup_dmp(void)
+{
   // join I2C bus (I2Cdev library doesn't do this automatically)
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
   Wire.begin(SDA, SCL, 400000);
@@ -148,8 +147,8 @@ void imu_setup_dmp(void) {
   // initialize serial communication
   // (115200 chosen because it is required for Teapot Demo output, but it's
   // really up to you depending on your project)
-//  Serial.begin(115200);
-//  while (!Serial); // wait for Leonardo enumeration, others continue immediately
+  //  Serial.begin(115200);
+  //  while (!Serial); // wait for Leonardo enumeration, others continue immediately
 
   // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3V or Arduino
   // Pro Mini running at 3.3V, cannot handle this baud rate reliably due to
@@ -160,22 +159,22 @@ void imu_setup_dmp(void) {
   // initialize device
   Serial.println(F("Initializing I2C devices..."));
   mpu.initialize();
-//  pinMode(INTERRUPT_PIN, INPUT);
+  //  pinMode(INTERRUPT_PIN, INPUT);
 
   // verify connection
   Serial.println(F("Testing device connections..."));
   Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
 
   // wait for ready
-//  Serial.println(F("\nSend any character to begin DMP programming and demo: "));
-//  while (Serial.available() && Serial.read()); // empty buffer
-//  while (!Serial.available());                 // wait for data
-//  while (Serial.available() && Serial.read()); // empty buffer again
+  //  Serial.println(F("\nSend any character to begin DMP programming and demo: "));
+  //  while (Serial.available() && Serial.read()); // empty buffer
+  //  while (!Serial.available());                 // wait for data
+  //  while (Serial.available() && Serial.read()); // empty buffer again
 
   // load and configure the DMP
   Serial.println(F("Initializing DMP..."));
   devStatus = mpu.dmpInitialize();
-  
+
   // supply your own offsets here.
   mpu.setXAccelOffset(X_ACCEL_OFFSET);
   mpu.setYAccelOffset(Y_ACCEL_OFFSET);
@@ -183,32 +182,35 @@ void imu_setup_dmp(void) {
   mpu.setXGyroOffset(X_GYRO_OFFSET);
   mpu.setYGyroOffset(Y_GYRO_OFFSET);
   mpu.setZGyroOffset(Z_GYRO_OFFSET);
-  
+
   // make sure it worked (returns 0 if so)
-  if (devStatus == 0) {
+  if (devStatus == 0)
+  {
     // Calibration Time: generate offsets and calibrate our MPU6050
-//    mpu.CalibrateAccel(6);  Coment this out to fix calibration
-//    mpu.CalibrateGyro(6);
-//    Serial.println();
-//    mpu.PrintActiveOffsets();
+    //    mpu.CalibrateAccel(6);  Coment this out to fix calibration
+    //    mpu.CalibrateGyro(6);
+    //    Serial.println();
+    //    mpu.PrintActiveOffsets();
     // turn on the DMP, now that it's ready
     Serial.println(F("Enabling DMP..."));
     mpu.setDMPEnabled(true);
 
-//    // enable Arduino interrupt detection
-//    Serial.print(F("Enabling interrupt detection (Arduino external interrupt "));
-//    Serial.print(digitalPinToInterrupt(INTERRUPT_PIN));
-//    Serial.println(F(")..."));
-//    attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
-//    mpuIntStatus = mpu.getIntStatus();
+    //    // enable Arduino interrupt detection
+    //    Serial.print(F("Enabling interrupt detection (Arduino external interrupt "));
+    //    Serial.print(digitalPinToInterrupt(INTERRUPT_PIN));
+    //    Serial.println(F(")..."));
+    //    attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
+    //    mpuIntStatus = mpu.getIntStatus();
 
     // set our DMP Ready flag so the main loop() function knows it's okay to use it
-//    Serial.println(F("DMP ready! Waiting for first interrupt..."));
+    //    Serial.println(F("DMP ready! Waiting for first interrupt..."));
     dmpReady = true;
 
     // get expected DMP packet size for later comparison
     packetSize = mpu.dmpGetFIFOPacketSize();
-  } else {
+  }
+  else
+  {
     // ERROR!
     // 1 = initial memory load failed
     // 2 = DMP configuration updates failed
@@ -217,73 +219,75 @@ void imu_setup_dmp(void) {
     Serial.print(devStatus);
     Serial.println(F(")"));
   }
-
 }
 
-void readFifoBuffer_() {
+void readFifoBuffer_()
+{
   // Clear the buffer so as we can get fresh values
   // The sensor is running a lot faster than our sample period
   mpu.resetFIFO();
-  
+
   // get current FIFO count
   fifoCount = mpu.getFIFOCount();
-  
+
   // wait for correct available data length, should be a VERY short wait
-  while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
+  while (fifoCount < packetSize)
+    fifoCount = mpu.getFIFOCount();
 
   // read a packet from FIFO
   mpu.getFIFOBytes(fifoBuffer, packetSize);
 }
 
-void getEulerAngles_dmp(float *angles){
+void getEulerAngles_dmp(float *angles)
+{
   readFifoBuffer_();
   mpu.dmpGetQuaternion(&q, fifoBuffer);
   mpu.dmpGetGravity(&gravity, &q);
   mpu.dmpGetYawPitchRoll(angles, &q, &gravity);
 }
 
-
-//double getTilt(void){
-//  mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b);  // gyro (+/- 250 deg/s) accel (+/- 2g)
-//  ax = 4*(ax_b/65535.0);  // g 
-//  ay = 4*(ay_b/65535.0);  // g 
-//  az = 4*(az_b/65535.0);  // g 
-//  gx = 2*250*(gx_b/(65535.0));  // deg/s
-//  gy = 2*250*(gy_b/(65535.0));  // deg/s
-//  gz = 2*250*(gz_b/(65535.0));  // deg/s
+// double getTilt(void){
+//   mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b);  // gyro (+/- 250 deg/s) accel (+/- 2g)
+//   ax = 4*(ax_b/65535.0);  // g
+//   ay = 4*(ay_b/65535.0);  // g
+//   az = 4*(az_b/65535.0);  // g
+//   gx = 2*250*(gx_b/(65535.0));  // deg/s
+//   gy = 2*250*(gy_b/(65535.0));  // deg/s
+//   gz = 2*250*(gz_b/(65535.0));  // deg/s
 //
-//  // Complementary filter
-//  accelPitch = atan2(ax, az) * RAD_TO_DEG;
+//   // Complementary filter
+//   accelPitch = atan2(ax, az) * RAD_TO_DEG;
 //
-//  pitch = (tau)*(pitch + (-gy)*0.05) + (1-tau)*(accelPitch);
-//   
-//  return pitch;
-//   
-//}
+//   pitch = (tau)*(pitch + (-gy)*0.05) + (1-tau)*(accelPitch);
+//
+//   return pitch;
+//
+// }
 
-void getAccelGyro(float* ay, float* az, float* gx, float* gz){
-  mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b);  // gyro (+/- 250 deg/s) accel (+/- 2g)
-  ay[0] = 4*(ay_b/65535.0);  // g 
-  az[0] = 4*(az_b/65535.0);  // g 
-  gx[0] = 2*250*(gx_b/(65535.0));  // deg/s
-  gz[0] = 2*250*(gz_b/(65535.0));  // deg/s
-   
+void getAccelGyro(float *ay, float *az, float *gx, float *gz)
+{
+  mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b); // gyro (+/- 250 deg/s) accel (+/- 2g)
+  ay[0] = 4 * (ay_b / 65535.0);                             // g
+  az[0] = 4 * (az_b / 65535.0);                             // g
+  gx[0] = 2 * 250 * (gx_b / (65535.0));                     // deg/s
+  gz[0] = 2 * 250 * (gz_b / (65535.0));                     // deg/s
 }
 
-float updatePitch(float currentAngle){
-  float currentAngle_deg = - currentAngle * RAD_TO_DEG;
+float updatePitch(float currentAngle)
+{
+  float currentAngle_deg = -currentAngle * RAD_TO_DEG;
   getAccelGyro(&ay, &az, &gx, &gz);
   accelPitch = atan2(ay, az) * RAD_TO_DEG;
-  pitch_deg = (tau)*(currentAngle_deg + (gx)*LOOP_PERIOD) + (1-tau)*(accelPitch);  
-  pitch_rad = - pitch_deg * DEG_TO_RAD;
+  pitch_deg = (tau) * (currentAngle_deg + (gx)*LOOP_PERIOD) + (1 - tau) * (accelPitch);
+  pitch_rad = -pitch_deg * DEG_TO_RAD;
 
   return pitch_rad;
 }
 
-float updateYaw(float currentYaw){
+float updateYaw(float currentYaw)
+{
   getAccelGyro(&ay, &az, &gx, &gz);
   newYaw = currentYaw + gz * DEG_TO_RAD;
 
   return newYaw;
 }
-  

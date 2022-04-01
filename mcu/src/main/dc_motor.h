@@ -8,8 +8,6 @@
 #define IN4 2
 #define ENB 15
 
-
-
 // Global Function Protoyes
 void motor_init(void);
 void stop_motor(void);
