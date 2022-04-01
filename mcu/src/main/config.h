@@ -14,7 +14,7 @@
 // RL parameters
 #define NUMBER_OF_INPUTS 1
 #define NUMBER_OF_OUTPUTS 2
-#define RL_INPUT_NORMALIZATION 1.5708   // (in_norm = in / RL_INPUT_NORMALIZATION)   --- //1.5708  // 0.06519447
+#define RL_INPUT_NORMALIZATION 1.5708       // (in_norm = in / RL_INPUT_NORMALIZATION)   --- //1.5708  // 0.06519447
 #define RL_OUTPUT_DENORMALIZATION 255.0     // (out = out_norm * RL_OUTPUT_DENORMALIZATION)
 #define TENSOR_ARENA_SIZE 16*1024           // You may need to tweak this value.
 

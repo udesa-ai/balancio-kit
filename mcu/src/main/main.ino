@@ -60,7 +60,7 @@ void loop()
   {
     // Get if X button was pressed
     x_down = x_button_pressed();
-    if (x_down and (millis() - time_ctr2)>=500)
+    if (x_down and (millis() - time_ctr2) >= 500)
     {
       stop_command = abs(stop_command - 1);
       time_ctr2 = millis();
@@ -70,7 +70,6 @@ void loop()
     currentAngle = updatePitch(currentAngle);
     yaw = updateYaw(yaw);
 
-    
     if (stop_command || (currentAngle > angle_limit) || (currentAngle < -angle_limit))
     {
       // Stop motors
@@ -82,10 +81,10 @@ void loop()
       // Reset PID
       if (control_algo.equals("PID"))
       {
-        ((PID*) pitch_control)->reset(0.0);
+        ((PID *)pitch_control)->reset(0.0);
       }
 
-      ((PID*) yaw_control)->reset(targetYaw);
+      ((PID *)yaw_control)->reset(targetYaw);
     }
     else
     {
@@ -128,7 +127,6 @@ void loop()
         Serial.println(micros() - time_ctr);
         time_ctr = micros();
       }
-      
     }
 
     controlFlag = false;
