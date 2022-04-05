@@ -108,46 +108,64 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 
 3. Subir el programa a la placa y usar el monitor serial para obtener las compensaciones de la IMU
 
-4. Modificar las compensaciones en el archivo `imu.ino` en:
+4. Modificar las compensaciones en el archivo `balancio-kit/mcu/src/main/config.h` en:
 ```c++
-mpu.setXAccelOffset(-3831);
-mpu.setYAccelOffset(1437);
-mpu.setZAccelOffset(1156);
-mpu.setXGyroOffset(-12);
-mpu.setYGyroOffset(-50);
-mpu.setZGyroOffset(-19);
+// IMU calibration parameters
+#define X_ACCEL_OFFSET -1775
+#define Y_ACCEL_OFFSET  756
+#define Z_ACCEL_OFFSET  2706
+#define X_GYRO_OFFSET   181
+#define Y_GYRO_OFFSET   77
+#define Z_GYRO_OFFSET   60
 ```
 
 
 ### Calibrar angulo de equilibrio
-1. Abrir `Balancio-kit/Code/Mcu/Src/pid/pid.ino`
+1. Abrir `balancio-kit/mcu/src/main/main.ino`
 
 2. Sostener el robot en la posición de equilibrio
 
 3. Subir el programa a la placa y usar el monitor serial para obtener las compensaciones de angulo
 
-4. Modificar en angulo de equilibrio en el archivo `PID.ino` en la línea:
+4. Modificar en angulo de equilibrio en el archivo `balancio-kit/mcu/src/main/config.h` en la línea:
 ```c++
-#define zero_targetAngle 0.01  // Calibrated point
+// Angle of (approximate) static equilibrium
+#define STATIC_ANGLE -0.04 // Calibrated point
 ```
 ### Calibración constantes PID
 1. Sacar el jumper de 12v en el driver 
 
-2. Elegir parámetros por algún método como Zigler-Nichols
+2. Elegir parámetros por algún método, como por ejemplo Zigler-Nichols
 
 3. Probar las constantes, si se sacó el jumper se puede probar incluso con el cable conectado. **Cuidado al hacer esto!**
 
-4. modificar las constantes del PID en el archivo `PID.ino` en las líneas:
+4. modificar las constantes del PID en el archivo `balancio-kit/mcu/src/main/config.h` en las líneas:
 ```c++
-#define Kp  2000
-#define Kd  20.0
-#define Ki  22000
+// PID Constants for pitch control
+#define KP 2000
+#define KI 22000
+#define KD 20.0
 ```
 ---
 
 ## Uso
 
-Se lo puede controlar con un joystick de Ps3 y con una app mediante Bluethooth Classic, hay que cambiar los flags correspondientes en el código.
+Una vez configurado correctamente el robot, se pueden seleccionar distintos parametros de configuracion en el archivo correspondiente (`config.h`). 
+
+Entre ellos, se puede seleccionar el tipo de controlador deseado para estabilizar el Balancio.
+
+Por ejemplo, en caso de querer utilizar un controlador PID:
+```c++
+// Control algorithm type
+#define CONTROL_ALGO "PID"
+```
+
+En caso de querer utilzar un agente de aprendizaje por refuerzo:
+```c++
+// Control algorithm type
+#define CONTROL_ALGO "RL"
+```
+
 
 ---
 ## TODO
