@@ -1,3 +1,10 @@
+/*
+======================================================================
+ Balancio-Kit (c) 2021 Linar (UdeSA)
+ This code is licensed under MIT license (see LICENSE.txt for details)
+======================================================================
+*/
+
 #include "commander.h"
 #include <Ps3Controller.h>
 #include "config.h"
@@ -6,11 +13,8 @@
 
 void ps3_setup(void)
 {
-    //    Ps3.attach(notify);
     Ps3.attachOnConnect(onConnect);
-    //    Ps3.begin("8c:7c:b5:97:58:48");
     Ps3.begin("08:d2:3e:45:6f:18");
-
     Serial.println("Joystick Ready.");
 }
 

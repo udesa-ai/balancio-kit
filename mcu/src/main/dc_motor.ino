@@ -1,3 +1,10 @@
+/* 
+======================================================================
+ Balancio-Kit (c) 2021 Linar (UdeSA)
+ This code is licensed under MIT license (see LICENSE.txt for details)
+====================================================================== 
+*/
+
 #include "dc_motor.h"
 
 #define L_CHANNEL 0

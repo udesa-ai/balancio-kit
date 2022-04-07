@@ -246,24 +246,6 @@ void getEulerAngles_dmp(float *angles)
   mpu.dmpGetYawPitchRoll(angles, &q, &gravity);
 }
 
-// double getTilt(void){
-//   mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b);  // gyro (+/- 250 deg/s) accel (+/- 2g)
-//   ax = 4*(ax_b/65535.0);  // g
-//   ay = 4*(ay_b/65535.0);  // g
-//   az = 4*(az_b/65535.0);  // g
-//   gx = 2*250*(gx_b/(65535.0));  // deg/s
-//   gy = 2*250*(gy_b/(65535.0));  // deg/s
-//   gz = 2*250*(gz_b/(65535.0));  // deg/s
-//
-//   // Complementary filter
-//   accelPitch = atan2(ax, az) * RAD_TO_DEG;
-//
-//   pitch = (tau)*(pitch + (-gy)*0.05) + (1-tau)*(accelPitch);
-//
-//   return pitch;
-//
-// }
-
 void getAccelGyro(float *ay, float *az, float *gx, float *gz)
 {
   mpu.getMotion6(&ax_b, &ay_b, &az_b, &gx_b, &gy_b, &gz_b); // gyro (+/- 250 deg/s) accel (+/- 2g)

@@ -1,3 +1,10 @@
+/* 
+======================================================================
+ Balancio-Kit (c) 2021 Linar (UdeSA)
+ This code is licensed under MIT license (see LICENSE.txt for details)
+====================================================================== 
+*/
+
 #include "config.h"
 #include "controllers.h"
 #include "rl_model.h"
@@ -61,7 +68,7 @@ PID::PID(float kp_init, float ki_init, float kd_init, float sum_constraint_init)
     kp = kp_init;
     ki = ki_init;
     kd = kd_init;
-    sum_constraint = sum_constraint_init; // 5
+    sum_constraint = sum_constraint_init; 
 }
 
 std::vector<float> PID::update(float current_angle, float target_angle)
