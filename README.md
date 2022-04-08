@@ -1,11 +1,12 @@
-# Balacio-Kit
+# Balancio-Kit
 
 ![license_MIT](https://img.shields.io/github/license/udesa-ai/balancio-kit)
 ![stars](https://img.shields.io/github/stars/udesa-ai/balancio-kit)
 
 
-## Información
-
+<details closed> 
+<summary><h2>Información</h2></summary>
+    
 Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capaz de correr una red neuronal para mantener el equilibrio y de ser controlado de manera inalámbrica  :trackball:.
 
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
@@ -15,8 +16,12 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/Balanciov0_4.jpg" width="219">
     <img src="resources/balancio_gif.gif" width="124">
 </p>
+</details>   
+
 
 ## Ensamblaje :wrench:
+<details open>
+<summary>Click</summary> 
 El balancio-kit consta de los siguientes componentes:
 - Placa base (impresa en 3D o hecha con algún otro material) 
 - Microcontrolador NodeMCU ESP32
@@ -28,7 +33,8 @@ El balancio-kit consta de los siguientes componentes:
 <p align="center">
     <img src="resources/Balancio_plano.png" width="530">
 </p>
-
+  </details>   
+   
 ## Instalación :floppy_disk:
 
 En primer lugar, se debe clonar el repositorio. Esto se puede realizar tanto descargando el mismo
@@ -37,29 +43,51 @@ como un .ZIP, o ejecutando `git clone https://github.com/UDESA-AI/balancio-kit.g
 La instalación consta de 3 módulos principales: Microcontrolador, simulación y aplicación.
 Éstos son fundamentales para el funcionamiento completo del proyecto, pero la instalación
 de cada uno de ellos se puede realizar en distinto orden.
-
+  
+  
 ### Microcontrolador
 
+<details open>
+<summary>Instalación IDE</summary> 
 Para programar y compilar el NodeMCU ESP32 usaremos la IDE de Arduino. Para esto se
 debe instalar la misma siguiendo los pasos que se especifican en el siguiente 
 [link](https://www.arduino.cc/en/software).
-
+</details> 
+<details open>
+<summary>Habilitación Microcrontolador</summary> 
 Una vez instalada la IDE, se debe habilitar el microcontrolador que vamos a usar.
 Para esto se deben seguir los siguientes pasos:
+    
 1. En la IDE, ir a 'File' (Archivos) → 'Preferences' (Preferencias)
+    
 2. En el campo "Additional Boards Manager URLs", agregar lo siguiente: https://dl.espressif.com/dl/package_esp32_index.json. (Luego clickear 'OK').
 3. Ir a 'Tools' → 'Board: ' → 'Boards Manager…' 
+    
 4. Buscar "esp32", e instalar "esp32 by Espressif Systems" presionando el botón 'Install'.
+    
 5. Indicarle a la IDE que vamos a utilizar un esp32. Ir a 'Tools' → 'Board:' → 'ESP32 Arduino' → 'NodeMCU-32S'
+    
 6. En 'Tools' → 'Port', seleccionar el puerto correspondiente a donde está conectado el microcontrolador.
 
+</details> 
+
+<details open>
+<summary>Librerias de Arduino</summary> 
 Luego procederemos a instalar las librerías de arduino que vamos a utilizar:
+    
+   
 - Para eso ir a 'Sketch' → 'Include Library' → 'Manage Libraries…'
+    
+    
 - Buscar e instalar las siguientes librerias, especificando la versión correspondiente:
     - MPU6050 by Electronic Cats (version 0.5.0)
     - PS3 Controller Host by Jeffrey van Pernis (version 1.1.0)
     - EloquentTinyML by Simone Salerno (version 0.0.7)
-
+    
+    
+</details> 
+<details open>
+<summary>Ejecusión Prueba y Errores</summary> 
 Para comprobar la instalación, ejecutaremos un ejemplo de prueba:
 - ir a 'File' → 'Examples' → 'WiFi' → 'WiFiScan'
 - En el sketch generado, presionar el botón de carga ('Upload')  :calling:
@@ -67,10 +95,11 @@ Para comprobar la instalación, ejecutaremos un ejemplo de prueba:
 
 Posibles errores:
 - Si no se puede cargar el programa al microcontrolador, intentar mantener presionado el botón "boot" presente en la placa, mientras se realiza la carga. Esto se debería realizar solo la primera vez.
-
+</details> 
 
 ### Simulación
-
+<details open>
+<summary>Simulación e Instalación de Conda </summary> 
 La simulación corre en Python :snake:, y utiliza diversos paquetes. Para facilitar la instalación de los mismos, utilizaremos [Conda](https://docs.conda.io/en/latest/).
 
 Se debe seguir con los siguientes pasos:
@@ -92,17 +121,24 @@ Se debe seguir con los siguientes pasos:
     `python setup.py`
 5. Probar la instalación, corriendo el siguiente [script](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/simulation/pid.py):
     `python pid.py`
+    </details> 
+## Aplicación 
 
-### Aplicación
-La aplicación está creada en [MIT App Inventor](https://appinventor.mit.edu/).
+<details open>
+<summary>Click</summary>
+    La aplicación está creada en [MIT App Inventor](https://appinventor.mit.edu/).
 
 Simplemente entrar al website e importar el .aia en `Balancio-kit/app/app.aia`. Luego de esto, se puede usar la aplicación mediante bluethooth desde un celular.
 
+</details>   
 
 ## Calibración
 
+
 Estas instrucciones asumen conocimiento del uso de la IDE arduino
-### Compensación IMU
+
+<details open>
+<summary>Compensación IMU</summary>
 1. Abrir `Balancio-kit/Mcu/Src/imu_calibration/imu_calibration.ino` con el IDE Arduino
 2. Colocar el robot con la IMU paralela al piso y mantenerlo firme
 
@@ -118,9 +154,10 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 #define Y_GYRO_OFFSET   77
 #define Z_GYRO_OFFSET   60
 ```
+</details>  
 
-
-### Calibrar angulo de equilibrio
+<details open>
+<summary>Calibrar angulo de equilibrio</summary>
 1. Abrir `balancio-kit/mcu/src/main/main.ino`
 
 2. Sostener el robot en la posición de equilibrio
@@ -132,7 +169,11 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 // Angle of (approximate) static equilibrium
 #define STATIC_ANGLE -0.04 // Calibrated point
 ```
-### Calibración constantes PID
+ </details>   
+ 
+<details open>
+<summary>Calibración constantes PID</summary>    
+
 1. Sacar el jumper de 12v en el driver 
 
 2. Elegir parámetros por algún método, como por ejemplo Zigler-Nichols
@@ -147,8 +188,11 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 #define KD 20.0
 ```
 ---
-
-## Uso
+</details> 
+    
+## uso 
+<details open>
+<summary>Usos</summary> 
 
 Una vez configurado correctamente el robot, se pueden seleccionar distintos parametros de configuracion en el archivo correspondiente (`config.h`). 
 
@@ -165,24 +209,31 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 // Control algorithm type
 #define CONTROL_ALGO "RL"
 ```
-
+</details> 
 
 ---
 ## TODO
-
+<details open>
+<summary>Click</summary> 
 - [x] initial commit
 - [x] Desarrollar aplicación bluetooth
 - [x] Crear agente RL
 - [x] Diseño mecánico
 - [ ] Publicar STEP del diseño mecánico
 - [ ] Crear diagrama electrónico
-
+</details> 
+    
 ## Bugs conocidos
-
+<details open>
+<summary>Click</summary> 
 - Wheel spins on sturtup
-
+</details> 
+    
 ## Contribuciones
+<details open>
+<summary>Click</summary> 
 Las *pull requests* son bienvenidas, para cambios mayores, por favor abrir un *issue* para discutir los cambios deseados
-
+</details> 
+    
 ## Licencia
 [MIT](https://choosealicense.com/licenses/mit/)
