@@ -41,13 +41,13 @@ RlSingleInput::RlSingleInput(void)
     ml.begin(rl_model);
 }
 
-std::vector<float> RlSingleInput::update(float current_angle, float target_angle)
+std::vector<float> RlSingleInput::update(float current_state, float target_state)
 {
     std::vector<float> output;
 
     // Input Normalization (for neural net compatibility).
     // WARNING: This must be the same normalization used during training.
-    error = current_angle - target_angle;
+    error = current_state - target_state;
     error /= RL_INPUT_NORMALIZATION;
     error = constrain(error, -1, 1);
 
@@ -71,22 +71,22 @@ PID::PID(float kp_init, float ki_init, float kd_init, float sum_constraint_init)
     sum_constraint = sum_constraint_init; 
 }
 
-std::vector<float> PID::update(float current_angle, float target_angle)
+std::vector<float> PID::update(float current_state, float target_state)
 {
     std::vector<float> output;
 
-    error = current_angle - target_angle;
+    error = current_state - target_state;
     errorSum += error;
     errorSum = constrain(errorSum, -sum_constraint, sum_constraint);
-    out = kp * (error) + ki * (errorSum)*LOOP_PERIOD + kd * (current_angle - prev_angle) / LOOP_PERIOD;
-    prev_angle = current_angle;
+    out = kp * (error) + ki * (errorSum)*LOOP_PERIOD + kd * (current_state - prev_state) / LOOP_PERIOD;
+    prev_state = current_state;
 
     output.push_back(out);
     return output;
 }
 
-void PID::reset(float previous_angle)
+void PID::reset(float previous_state)
 {
     errorSum = 0.0;
-    prev_angle = previous_angle;
+    prev_state = previous_state;
 }
