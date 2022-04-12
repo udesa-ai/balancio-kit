@@ -3,9 +3,7 @@
 ![license_MIT](https://img.shields.io/github/license/udesa-ai/balancio-kit)
 ![stars](https://img.shields.io/github/stars/udesa-ai/balancio-kit)
 
-
-<details closed> 
-<summary><h2>Información</h2></summary>
+## Información
     
 Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capaz de correr una red neuronal para mantener el equilibrio y de ser controlado de manera inalámbrica  :trackball:.
 
@@ -16,12 +14,11 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/Balanciov0_4.jpg" width="219">
     <img src="resources/balancio_gif.gif" width="124">
 </p>
-</details>   
+
 
 
 ## Ensamblaje :wrench:
-<details open>
-<summary>Click</summary> 
+
 El balancio-kit consta de los siguientes componentes:
 - Placa base (impresa en 3D o hecha con algún otro material) 
 - Microcontrolador NodeMCU ESP32
@@ -33,7 +30,7 @@ El balancio-kit consta de los siguientes componentes:
 <p align="center">
     <img src="resources/Balancio_plano.png" width="530">
 </p>
-  </details>   
+
    
 ## Instalación :floppy_disk:
 
@@ -47,13 +44,13 @@ de cada uno de ellos se puede realizar en distinto orden.
   
 ### Microcontrolador
 
-<details open>
+<details closed>
 <summary>Instalación IDE</summary> 
 Para programar y compilar el NodeMCU ESP32 usaremos la IDE de Arduino. Para esto se
 debe instalar la misma siguiendo los pasos que se especifican en el siguiente 
 [link](https://www.arduino.cc/en/software).
 </details> 
-<details open>
+<details closed>
 <summary>Habilitación Microcrontolador</summary> 
 Una vez instalada la IDE, se debe habilitar el microcontrolador que vamos a usar.
 Para esto se deben seguir los siguientes pasos:
@@ -71,7 +68,7 @@ Para esto se deben seguir los siguientes pasos:
 
 </details> 
 
-<details open>
+<details closed>
 <summary>Librerias de Arduino</summary> 
 Luego procederemos a instalar las librerías de arduino que vamos a utilizar:
     
@@ -86,7 +83,7 @@ Luego procederemos a instalar las librerías de arduino que vamos a utilizar:
     
     
 </details> 
-<details open>
+<details closed>
 <summary>Ejecusión Prueba y Errores</summary> 
 Para comprobar la instalación, ejecutaremos un ejemplo de prueba:
 - ir a 'File' → 'Examples' → 'WiFi' → 'WiFiScan'
@@ -98,7 +95,7 @@ Posibles errores:
 </details> 
 
 ### Simulación
-<details open>
+<details closed>
 <summary>Simulación e Instalación de Conda </summary> 
 La simulación corre en Python :snake:, y utiliza diversos paquetes. Para facilitar la instalación de los mismos, utilizaremos [Conda](https://docs.conda.io/en/latest/).
 
@@ -122,22 +119,20 @@ Se debe seguir con los siguientes pasos:
 5. Probar la instalación, corriendo el siguiente [script](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/simulation/pid.py):
     `python pid.py`
     </details> 
-## Aplicación 
+### Aplicación 
 
-<details open>
-<summary>Click</summary>
+
     La aplicación está creada en [MIT App Inventor](https://appinventor.mit.edu/).
 
 Simplemente entrar al website e importar el .aia en `Balancio-kit/app/app.aia`. Luego de esto, se puede usar la aplicación mediante bluethooth desde un celular.
 
-</details>   
 
 ## Calibración
 
 
 Estas instrucciones asumen conocimiento del uso de la IDE arduino
 
-<details open>
+<details closed>
 <summary>Compensación IMU</summary>
 1. Abrir `Balancio-kit/Mcu/Src/imu_calibration/imu_calibration.ino` con el IDE Arduino
 2. Colocar el robot con la IMU paralela al piso y mantenerlo firme
@@ -156,7 +151,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 ```
 </details>  
 
-<details open>
+<details closed>
 <summary>Calibrar angulo de equilibrio</summary>
 1. Abrir `balancio-kit/mcu/src/main/main.ino`
 
@@ -171,7 +166,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 ```
  </details>   
  
-<details open>
+<details closed>
 <summary>Calibración constantes PID</summary>    
 
 1. Sacar el jumper de 12v en el driver 
@@ -191,7 +186,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 </details> 
     
 ## uso 
-<details open>
+<details Closed>
 <summary>Usos</summary> 
 
 Una vez configurado correctamente el robot, se pueden seleccionar distintos parametros de configuracion en el archivo correspondiente (`config.h`). 
@@ -213,27 +208,22 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 
 ---
 ## TODO
-<details open>
-<summary>Click</summary> 
+
 - [x] initial commit
 - [x] Desarrollar aplicación bluetooth
 - [x] Crear agente RL
 - [x] Diseño mecánico
 - [ ] Publicar STEP del diseño mecánico
 - [ ] Crear diagrama electrónico
-</details> 
+
     
 ## Bugs conocidos
-<details open>
-<summary>Click</summary> 
 - Wheel spins on sturtup
-</details> 
+
     
 ## Contribuciones
-<details open>
-<summary>Click</summary> 
+ 
 Las *pull requests* son bienvenidas, para cambios mayores, por favor abrir un *issue* para discutir los cambios deseados
-</details> 
-    
+
 ## Licencia
 [MIT](https://choosealicense.com/licenses/mit/)
