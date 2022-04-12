@@ -44,13 +44,13 @@ de cada uno de ellos se puede realizar en distinto orden.
   
 ### Microcontrolador
 
-<details closed>
+<details open>
 <summary>Instalación IDE</summary> 
 Para programar y compilar el NodeMCU ESP32 usaremos la IDE de Arduino. Para esto se
 debe instalar la misma siguiendo los pasos que se especifican en el siguiente 
 [link](https://www.arduino.cc/en/software).
 </details> 
-<details closed>
+<details open>
 <summary>Habilitación Microcrontolador</summary> 
 Una vez instalada la IDE, se debe habilitar el microcontrolador que vamos a usar.
 Para esto se deben seguir los siguientes pasos:
@@ -68,7 +68,7 @@ Para esto se deben seguir los siguientes pasos:
 
 </details> 
 
-<details closed>
+<details open>
 <summary>Librerias de Arduino</summary> 
 Luego procederemos a instalar las librerías de arduino que vamos a utilizar:
     
@@ -83,7 +83,7 @@ Luego procederemos a instalar las librerías de arduino que vamos a utilizar:
     
     
 </details> 
-<details closed>
+<details open>
 <summary>Ejecusión Prueba y Errores</summary> 
 Para comprobar la instalación, ejecutaremos un ejemplo de prueba:
 - ir a 'File' → 'Examples' → 'WiFi' → 'WiFiScan'
@@ -95,7 +95,7 @@ Posibles errores:
 </details> 
 
 ### Simulación
-<details closed>
+<details open>
 <summary>Simulación e Instalación de Conda </summary> 
 La simulación corre en Python :snake:, y utiliza diversos paquetes. Para facilitar la instalación de los mismos, utilizaremos [Conda](https://docs.conda.io/en/latest/).
 
@@ -132,7 +132,7 @@ Simplemente entrar al website e importar el .aia en `Balancio-kit/app/app.aia`. 
 
 Estas instrucciones asumen conocimiento del uso de la IDE arduino
 
-<details closed>
+<details open>
 <summary>Compensación IMU</summary>
 1. Abrir `Balancio-kit/Mcu/Src/imu_calibration/imu_calibration.ino` con el IDE Arduino
 2. Colocar el robot con la IMU paralela al piso y mantenerlo firme
@@ -151,7 +151,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 ```
 </details>  
 
-<details closed>
+<details open>
 <summary>Calibrar angulo de equilibrio</summary>
 1. Abrir `balancio-kit/mcu/src/main/main.ino`
 
@@ -166,7 +166,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 ```
  </details>   
  
-<details closed>
+<details open>
 <summary>Calibración constantes PID</summary>    
 
 1. Sacar el jumper de 12v en el driver 
@@ -186,7 +186,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 </details> 
     
 ## uso 
-<details Closed>
+<details open>
 <summary>Usos</summary> 
 
 Una vez configurado correctamente el robot, se pueden seleccionar distintos parametros de configuracion en el archivo correspondiente (`config.h`). 
