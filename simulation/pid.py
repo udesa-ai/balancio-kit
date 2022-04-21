@@ -7,7 +7,6 @@ import numpy as np
 from balancio_lib.environments import balancioGymEnv
 import argparse
 
-
 # Instantiate the parser
 parser = argparse.ArgumentParser(
     description='PID control algorithm script for the Balancio-Kit simulation.')
@@ -17,7 +16,7 @@ parser.add_argument("-ki", "--ki", action='store', default=22000.0,
                     type=float, help="Derivative gain (Default: 22000).")
 parser.add_argument("-kd", "--kd", action='store', default=20.0,
                     type=float, help="Integral gain (Default: 20).")
-parser.add_argument("--RealIMU",   action='store_true',
+parser.add_argument("--RealIMU", action='store_true',
                     help="Simulate real IMU [IN DEVELOPMENT]")
 args = parser.parse_args()
 
@@ -29,10 +28,10 @@ else:
 # Loop control frequency. This freq. has to match the one used in the microcontroller.
 LoopFreq = 100  # Hz
 # Simulation step period.
-StepPeriod = (1/240) * 1/10  # s
+StepPeriod = (1 / 240) * 1 / 10  # s
 # Simulation steps in each control cycle.
 # For Microcontroller loop frequency compatibility
-actions_per_step = int(round((1/LoopFreq)/StepPeriod))
+actions_per_step = int(round((1 / LoopFreq) / StepPeriod))
 
 # Gym environment.
 env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True,
@@ -75,22 +74,21 @@ while True:
 
     # Compute PID.
     pid_p = Kp * delta_tita
-    errorSum += delta_tita * (1/LoopFreq)
+    errorSum += delta_tita * (1 / LoopFreq)
     errorSum = np.clip(errorSum, -5, 5)
     pid_i = Ki * errorSum
-    pid_d = Kd * ((delta_tita - previous_delta_tita) / (1/LoopFreq))
+    pid_d = Kd * ((delta_tita - previous_delta_tita) / (1 / LoopFreq))
     previous_delta_tita = delta_tita
     pwm = -(pid_p + pid_i + pid_d)
-    pwm = pwm/255
+    pwm = pwm / 255
     pwm = np.clip(pwm, -1, 1)
 
     # action: [left, right]
-    action = [pwm + 0.2*yaw_rate, pwm - 0.2*yaw_rate]
+    action = [pwm + 0.2 * yaw_rate, pwm - 0.2 * yaw_rate]
     # Normalize action
     normalized_action = env.normalize_action(action)
 
     # Step simulation. Get new state.
     tita, rew, done, _ = env.step(normalized_action)
     tita = tita[0]
-    # print(tita)
     tita = env.normalizer_denormalize(tita)[0]
