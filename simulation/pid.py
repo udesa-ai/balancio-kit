@@ -42,12 +42,12 @@ Kp = args.kp
 Ki = args.ki
 Kd = args.kd
 tita_target = 0.0
-delta_tita = 0
-previous_delta_tita = 0
-errorSum = 0
-pid_p = 0
-pid_i = 0
-pid_d = 0
+delta_tita = 0.0
+previous_delta_tita = 0.0
+errorSum = 0.0
+pid_p = 0.0
+pid_i = 0.0
+pid_d = 0.0
 
 # Reset agent.
 tita = env.reset()[0]
@@ -63,7 +63,7 @@ while True:
     if done:
         tita = env.reset()[0]
         tita = env.normalizer_denormalize(tita)[0]
-        errorSum = 0
+        errorSum = 0.0
 
     # Get commands.
     tita_target = env.get_slider_tita()
@@ -80,7 +80,7 @@ while True:
     pid_d = Kd * ((delta_tita - previous_delta_tita) / (1 / LoopFreq))
     previous_delta_tita = delta_tita
     pwm = -(pid_p + pid_i + pid_d)
-    pwm = pwm / 255
+    pwm = pwm / 255.0
     pwm = np.clip(pwm, -1, 1)
 
     # action: [left, right]
