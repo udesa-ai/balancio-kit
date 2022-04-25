@@ -9,6 +9,7 @@ Based on: https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet
 """
 
 import numpy as np
+from typing import Tuple
 
 MOTOR_VOLTAGE = 28.0            # 40*Kg.Dm²/A.(10.s)³       # 7.0 -> [6.6, 7.4]     V : Kg.M²/A.s³
 MOTOR_RESISTANCE = 21.2         # 40*Kg.Dm²/A².(10.s)³      # 5.3 +- 0.1            Ohm : Kg.M²/A².s³
@@ -52,8 +53,8 @@ class MotorModel(object):
         return self._viscous_damping
 
     def convert_to_torque(self,
-                          pwm,
-                          true_motor_velocity):
+                          pwm: np.ndarray,
+                          true_motor_velocity: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """Convert the commands (pwm) to torque, taking into account static and dynamic friction.
 
           @param pwm: The pwm signal.
