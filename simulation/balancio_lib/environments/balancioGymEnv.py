@@ -49,7 +49,6 @@ class BalancioGymEnv(gym.Env):
                  backlash: bool = True,
                  real_imu: bool = False,
                  seed: Union[str, int] = None,
-                 algo_mode: str = 'RL',  # 'RL' or 'PID'
                  memory_buffer: int = 1,
                  only_pitch: bool = True,
                  policy_feedback: bool = False
@@ -64,7 +63,6 @@ class BalancioGymEnv(gym.Env):
         @param backlash: Whether to apply backlash to the motors or not.
         @param real_imu: If the pitch is calculated directly (False) or via a complementary filter of a simulated IMU (True).
         @param seed: Gym and Numpy random seed.
-        @param algo_mode: Control algorithm running on top of the environment. (RL, PID, etc).
         @param memory_buffer: Number of time-steps stored and returned for each observation component.
         @param only_pitch: If the observation contains only the robot's pitch.
         @param policy_feedback: If the observation contains the motor commands of the previous time-step.
@@ -87,7 +85,6 @@ class BalancioGymEnv(gym.Env):
         self.filter_tau = 0.98
         self.pitch_ri = 0
         self.seed(seed)
-        self._algo_mode = algo_mode
         self._memory_buffer = memory_buffer
         self._only_pitch = only_pitch
         self._policy_feedback = policy_feedback
@@ -268,10 +265,7 @@ class BalancioGymEnv(gym.Env):
             if i == self._action_repeat - 1:
                 self._observation = self.get_observation_UPDATE()
             if self._termination():
-                if self._algo_mode == 'RL':
-                    break
-                elif self._algo_mode == 'PID':
-                    pass
+                break
             self._env_step_counter += 1
         reward = self._reward()
         done = self._termination()
