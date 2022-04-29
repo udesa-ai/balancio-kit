@@ -17,8 +17,12 @@ URDF_PATH = os.path.join('/', *os.path.dirname(os.path.realpath(__file__)).split
 
 class Balancio:
 
-    def __init__(self, bullet_client, urdf_root_path='', time_step=1 / 240, backlash=True):
-        self.urdf_root_path = urdf_root_path  # Usar para mnodificar el path del URDF a uno relativo
+    def __init__(self, bullet_client, time_step=1 / 240, backlash=True):
+        """Class constructor.
+        @param bullet_client: Pybullet client.
+        @param time_step: Period of each timestep.
+        @param backlash: Whether to apply backlash to the motors or not.
+        """
         self.time_step = time_step  # Intentar dejarlo en el estandar (240hz)
         self._p = bullet_client
 

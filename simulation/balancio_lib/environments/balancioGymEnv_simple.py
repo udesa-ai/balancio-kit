@@ -1,3 +1,12 @@
+# ======================================================================
+#  Balancio-Kit (c) 2021 Linar (UdeSA)
+#  This code is licensed under MIT license (see LICENSE.txt for details)
+# ======================================================================
+
+"""
+    Out of date
+    TODO: Refactor
+"""
 
 import os
 import inspect
@@ -82,7 +91,7 @@ class BalancioGymEnv(gym.Env):
         # stadiumobjects = self._p.loadSDF(os.path.join(self._urdfRoot, "stadium.sdf"))
 
         self._p.setGravity(0, 0, -9.81)
-        self._robot = balancio.Balancio(self._p, urdf_root_path=self._urdf_root, time_step=self._time_step, backlash=self._backlash)
+        self._robot = balancio.Balancio(self._p, time_step=self._time_step, backlash=self._backlash)
         self._env_step_counter = 0
         for i in range(5):
             self._p.stepSimulation()

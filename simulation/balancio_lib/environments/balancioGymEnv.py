@@ -1,3 +1,11 @@
+# ======================================================================
+#  Balancio-Kit (c) 2021 Linar (UdeSA)
+#  This code is licensed under MIT license (see LICENSE.txt for details)
+# ======================================================================
+
+"""
+This module implements an OpenAI Gym environment of the Balancio-Kit.
+"""
 
 import os
 import inspect
@@ -13,7 +21,7 @@ import pybullet_data
 from pkg_resources import parse_version
 from collections import deque
 import matplotlib.pyplot as plt
-
+from typing import Union, Tuple
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(os.path.dirname(currentdir))
@@ -28,23 +36,40 @@ PLOT_DATA = True
 
 
 class BalancioGymEnv(gym.Env):
+    """ Class that encapsulates the Balancio-Kit environment.
+    """
     metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
 
     def __init__(self,
-                 urdf_root=pybullet_data.getDataPath(),
-                 action_repeat=1,
-                 is_discrete=False,
-                 renders=False,
-                 normalize=True,
-                 backlash=True,
-                 real_imu=False,
-                 seed=None,
-                 algo_mode='RL',  # 'RL' or 'PID'
-                 memory_buffer=1,
-                 only_pitch=True,
-                 policy_feedback=False
+                 urdf_root: str = pybullet_data.getDataPath(),
+                 action_repeat: int = 1,
+                 is_discrete: bool = False,
+                 renders: bool = False,
+                 normalize: bool = True,
+                 backlash: bool = True,
+                 real_imu: bool = False,
+                 seed: Union[str, int] = None,
+                 algo_mode: str = 'RL',  # 'RL' or 'PID'
+                 memory_buffer: int = 1,
+                 only_pitch: bool = True,
+                 policy_feedback: bool = False
                  ):
-        self._time_step = 1/240  # 0.01
+        """Class constructor.
+
+        @param urdf_root: Pybullet installation path.
+        @param action_repeat: Number of simulation steps inside a control step.
+        @param is_discrete: If the action space is discrete.
+        @param renders: Render simulation or not.
+        @param normalize: Normalize or not actions and observations.
+        @param backlash: Whether to apply backlash to the motors or not.
+        @param real_imu: If the pitch is calculated directly (False) or via a complementary filter of a simulated IMU (True).
+        @param seed: Gym and Numpy random seed.
+        @param algo_mode: Control algorithm running on top of the environment. (RL, PID, etc).
+        @param memory_buffer: Number of time-steps stored and returned for each observation component.
+        @param only_pitch: If the observation contains only the robot's pitch.
+        @param policy_feedback: If the observation contains the motor commands of the previous time-step.
+        """
+        self._time_step = 1 / 240  # 0.01
         self._urdf_root = urdf_root
         self._action_repeat = action_repeat
         self._observation = []
@@ -95,21 +120,22 @@ class BalancioGymEnv(gym.Env):
         # Normalization parameters
         # Observation vector: [pitch, ax, ay, az, gx, gy, gz, pwmL, pwmR]  -> Varies depending on observation_dim
         # HARD-CODED MEAN AND ST-DEV
-        self.norm_mean = np.array([0, 0,  0, 1.05682576e+00,  0,  0,  0, 0, 0])
+        self.norm_mean = np.array([0, 0, 0, 1.05682576e+00, 0, 0, 0, 0, 0])
         # self.norm_std = np.array([0.06519447, 3.0353326, 1.81746345, 5.0081295, 0.09617138, 0.03410039, 0.26264516, 0.32308017, 0.32999594])
-        self.norm_std = np.array([1.5, 3.0353326, 1.81746345, 5.0081295, 0.09617138, 0.03410039, 0.26264516, 0.32308017, 0.32999594])
+        self.norm_std = np.array(
+            [1.5, 3.0353326, 1.81746345, 5.0081295, 0.09617138, 0.03410039, 0.26264516, 0.32308017, 0.32999594])
         if self._only_pitch and self._policy_feedback:
             self.norm_mean = np.array([self.norm_mean[0], self.norm_mean[-2], self.norm_mean[-1]])
             self.norm_std = np.array([self.norm_std[0], self.norm_std[-2], self.norm_std[-1]])
         else:
-            self.norm_mean = self.norm_mean[:int(observation_dim/self._memory_buffer)]
-            self.norm_std = self.norm_std[:int(observation_dim/self._memory_buffer)]
+            self.norm_mean = self.norm_mean[:int(observation_dim / self._memory_buffer)]
+            self.norm_std = self.norm_std[:int(observation_dim / self._memory_buffer)]
 
         # self.norm_mean = np.zeros(int(observation_dim/self._memory_buffer))
         # self.norm_std = np.ones(int(observation_dim/self._memory_buffer))
         self.norm_ctr = 0
-        self.norm_var = np.ones(int(observation_dim/self._memory_buffer))
-        self.mean_diff = np.zeros(int(observation_dim/self._memory_buffer))
+        self.norm_var = np.ones(int(observation_dim / self._memory_buffer))
+        self.mean_diff = np.zeros(int(observation_dim / self._memory_buffer))
 
         max_act = 1
         self.act_norm = max_act * np.array([1, 1])
@@ -152,16 +178,20 @@ class BalancioGymEnv(gym.Env):
             self.real_pitch_buffer = deque(maxlen=100)
             self.filter_pitch_buffer = deque(maxlen=100)
 
-    def reset(self):
+    def reset(self) -> list:
+        """Reset environment.
+        @return _observation: Initial robot's observation, after resetting the environment.
+        """
         self._p.resetSimulation()
-        #p.setPhysicsEngineParameter(numSolverIterations=300)
+        # p.setPhysicsEngineParameter(numSolverIterations=300)
         self._p.setTimeStep(self._time_step)
         # self._p.setPhysicsEngineParameter(numSolverIterations=300, numSubSteps=200)
         self._p.loadURDF(os.path.join(self._urdf_root, "plane.urdf"))
         # stadiumobjects = self._p.loadSDF(os.path.join(self._urdfRoot, "stadium.sdf"))
 
         self._p.setGravity(0, 0, -0.981)  # Gravity: 0.981 dm/(10.s)^2
-        self._robot = balancio.Balancio(self._p, urdf_root_path=self._urdf_root, time_step=self._time_step, backlash=self._backlash)
+        self._robot = balancio.Balancio(self._p, time_step=self._time_step,
+                                        backlash=self._backlash)
         self._env_step_counter = 0
 
         self.pitch_ri = self._robot.orientation_init_pitch
@@ -188,17 +218,30 @@ class BalancioGymEnv(gym.Env):
         return self._observation
 
     def __del__(self):
+        """Destructor"""
         self._p = 0
 
-    def seed(self, seed_init=None):
+    def seed(self, seed_init: Union[int, str] = None):
+        """Set Gym and Numpy seed.
+        @param seed_init: Seed.
+        """
         self.np_random, seed = seeding.np_random(seed_init)
         if seed_init is not None:
             np.random.seed(seed_init)
         return [seed]
 
-    def step(self, action):
-        """ Note: step receives normalized actions between -1 and 1,
-            and returns also normalized observations between -1 and 1."""
+    def step(self, action: Union[list, np.ndarray]) -> Tuple[list, float, bool, dict]:
+        """Apply one control step to the environment.
+        Note that the period between each control step = action repeat * period of each simulation step.
+
+        @param action: Motor commands.
+                Note: step receives normalized actions between -1 and 1.
+        @return self._observation: Robot's observations.
+                Note: The returned observations are normalized if, self._normalize is True.
+        @return reward: Reward earned by the agent in the current step.
+        @return done: True if the episode has terminated, False if not.
+        @return info: {}
+        """
         # if (self._renders):
         #   basePos, orn = self._p.getBasePositionAndOrientation(self._racecar.racecarUniqueId)
         #   #self._p.resetDebugVisualizerCamera(1, 30, -40, basePos)
@@ -217,12 +260,12 @@ class BalancioGymEnv(gym.Env):
             self._p.stepSimulation()
             if self._renders:
                 elapsed_time = time.time() - self.last_frame_time
-                if elapsed_time < self._time_step/10:
-                    time.sleep(self._time_step/10 - elapsed_time)
+                if elapsed_time < self._time_step / 10:
+                    time.sleep(self._time_step / 10 - elapsed_time)
                 self.last_frame_time = time.time()
 
             self._robot.linear_accel_update()
-            if i == self._action_repeat-1:
+            if i == self._action_repeat - 1:
                 self._observation = self.get_observation_UPDATE()
             if self._termination():
                 if self._algo_mode == 'RL':
@@ -232,11 +275,14 @@ class BalancioGymEnv(gym.Env):
             self._env_step_counter += 1
         reward = self._reward()
         done = self._termination()
-        #print("len=%r" % len(self._observation))
+        # print("len=%r" % len(self._observation))
 
         return self._observation, reward, done, {}
 
-    def render(self, mode='human', close=False):
+    def render(self, mode='human'):
+        # TODO: Check this method
+        """ Gym's Render method.
+        """
         if mode != "rgb_array":
             return np.array([])
         base_pos, orn = self._p.getBasePositionAndOrientation(self._robot.robotUniqueId)
@@ -260,31 +306,61 @@ class BalancioGymEnv(gym.Env):
         return rgb_array
 
     def close(self):
+        """Close pybullet client.
+        """
         self._p.disconnect()
 
-    def _termination(self):
+    def _termination(self) -> bool:
+        """Check if episode has ended.
+        @return: True if episode has terminated.
+        """
         self.pitch_angle = self._robot.get_pitch()[0]
         return self._env_step_counter > EPISODE_LENGTH or abs(self.pitch_angle) > 0.8
 
-    def _reward(self):
+    def _reward(self) -> float:
+        """Calculate reward in current timestep.
+        @return reward: Computed reward.
+        """
         self.pitch_angle = self._robot.get_pitch()[0]
         reward = - np.square(self.pitch_angle)
         return reward
 
-    def normalize_action(self, action):
+    def normalize_action(self, action: Union[list, np.ndarray]) -> Union[list, np.ndarray]:
+        """ Normalize action.
+        @param action: Action to normalize.
+        @return norm_action: Normalized action.
+        """
         # Normalized action -> [-1, 1]
         action_normalizer = self.act_norm
         norm_action = np.array(action) / action_normalizer
         return norm_action
 
-    def denormalize_action(self, normalized_action):
+    def denormalize_action(self, normalized_action: Union[list, np.ndarray]) -> Union[list, np.ndarray]:
+        """ De-normalize action.
+        @param normalized_action: Action to de-normalize.
+        @return denorm_action: Denormalized action.
+        """
         # Normalized action -> [-1, 1]
         action_normalizer = self.act_norm
         denorm_action = np.array(normalized_action) * action_normalizer
         return denorm_action
 
-    def get_observation_UPDATE(self):
-        # Observation vector: [pitch, ax, ay, az, gx, gy, gz, pwmL, pwmR]  -> Varies depending on observation_dim
+    def get_observation_UPDATE(self) -> list:
+        """ Get the robot's observation.
+
+        (!) Warning: This method should be called once per simulation step.
+
+        Depending on the initialization of the environment, the observation can contain the robot's pitch,
+        data from the accelerometer, gyroscope, and/or a feedback from the previous commanded robot.
+        E.g.
+        Observation vector: [pitch, ax, ay, az, gx, gy, gz, pwmL, pwmR]  -> Varies depending on observation_dim.
+        The observed list may contain also data from older time-steps. The amount (n) of time-steps is determined
+        by the variable '_memory_buffer'.
+        E.g.
+        observation vector: [pitch_1, .., pitch_n, ax_1, ..., ax_n, ay_1, ..., ay_n, ...]
+
+        @return full_obs: List containing the different components of the observation.
+        """
 
         sensor_obs = []
 
@@ -305,7 +381,8 @@ class BalancioGymEnv(gym.Env):
             az = linear_accel[2]
             gx = angular_vel[0]
             accel_pitch = np.arctan2(ay, az)
-            self.pitch_ri = self.filter_tau * (self.pitch_ri - gx * self._time_step * self._action_repeat) + (1 - self.filter_tau) * (-accel_pitch)
+            self.pitch_ri = self.filter_tau * (self.pitch_ri - gx * self._time_step * self._action_repeat) + (
+                    1 - self.filter_tau) * (-accel_pitch)
             sensor_obs[0] = self.pitch_ri
 
         if PLOT_DATA and self._real_imu:
@@ -349,14 +426,18 @@ class BalancioGymEnv(gym.Env):
             full_obs.extend(self.pwmR_buffer)
         return full_obs
 
-    def normalizer_update(self, sensor_obs):
+    def normalizer_update(self, sensor_obs: np.ndarray):
+        """ Update observation normalizer.
+
+        @param sensor_obs: New observation.
+        """
         # alfa = 0.05
         self.norm_ctr += 1
-        alfa = 1/self.norm_ctr
+        alfa = 1 / self.norm_ctr
         last_mean = self.norm_mean.copy()
 
         # Running Average
-        self.norm_mean = (1-alfa)*self.norm_mean + alfa*sensor_obs
+        self.norm_mean = (1 - alfa) * self.norm_mean + alfa * sensor_obs
 
         # used to compute variance
         self.mean_diff += (sensor_obs - last_mean) * (sensor_obs - self.norm_mean)
@@ -366,28 +447,47 @@ class BalancioGymEnv(gym.Env):
         self.norm_std = np.sqrt(self.norm_var)
 
     def normalizer_reset(self):
+        """Reset observation normalizer.
+        """
         self.norm_ctr = 0
-        self.norm_mean = np.zeros(int(self.observation_dim/self._memory_buffer))
-        self.mean_diff = np.zeros(int(self.observation_dim/self._memory_buffer))
+        self.norm_mean = np.zeros(int(self.observation_dim / self._memory_buffer))
+        self.mean_diff = np.zeros(int(self.observation_dim / self._memory_buffer))
 
-    def normalizer_normalize(self, sensor_obs):
+    def normalizer_normalize(self, sensor_obs: np.ndarray) -> np.ndarray:
+        """Normalize observation.
+        @param sensor_obs: Observation to normalize.
+        @return: Normalized observation.
+        """
         state_mean = self.norm_mean
         state_std = self.norm_std
         return (sensor_obs - state_mean) / state_std
 
-    def normalizer_denormalize(self, normalized_obs):
+    def normalizer_denormalize(self, normalized_obs: np.ndarray) -> np.ndarray:
+        """Denormalize observation.
+        @param normalized_obs: Observation to de-normalize.
+        @return: De-normalized observation.
+        """
         # Normalized observation -> [-1, 1]
         denorm_obs = normalized_obs * self.norm_std + self.norm_mean
         return denorm_obs
 
     def add_sliders(self):
+        """Add pitch and yaw sliders to the Pybullet GUI.
+        """
         self.tita_slider = self._p.addUserDebugParameter(paramName='Tita', rangeMin=-0.1, rangeMax=0.1, startValue=0.0)
-        self.yaw_slider = self._p.addUserDebugParameter(paramName='Yaw Rate (Dimensionless)', rangeMin=-1, rangeMax=1, startValue=0.0)
+        self.yaw_slider = self._p.addUserDebugParameter(paramName='Yaw Rate (Dimensionless)', rangeMin=-1, rangeMax=1,
+                                                        startValue=0.0)
 
     def get_slider_tita(self):
+        """Get the pitch value from the GUI slider.
+        @return: Pitch value.
+        """
         return self._p.readUserDebugParameter(self.tita_slider)
 
     def get_slider_yaw(self):
+        """Get the yaw value from the GUI slider.
+        @return: Yaw value.
+        """
         return self._p.readUserDebugParameter(self.yaw_slider)
 
     if parse_version(gym.__version__) < parse_version('0.9.6'):
