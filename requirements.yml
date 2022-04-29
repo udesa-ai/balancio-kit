@@ -48,6 +48,7 @@ dependencies:
     - grpcio==1.32.0
     - gym==0.18.0
     - h5py==2.10.0
+    - hexdump==3.3
     - idna==2.10
     - importlib-metadata==4.0.1
     - joblib==1.0.1
