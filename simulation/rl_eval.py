@@ -37,7 +37,7 @@ actions_per_step = int(round((1/LoopFreq)/StepPeriod))  # For Microcontroller lo
 
 
 model = A2C.load(os.path.join(training_save_path, MODEL_NAME, 'best_model'))
-env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE, backlash=BACKLASH, algo_mode='RL', memory_buffer=MEMORY_BUFFER)
+env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE, backlash=BACKLASH, memory_buffer=MEMORY_BUFFER)
 
 
 if CONVERT2KERAS:
