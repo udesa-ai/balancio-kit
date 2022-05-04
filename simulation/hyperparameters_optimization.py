@@ -46,13 +46,13 @@ SEED = 0
 # HyperParameters Tuning
 RL_ALGO_NAME = "A2C"                # Algorithm to which hp are to be optimized
 N_TRIALS = 200                      # Total number of optimization iterations
-N_JOBS = 8                          # Number of parallel runs
+N_JOBS = 2                          # Number of parallel runs
 N_TIMESTEPS = int(1e5)              # Total simulation steps per trial
 N_STARTUP_TRIALS = N_TRIALS // 3    # Number of trials before enabling pruning
 N_WARMUP_STEPS = N_TIMESTEPS // 3   # Number of steps before enabling pruning, in each trial.
 N_EVALUATIONS = 5                   # Number of evaluations in each trial.
 N_EVAL_EPISODES = 2                 # Number of episodes to test the agent in each evaluation.
-TIMEOUT = 8                         # Timeout in hours
+TIMEOUT = 10                         # Timeout in hours
 
 
 def sample_a2c_params(trial: optuna.Trial) -> Dict[str, Any]:
@@ -236,6 +236,5 @@ if __name__ == "__main__":
 
     fig1 = plot_optimization_history(study)
     fig1.show()
-    # TODO: Check -inf rewards
     fig2 = plot_param_importances(study)
     fig2.show()
