@@ -1,63 +1,58 @@
+# ======================================================================
+#  Balancio-Kit (c) 2021 Linar (UdeSA)
+#  This code is licensed under MIT license (see LICENSE.txt for details)
+# ======================================================================
+"""
+Script for optimizing RL hyperparameters.
+Based on: https://github.com/araffin/rl-baselines-zoo/blob/master/utils/hyperparams_opt.py
+"""
+
+# Filter tensorflow version warnings
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=Warning)
+import tensorflow as tf
+tf.get_logger().setLevel('INFO')
+tf.autograph.set_verbosity(0)
+import logging
+tf.get_logger().setLevel(logging.ERROR)
 
 import pickle as pkl
+import yaml
 from typing import Any, Dict
 import gym
-
 from balancio_lib.environments import balancioGymEnv
-
 from stable_baselines import A2C
 from stable_baselines.common.callbacks import EvalCallback
 from stable_baselines.common import set_global_seeds
-
-import tensorflow as tf
-import os
-
 import optuna
 from optuna.pruners import MedianPruner
 from optuna.visualization import plot_optimization_history, plot_param_importances
 
 
+# TODO: Add argument parsing
+
 # Environment
 NORMALIZE = True
 BACKLASH = True
+MEMORY_BUFFER = 1
+LoopFreq = 100  # Hz
+StepPeriod = (1 / 240) * 1 / 10  # s
+actions_per_step = int(round((1 / LoopFreq) / StepPeriod))  # For Microcontroller loop frequency compatibility
 SEED = 0
-# Directories
-training_save_path = os.path.join('Models', 'test')
-training_log_path = os.path.join('Logs', 'test')
 
 # HyperParameters Tuning
-N_TRIALS = 500
-N_JOBS = 16
-N_STARTUP_TRIALS = 5
-N_EVALUATIONS = 2
-N_TIMESTEPS = int(1e5)
-EVAL_FREQ = int(N_TIMESTEPS / N_EVALUATIONS)
-N_EVAL_EPISODES = 3
-TIMEOUT = int(60 * 60 * 8)  # 8 hours
-
-
-def make_env(rank, seed=0):
-    """
-    Utility function for multiprocessed env.
-
-    :param seed: (int) the inital seed for RNG
-    :param rank: (int) index of the subprocess
-    """
-    def _init():
-        env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH, seed=seed + rank)
-        env.seed(seed + rank)
-        return env
-    set_global_seeds(seed)
-    return _init
-
-
-# env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH)
-# # env = DummyVecEnv([lambda: env])
-#
-# DEFAULT_HYPERPARAMS = {
-#     "policy": "MlpPolicy",
-#     "env": env,
-# }
+RL_ALGO_NAME = "A2C"                # Algorithm to which hp are to be optimized
+N_TRIALS = 200                      # Total number of optimization iterations
+N_JOBS = 8                          # Number of parallel runs
+N_TIMESTEPS = int(1e5)              # Total simulation steps per trial
+N_STARTUP_TRIALS = N_TRIALS // 3    # Number of trials before enabling pruning
+N_WARMUP_STEPS = N_TIMESTEPS // 3   # Number of steps before enabling pruning, in each trial.
+N_EVALUATIONS = 5                   # Number of evaluations in each trial.
+N_EVAL_EPISODES = 2                 # Number of episodes to test the agent in each evaluation.
+TIMEOUT = 8                         # Timeout in hours
 
 
 def sample_a2c_params(trial: optuna.Trial) -> Dict[str, Any]:
@@ -70,7 +65,7 @@ def sample_a2c_params(trial: optuna.Trial) -> Dict[str, Any]:
     lr_schedule = "constant"  # trial.suggest_categorical("lr_schedule", ["linear", "constant"])
     learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
     ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
-    # ortho_init = trial.suggest_categorical("ortho_init", [False, True])               # --------> Nose que es
+    # ortho_init = trial.suggest_categorical("ortho_init", [False, True])
     net_arch = trial.suggest_categorical("net_arch", ["tiny", "small", "medium", "big"])
     # activation_fn = trial.suggest_categorical("activation_fn", ["tanh", "relu"])
 
@@ -112,13 +107,13 @@ class TrialEvalCallback(EvalCallback):
     """Callback used for evaluating and reporting a trial."""
 
     def __init__(
-        self,
-        eval_env: gym.Env,
-        trial: optuna.Trial,
-        n_eval_episodes: int = 5,
-        eval_freq: int = 10000,
-        deterministic: bool = True,
-        verbose: int = 0,
+            self,
+            eval_env: gym.Env,
+            trial: optuna.Trial,
+            n_eval_episodes: int = 5,
+            eval_freq: int = 10000,
+            deterministic: bool = True,
+            verbose: int = 0,
     ):
 
         super().__init__(
@@ -145,8 +140,8 @@ class TrialEvalCallback(EvalCallback):
 
 
 def objective(trial: optuna.Trial) -> float:
-
-    env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH)
+    env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
+                                        backlash=BACKLASH, memory_buffer=MEMORY_BUFFER)
 
     DEFAULT_HYPERPARAMS = {
         "policy": "MlpPolicy",
@@ -159,7 +154,8 @@ def objective(trial: optuna.Trial) -> float:
     # Create the RL model
     model = A2C(**kwargs)
     # Create env used for evaluation
-    eval_env = balancioGymEnv.BalancioGymEnv(renders=False, normalize=NORMALIZE, backlash=BACKLASH)
+    eval_env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
+                                             backlash=BACKLASH, memory_buffer=MEMORY_BUFFER)
     # eval_env = DummyVecEnv([lambda: eval_env])
     # eval_env = gym.make(ENV_ID)
 
@@ -169,7 +165,7 @@ def objective(trial: optuna.Trial) -> float:
         eval_env,
         trial,
         n_eval_episodes=N_EVAL_EPISODES,
-        eval_freq=EVAL_FREQ,
+        eval_freq=int(N_TIMESTEPS / N_EVALUATIONS),
         deterministic=True,
     )
 
@@ -196,20 +192,18 @@ def objective(trial: optuna.Trial) -> float:
 
 
 if __name__ == "__main__":
-    # Set pytorch num threads to 1 for faster training
-    # torch.set_num_threads(1)
 
     sampler = optuna.samplers.CmaEsSampler()
     # sampler = TPESampler(n_startup_trials=N_STARTUP_TRIALS)
     # Do not prune before 1/3 of the max budget is used
     pruner = MedianPruner(
-        n_startup_trials=N_STARTUP_TRIALS, n_warmup_steps=N_EVALUATIONS // 3
+        n_startup_trials=N_STARTUP_TRIALS, n_warmup_steps=N_WARMUP_STEPS
     )
 
     study = optuna.create_study(sampler=sampler, pruner=pruner, direction="maximize")
 
     try:
-        study.optimize(objective, n_trials=N_TRIALS, n_jobs=N_JOBS, timeout=TIMEOUT)
+        study.optimize(objective, n_trials=N_TRIALS, n_jobs=N_JOBS, timeout=int(60 * 60 * TIMEOUT))
     except KeyboardInterrupt:
         pass
 
@@ -229,13 +223,19 @@ if __name__ == "__main__":
     #     print(f"    {key}: {value}")
 
     # Write report
-    study.trials_dataframe().to_csv("HyperParameters_optuna.csv")
+    study.trials_dataframe().to_csv("../rl_data/hyperparameters/HyperParameters_optuna.csv")
 
-    with open("HP.pkl", "wb+") as f:
+    with open("../rl_data/hyperparameters/HP.pkl", "wb+") as f:
         pkl.dump(study, f)
+        f.close()
+
+    with open("../rl_data/hyperparameters/HP.yaml", "w") as f:
+        param_dict = {RL_ALGO_NAME: study.best_params}
+        yaml.dump(param_dict, f)
+        f.close()
 
     fig1 = plot_optimization_history(study)
-    fig2 = plot_param_importances(study)
-
     fig1.show()
+    # TODO: Check -inf rewards
+    fig2 = plot_param_importances(study)
     fig2.show()
