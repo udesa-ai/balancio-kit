@@ -32,7 +32,7 @@ from optuna.pruners import MedianPruner
 from optuna.visualization import plot_optimization_history, plot_param_importances
 
 
-# TODO: Add argument parsing
+# TODO: Add argument parsing. Add algorithm and environment selection.
 
 # Environment
 NORMALIZE = True
@@ -66,7 +66,7 @@ def sample_a2c_params(trial: optuna.Trial) -> Dict[str, Any]:
     learning_rate = trial.suggest_loguniform("learning_rate", 1e-5, 1)
     ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
     # ortho_init = trial.suggest_categorical("ortho_init", [False, True])
-    net_arch = trial.suggest_categorical("net_arch", ["tiny", "small", "medium", "big"])
+    neurons_layer = trial.suggest_categorical("neurons_layer", [16, 32, 64, 128])
     # activation_fn = trial.suggest_categorical("activation_fn", ["tanh", "relu"])
 
     # Display true values
@@ -74,14 +74,7 @@ def sample_a2c_params(trial: optuna.Trial) -> Dict[str, Any]:
     # trial.set_user_attr("alpha_", alpha)
     # trial.set_user_attr("n_steps", n_steps)
 
-    if net_arch == "tiny":
-        net_arch = [16, 16]
-    elif net_arch == "small":
-        net_arch = [32, 32]
-    elif net_arch == "medium":
-        net_arch = [64, 64]
-    elif net_arch == "big":
-        net_arch = [128, 128]
+    net_arch = 2*[neurons_layer]
 
     # net_arch = [64, 64]
     act_fun = tf.nn.relu  # {"tanh": tf.nn.tanh, "relu": tf.nn.relu}[activation_fn]
@@ -224,10 +217,6 @@ if __name__ == "__main__":
 
     # Write report
     study.trials_dataframe().to_csv("../rl_data/hyperparameters/HyperParameters_optuna.csv")
-
-    with open("../rl_data/hyperparameters/HP.pkl", "wb+") as f:
-        pkl.dump(study, f)
-        f.close()
 
     with open("../rl_data/hyperparameters/HP.yaml", "w") as f:
         param_dict = {RL_ALGO_NAME: study.best_params}
