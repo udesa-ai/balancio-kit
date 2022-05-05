@@ -23,7 +23,7 @@ from stable_baselines import A2C
 import argparse
 
 
-# TODO: Automate model conversion and algorithm selection.
+# TODO: Automate model conversion.
 
 # Instantiate the parser
 parser = argparse.ArgumentParser(description='Script to evaluate RL agents')
@@ -45,6 +45,8 @@ NORMALIZE = True
 BACKLASH = True
 SEED = 5
 memory_buffer = int(args.EnvName[args.EnvName.find("_")+1::])
+only_pitch = not 'i' in args.EnvName
+policy_feedback = 'f' in args.EnvName
 LoopFreq = 100  # Hz
 StepPeriod = (1 / 240) * 1 / 10  # s
 actions_per_step = int(round((1 / LoopFreq) / StepPeriod))  # For Microcontroller loop frequency compatibility
@@ -54,9 +56,14 @@ training_save_path = os.path.join('../rl_data/models/')
 
 
 def main():
-    model = A2C.load(os.path.join(training_save_path, MODEL_NAME, 'best_model'))
+    if args.Algo == "A2C":
+        model = A2C.load(os.path.join(training_save_path, MODEL_NAME, 'best_model'))
+    else:
+        raise Exception("Insert a compatible RL algorithm: A2C, ...")
+
     env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
-                                        backlash=BACKLASH, memory_buffer=memory_buffer)
+                                        backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                        policy_feedback=policy_feedback)
 
     # Convert stable-baselines model to keras, for further lite conversion.
     if CONVERT2KERAS:
