@@ -22,22 +22,29 @@ from balancio_lib.environments import balancioGymEnv
 from stable_baselines import A2C
 import argparse
 
+
+# TODO: Automate model conversion and algorithm selection.
+
 # Instantiate the parser
 parser = argparse.ArgumentParser(description='Script to evaluate RL agents')
-parser.add_argument("-mn", "--modelName", action='store', default='model', type=str,
-                    help="Name of the model to be evaluated [Default: model]")
+parser.add_argument("-mn", "--ModelName", action='store', default='A2C_p_1_dev', type=str,
+                    help="Name of the model to be evaluated [Default: A2C_p_1_dev]")
+parser.add_argument("-a", "--Algo", action='store', default='A2C', type=str,
+                    help="Reinforcement Learning algorithm used during training [Default: 'A2C'].")
+parser.add_argument("-en", "--EnvName", action='store', default='p_1', type=str,
+                    help="Environment name: 'pif_b' --> p if pitch, i if imu, f if feedback, b buffer length. [Default: 'p_1'].")
 args = parser.parse_args()
 
 # Params
 CONVERT2KERAS = False  # Save Stable Baselines model to Keras, and evaluate it.
-MODEL_NAME = args.modelName  # Folder name where best_model.zip is held.
+MODEL_NAME = args.ModelName  # Folder name where best_model.zip is held.
 NET_LAYERS = [32, 32]
-MEMORY_BUFFER = 1
 
 # Environment
 NORMALIZE = True
 BACKLASH = True
 SEED = 5
+memory_buffer = int(args.EnvName[args.EnvName.find("_")+1::])
 LoopFreq = 100  # Hz
 StepPeriod = (1 / 240) * 1 / 10  # s
 actions_per_step = int(round((1 / LoopFreq) / StepPeriod))  # For Microcontroller loop frequency compatibility
@@ -49,7 +56,7 @@ training_save_path = os.path.join('../rl_data/models/')
 def main():
     model = A2C.load(os.path.join(training_save_path, MODEL_NAME, 'best_model'))
     env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
-                                        backlash=BACKLASH, memory_buffer=MEMORY_BUFFER)
+                                        backlash=BACKLASH, memory_buffer=memory_buffer)
 
     # Convert stable-baselines model to keras, for further lite conversion.
     if CONVERT2KERAS:
