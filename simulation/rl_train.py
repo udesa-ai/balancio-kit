@@ -37,8 +37,6 @@ parser.add_argument("-en", "--EnvName", action='store', default='p_1', type=str,
 args = parser.parse_args()
 
 
-# TODO: Add RL algorithm selection and automate env generator based on EnvName.
-
 # Policy hyperparameters
 MODEL_NAME = args.Algo + "_" + args.EnvName
 TIMESTEPS = 250000  # 1000000
@@ -50,6 +48,8 @@ NORMALIZE = True
 BACKLASH = True
 SEED = 5
 memory_buffer = int(args.EnvName[args.EnvName.find("_")+1::])
+only_pitch = not 'i' in args.EnvName
+policy_feedback = 'f' in args.EnvName
 LoopFreq = 100  # Hz
 StepPeriod = (1 / 240) * 1 / 10  # s
 actions_per_step = int(round((1 / LoopFreq) / StepPeriod))  # For Microcontroller loop frequency compatibility
@@ -66,7 +66,8 @@ def make_env(rank: int, seed: int = 0) -> Callable:
 
     def _init():
         env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
-                                            backlash=BACKLASH, seed=seed + rank, memory_buffer=memory_buffer)
+                                            backlash=BACKLASH, seed=seed + rank, memory_buffer=memory_buffer,
+                                            only_pitch=only_pitch, policy_feedback=policy_feedback)
         env.seed(seed + rank)
         return env
 
@@ -89,7 +90,8 @@ def main():
     # Environment used for evaluation.
     eval_env = DummyVecEnv([lambda: balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False,
                                                                   normalize=NORMALIZE, backlash=BACKLASH,
-                                                                  memory_buffer=memory_buffer)])
+                                                                  memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                                                  policy_feedback=policy_feedback)])
     eval_callback = EvalCallback(eval_env,
                                  eval_freq=int(EVAL_FREQ/NUM_CPU),
                                  best_model_save_path=training_save_path,
@@ -105,15 +107,26 @@ def main():
     net_layers = 2*[rl_algo_hp["neurons_layer"]]
     policy_kwargs = dict(act_fun=tf.nn.relu, net_arch=net_layers)
     # model = PPO2(MlpPolicy, env, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
-    model = A2C(MlpPolicy, train_env, gamma=rl_algo_hp["gamma"], n_steps=rl_algo_hp["n_steps"], ent_coef=rl_algo_hp["ent_coef"], max_grad_norm=rl_algo_hp["max_grad_norm"],
-                vf_coef=rl_algo_hp["vf_coef"], learning_rate=rl_algo_hp["learning_rate"], alpha=rl_algo_hp["alpha"],
-                policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
+
+    if args.Algo == "A2C":
+        model = A2C(MlpPolicy, train_env, gamma=rl_algo_hp["gamma"], n_steps=rl_algo_hp["n_steps"],
+                    ent_coef=rl_algo_hp["ent_coef"], max_grad_norm=rl_algo_hp["max_grad_norm"],
+                    vf_coef=rl_algo_hp["vf_coef"], learning_rate=rl_algo_hp["learning_rate"], alpha=rl_algo_hp["alpha"],
+                    policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
+    else:
+        raise Exception("Insert a compatible RL algorithm: A2C, ...")
+
     model.learn(total_timesteps=TIMESTEPS, callback=eval_callback)
 
     # Trained agent testing.
-    best_model = A2C.load(os.path.join(training_save_path, 'best_model'))
+    if args.Algo == "A2C":
+        best_model = A2C.load(os.path.join(training_save_path, 'best_model'))
+    else:
+        raise Exception("Insert a compatible RL algorithm: A2C, ...")
+
     test_env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
-                                             backlash=BACKLASH, memory_buffer=memory_buffer)
+                                             backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                             policy_feedback=policy_feedback)
     while True:
         obs = test_env.reset()
         done = False
