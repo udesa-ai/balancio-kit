@@ -1,0 +1,9 @@
+p_1:
+  alpha: 0.9
+  ent_coef: 3.2155672659533806e-05
+  gamma: 0.9
+  learning_rate: 0.004030614464204483
+  max_grad_norm: 0.6
+  n_steps: 16
+  neurons_layer: 32
+  vf_coef: 0.4439617266032203
