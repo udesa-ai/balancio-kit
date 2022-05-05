@@ -19,8 +19,8 @@ tf.autograph.set_verbosity(0)
 import logging
 tf.get_logger().setLevel(logging.ERROR)
 
-import pickle as pkl
 import yaml
+import argparse
 from typing import Any, Dict
 import gym
 from balancio_lib.environments import balancioGymEnv
@@ -32,19 +32,17 @@ from optuna.pruners import MedianPruner
 from optuna.visualization import plot_optimization_history, plot_param_importances
 
 
-# TODO: Add argument parsing. Add algorithm and environment selection.
+# Instantiate the parser
+parser = argparse.ArgumentParser(description='Script for optimizing RL hyperparameters.')
+parser.add_argument("-a", "--Algo", action='store', default='A2C', type=str,
+                    help="Reinforcement Learning algorithm used during training [Default: 'A2C'].")
+parser.add_argument("-en", "--EnvName", action='store', default='p_1', type=str,
+                    help="Environment name: 'pif_b' --> p if pitch, i if imu, f if feedback, b buffer length. [Default: 'p_1'].")
+args = parser.parse_args()
 
-# Environment
-NORMALIZE = True
-BACKLASH = True
-MEMORY_BUFFER = 1
-LoopFreq = 100  # Hz
-StepPeriod = (1 / 240) * 1 / 10  # s
-actions_per_step = int(round((1 / LoopFreq) / StepPeriod))  # For Microcontroller loop frequency compatibility
-SEED = 0
 
-# HyperParameters Tuning
-RL_ALGO_NAME = "A2C"                # Algorithm to which hp are to be optimized
+# Optuna HyperParameters Tuning
+RL_ALGO_NAME = args.Algo            # Algorithm to which hp are to be optimized
 N_TRIALS = 200                      # Total number of optimization iterations
 N_JOBS = 2                          # Number of parallel runs
 N_TIMESTEPS = int(1e5)              # Total simulation steps per trial
@@ -52,7 +50,18 @@ N_STARTUP_TRIALS = N_TRIALS // 3    # Number of trials before enabling pruning
 N_WARMUP_STEPS = N_TIMESTEPS // 3   # Number of steps before enabling pruning, in each trial.
 N_EVALUATIONS = 5                   # Number of evaluations in each trial.
 N_EVAL_EPISODES = 2                 # Number of episodes to test the agent in each evaluation.
-TIMEOUT = 10                         # Timeout in hours
+TIMEOUT = 10                        # Timeout in hours
+
+# Environment
+NORMALIZE = True
+BACKLASH = True
+memory_buffer = int(args.EnvName[args.EnvName.find("_")+1::])
+only_pitch = not 'i' in args.EnvName
+policy_feedback = 'f' in args.EnvName
+LoopFreq = 100  # Hz
+StepPeriod = (1 / 240) * 1 / 10  # s
+actions_per_step = int(round((1 / LoopFreq) / StepPeriod))  # For Microcontroller loop frequency compatibility
+SEED = 0
 
 
 def sample_a2c_params(trial: optuna.Trial) -> Dict[str, Any]:
@@ -134,7 +143,8 @@ class TrialEvalCallback(EvalCallback):
 
 def objective(trial: optuna.Trial) -> float:
     env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
-                                        backlash=BACKLASH, memory_buffer=MEMORY_BUFFER)
+                                        backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                        policy_feedback=policy_feedback)
 
     DEFAULT_HYPERPARAMS = {
         "policy": "MlpPolicy",
@@ -142,15 +152,19 @@ def objective(trial: optuna.Trial) -> float:
     }
 
     kwargs = DEFAULT_HYPERPARAMS.copy()
-    # Sample hyperparameters
-    kwargs.update(sample_a2c_params(trial))
-    # Create the RL model
-    model = A2C(**kwargs)
+
+    if args.Algo == "A2C":
+        # Sample hyperparameters
+        kwargs.update(sample_a2c_params(trial))
+        # Create the RL model
+        model = A2C(**kwargs)
+    else:
+        raise Exception("Insert a compatible RL algorithm: A2C, ...")
+
     # Create env used for evaluation
     eval_env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
-                                             backlash=BACKLASH, memory_buffer=MEMORY_BUFFER)
-    # eval_env = DummyVecEnv([lambda: eval_env])
-    # eval_env = gym.make(ENV_ID)
+                                             backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                             policy_feedback=policy_feedback)
 
     # Create the callback that will periodically evaluate
     # and report the performance
