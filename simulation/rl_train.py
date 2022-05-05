@@ -26,25 +26,30 @@ from stable_baselines.common.callbacks import EvalCallback
 from stable_baselines.common import set_global_seeds
 import argparse
 from typing import Callable
+import yaml
 
 # Instantiate the parser
-parser = argparse.ArgumentParser(description='Script to train RL agent')
-parser.add_argument("-mn", "--modelName", action='store', default='model', type=str,
-                    help="Name where model and logs will be saved to [Default: model]")
+parser = argparse.ArgumentParser(description='Script to train RL agent.')
+parser.add_argument("-a", "--Algo", action='store', default='A2C', type=str,
+                    help="Reinforcement Learning algorithm used during training [Default: 'A2C'].")
+parser.add_argument("-en", "--EnvName", action='store', default='p_1', type=str,
+                    help="Environment name: 'pif_b' --> p if pitch, i if imu, f if feedback, b buffer length. [Default: 'p_1'].")
 args = parser.parse_args()
 
+
+# TODO: Add RL algorithm selection and automate env generator based on EnvName.
+
 # Policy hyperparameters
-MODEL_NAME = args.modelName
-TIMESTEPS = 500000  # 1000000
+MODEL_NAME = args.Algo + "_" + args.EnvName
+TIMESTEPS = 250000  # 1000000
 EVAL_FREQ = 5000
 NUM_CPU = 8  # Number of processes to uses -> More implies more samples per time, but less efficiency.
-NET_LAYERS = [32, 32]
-MEMORY_BUFFER = 1
 
 # Environment
 NORMALIZE = True
 BACKLASH = True
 SEED = 5
+memory_buffer = int(args.EnvName[args.EnvName.find("_")+1::])
 LoopFreq = 100  # Hz
 StepPeriod = (1 / 240) * 1 / 10  # s
 actions_per_step = int(round((1 / LoopFreq) / StepPeriod))  # For Microcontroller loop frequency compatibility
@@ -61,7 +66,7 @@ def make_env(rank: int, seed: int = 0) -> Callable:
 
     def _init():
         env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
-                                            backlash=BACKLASH, seed=seed + rank, memory_buffer=MEMORY_BUFFER)
+                                            backlash=BACKLASH, seed=seed + rank, memory_buffer=memory_buffer)
         env.seed(seed + rank)
         return env
 
@@ -72,7 +77,7 @@ def make_env(rank: int, seed: int = 0) -> Callable:
 def main():
     """Main training script."""
     # Directories
-    training_save_path = os.path.join('../rl_data/models/', MODEL_NAME)
+    training_save_path = os.path.join('../rl_data/models/', MODEL_NAME + '_dev')
     training_log_path = os.path.join('../rl_data/logs/', MODEL_NAME)
     if not os.path.exists(training_save_path):
         os.makedirs(training_save_path)
@@ -84,26 +89,36 @@ def main():
     # Environment used for evaluation.
     eval_env = DummyVecEnv([lambda: balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False,
                                                                   normalize=NORMALIZE, backlash=BACKLASH,
-                                                                  memory_buffer=MEMORY_BUFFER)])
+                                                                  memory_buffer=memory_buffer)])
     eval_callback = EvalCallback(eval_env,
-                                 eval_freq=EVAL_FREQ,
+                                 eval_freq=int(EVAL_FREQ/NUM_CPU),
                                  best_model_save_path=training_save_path,
                                  verbose=1)
-    policy_kwargs = dict(act_fun=tf.nn.relu, net_arch=NET_LAYERS)
+
+    # Load RL algorithm hyperparameters.
+    with open('../rl_data/hyperparameters/{}.yaml'.format(args.Algo), 'r') as stream:
+        try:
+            rl_algo_hp = yaml.safe_load(stream)[args.EnvName]
+        except yaml.YAMLError as exc:
+            print(exc)
+
+    net_layers = 2*[rl_algo_hp["neurons_layer"]]
+    policy_kwargs = dict(act_fun=tf.nn.relu, net_arch=net_layers)
     # model = PPO2(MlpPolicy, env, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
-    model = A2C(MlpPolicy, train_env, gamma=0.9, n_steps=16, ent_coef=3.2155672659533806e-05, max_grad_norm=0.6,
-                vf_coef=0.4439617266032203, learning_rate=0.004030614464204483, alpha=0.9,
+    model = A2C(MlpPolicy, train_env, gamma=rl_algo_hp["gamma"], n_steps=rl_algo_hp["n_steps"], ent_coef=rl_algo_hp["ent_coef"], max_grad_norm=rl_algo_hp["max_grad_norm"],
+                vf_coef=rl_algo_hp["vf_coef"], learning_rate=rl_algo_hp["learning_rate"], alpha=rl_algo_hp["alpha"],
                 policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
     model.learn(total_timesteps=TIMESTEPS, callback=eval_callback)
 
     # Trained agent testing.
+    best_model = A2C.load(os.path.join(training_save_path, 'best_model'))
     test_env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
-                                             backlash=BACKLASH, memory_buffer=MEMORY_BUFFER)
+                                             backlash=BACKLASH, memory_buffer=memory_buffer)
     while True:
         obs = test_env.reset()
         done = False
         while done is False:
-            action, _states = model.predict(obs, deterministic=True)
+            action, _states = best_model.predict(obs, deterministic=True)
             obs, reward, done, info = test_env.step(action)
             test_env.render()
 
