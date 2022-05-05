@@ -42,7 +42,7 @@ args = parser.parse_args()
 
 
 # Optuna HyperParameters Tuning
-RL_ALGO_NAME = args.Algo            # Algorithm to which hp are to be optimized
+RL_ALGO_NAME = args.Algo.upper()    # Algorithm to which hp are to be optimized
 N_TRIALS = 200                      # Total number of optimization iterations
 N_JOBS = 2                          # Number of parallel runs
 N_TIMESTEPS = int(1e5)              # Total simulation steps per trial
@@ -153,7 +153,7 @@ def objective(trial: optuna.Trial) -> float:
 
     kwargs = DEFAULT_HYPERPARAMS.copy()
 
-    if args.Algo == "A2C":
+    if args.Algo.upper() == "A2C":
         # Sample hyperparameters
         kwargs.update(sample_a2c_params(trial))
         # Create the RL model

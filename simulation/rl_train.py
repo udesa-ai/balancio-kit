@@ -38,7 +38,7 @@ args = parser.parse_args()
 
 
 # Policy hyperparameters
-MODEL_NAME = args.Algo + "_" + args.EnvName
+MODEL_NAME = args.Algo.upper() + "_" + args.EnvName
 TIMESTEPS = 250000  # 1000000
 EVAL_FREQ = 5000
 NUM_CPU = 8  # Number of processes to uses -> More implies more samples per time, but less efficiency.
@@ -98,7 +98,7 @@ def main():
                                  verbose=1)
 
     # Load RL algorithm hyperparameters.
-    with open('../rl_data/hyperparameters/{}.yaml'.format(args.Algo), 'r') as stream:
+    with open('../rl_data/hyperparameters/{}.yaml'.format(args.Algo.upper()), 'r') as stream:
         try:
             rl_algo_hp = yaml.safe_load(stream)[args.EnvName]
         except yaml.YAMLError as exc:
@@ -108,7 +108,7 @@ def main():
     policy_kwargs = dict(act_fun=tf.nn.relu, net_arch=net_layers)
     # model = PPO2(MlpPolicy, env, policy_kwargs=policy_kwargs, verbose=1, tensorboard_log=training_log_path)
 
-    if args.Algo == "A2C":
+    if args.Algo.upper() == "A2C":
         model = A2C(MlpPolicy, train_env, gamma=rl_algo_hp["gamma"], n_steps=rl_algo_hp["n_steps"],
                     ent_coef=rl_algo_hp["ent_coef"], max_grad_norm=rl_algo_hp["max_grad_norm"],
                     vf_coef=rl_algo_hp["vf_coef"], learning_rate=rl_algo_hp["learning_rate"], alpha=rl_algo_hp["alpha"],
@@ -119,7 +119,7 @@ def main():
     model.learn(total_timesteps=TIMESTEPS, callback=eval_callback)
 
     # Trained agent testing.
-    if args.Algo == "A2C":
+    if args.Algo.upper() == "A2C":
         best_model = A2C.load(os.path.join(training_save_path, 'best_model'))
     else:
         raise Exception("Insert a compatible RL algorithm: A2C, ...")

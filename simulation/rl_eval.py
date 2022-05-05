@@ -56,7 +56,7 @@ training_save_path = os.path.join('../rl_data/models/')
 
 
 def main():
-    if args.Algo == "A2C":
+    if args.Algo.upper() == "A2C":
         model = A2C.load(os.path.join(training_save_path, MODEL_NAME, 'best_model'))
     else:
         raise Exception("Insert a compatible RL algorithm: A2C, ...")
