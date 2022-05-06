@@ -129,6 +129,29 @@ class Balancio:
 
         return angular_vel_imu
 
+    def get_linear_vel_imu(self) -> list:
+        """Calculate the linear velocity relative to the IMU link.
+
+        @return linear_vel_imu: List containing the linear velocity in the 3 IMU axis.
+        """
+        # Get linear velocity of base relative to global frame, in cartesian global coordinates.
+        # linear_vel_b = np.array(self._p.getBaseVelocity(self.robotUniqueId)[0])
+        # Get linear velocity of imu relative to global frame, in cartesian global coordinates.
+        linear_vel_b = self._p.getLinkState(self.robotUniqueId, self.joint_name2idx['imu'], computeLinkVelocity=True)[
+            -2]
+
+        # Transform linear velocity, to base coordinates.
+        _, orn = self._p.getBasePositionAndOrientation(self.robotUniqueId)
+        rot_matrix = self._p.getMatrixFromQuaternion(orn)
+        rot_matrix_b2r = np.array([rot_matrix[:3], rot_matrix[3:6], rot_matrix[6:9]])
+        rot_matrix_r2b = np.linalg.inv(rot_matrix_b2r)
+        linear_vel_r = np.matmul(rot_matrix_r2b, linear_vel_b)
+
+        # Transform angular velocity to real IMU coordinates (based on orientation on real robot).
+        linear_vel_imu = [-linear_vel_r[1], linear_vel_r[0], linear_vel_r[2]]
+        
+        return linear_vel_imu
+
     def linear_accel_update(self):
         """Calculate the linear acceleration of the IMU link.
 
@@ -137,6 +160,7 @@ class Balancio:
 
         (!) Warning: This method should be called once per simulation step.
         """
+        # TODO: Add timestep checking (to avoid the warning) and re utilize methods.
         # Get linear velocity of base relative to global frame, in cartesian global coordinates.
         # linear_vel_b = np.array(self._p.getBaseVelocity(self.robotUniqueId)[0])
         # Get linear velocity of imu relative to global frame, in cartesian global coordinates.
