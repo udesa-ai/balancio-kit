@@ -5,7 +5,6 @@
 """
 Script for converting a keras model into a C byte array.
 Based on: https://github.com/eloquentarduino/tinymlgen/blob/master/tinymlgen/tinymlgen.pys.
-Almost identical, but using TF1.
 """
 
 # Filter tensorflow warnings
@@ -35,7 +34,7 @@ def main():
     folder_name = args.model_folder_name
 
     path2model_load = os.path.join("../rl_data/models", folder_name)
-    path2model_save = os.path.join("../mcu/src/main/models", folder_name)
+    path2model_save = "../mcu/src/main/models"
     if not os.path.exists(path2model_save):
         os.makedirs(path2model_save)
 
@@ -46,7 +45,7 @@ def main():
     # Save TFLite model to disk
     # open(path2folder + "/lite/model_quantized.tflite", "wb").write(tflite_model)
 
-    # Convert TFLite model into C byte array.
+    # Convert TFLite model into C byte array, and save it to file.
     bytes = hexdump.dump(tflite_model).split(' ')
     c_array = ', '.join(['0x%02x' % int(byte, 16) for byte in bytes])
     c = 'const unsigned char rl_model[] DATA_ALIGN_ATTRIBUTE = {%s};' % (c_array)
@@ -54,22 +53,21 @@ def main():
     c = re.sub(r'(0x..?, ){12}', lambda x: '%s\n\t' % x.group(0), c)
     c += '\nconst int rl_model_len = %d;' % (len(bytes))
     preamble = '''
-    // if having troubles with min/max, uncomment the following
-    // #undef min    
-    // #undef max
-    #ifdef __has_attribute
-    #define HAVE_ATTRIBUTE(x) __has_attribute(x)
-    #else
-    #define HAVE_ATTRIBUTE(x) 0
-    #endif
-    #if HAVE_ATTRIBUTE(aligned) || (defined(__GNUC__) && !defined(__clang__))
-    #define DATA_ALIGN_ATTRIBUTE __attribute__((aligned(4)))
-    #else
-    #define DATA_ALIGN_ATTRIBUTE
-    #endif
-    '''
-    open(path2model_save + "/rl_model.h", 'w').write(preamble + c)
-
+        // if having troubles with min/max, uncomment the following
+        // #undef min    
+        // #undef max
+        #ifdef __has_attribute
+        #define HAVE_ATTRIBUTE(x) __has_attribute(x)
+        #else
+        #define HAVE_ATTRIBUTE(x) 0
+        #endif
+        #if HAVE_ATTRIBUTE(aligned) || (defined(__GNUC__) && !defined(__clang__))
+        #define DATA_ALIGN_ATTRIBUTE __attribute__((aligned(4)))
+        #else
+        #define DATA_ALIGN_ATTRIBUTE
+        #endif \n
+        '''
+    open(path2model_save + "/{}.h".format(folder_name), 'w').write(preamble + c)
 
 if __name__ == '__main__':
     main()
