@@ -49,7 +49,7 @@
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <!-- <box size="0.01 0.07 0.3"/> -->
-        <mesh filename="package://Code/Simulation/stl/Body.stl" scale="1 1 1"/>  <!-- TODO: collision shape box -->
+        <mesh filename="package://Code/Simulation/stl/Body.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <visual>
