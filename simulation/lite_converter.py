@@ -21,22 +21,30 @@ import logging
 tf.get_logger().setLevel(logging.ERROR)
 import hexdump
 import re
-
-# Folder containing model to convert.
-FOLDER_NAME = "test"
+import argparse
 
 
 def main():
-    path2folder = os.path.join("../rl_data/models", FOLDER_NAME)
-    if not os.path.exists(path2folder + "/lite"):
-        os.makedirs(path2folder + "/lite")
+    # Instantiate the parser
+    parser = argparse.ArgumentParser(description='Script to convert a keras/TF model into a C byte array.')
+    parser.add_argument("-m", "--model_folder_name", action='store', default='A2C_p_1', type=str,
+                        help="Name of the folder containing the model to convert. [Default: 'A2C_p_1'].")
+    args = parser.parse_args()
+
+    # Folder containing model to convert.
+    folder_name = args.model_folder_name
+
+    path2model_load = os.path.join("../rl_data/models", folder_name)
+    path2model_save = os.path.join("../mcu/src/main/models", folder_name)
+    if not os.path.exists(path2model_save):
+        os.makedirs(path2model_save)
 
     # Convert keras model into TFLite
-    converter = tf.lite.TFLiteConverter.from_keras_model_file(path2folder + "/model.h5")
+    converter = tf.lite.TFLiteConverter.from_keras_model_file(path2model_load + "/model.h5")
     # converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_SIZE]
     tflite_model = converter.convert()
     # Save TFLite model to disk
-    open(path2folder + "/lite/model_quantized.tflite", "wb").write(tflite_model)
+    # open(path2folder + "/lite/model_quantized.tflite", "wb").write(tflite_model)
 
     # Convert TFLite model into C byte array.
     bytes = hexdump.dump(tflite_model).split(' ')
@@ -60,7 +68,7 @@ def main():
     #define DATA_ALIGN_ATTRIBUTE
     #endif
     '''
-    open(path2folder + "/lite/model_quantized.cc", 'w').write(preamble + c)
+    open(path2model_save + "/rl_model.h", 'w').write(preamble + c)
 
 
 if __name__ == '__main__':
