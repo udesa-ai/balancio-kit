@@ -187,12 +187,12 @@ class BalancioGymEnv(gym.Env):
         # stadiumobjects = self._p.loadSDF(os.path.join(self._urdfRoot, "stadium.sdf"))
 
         self._p.setGravity(0, 0, -0.981)  # Gravity: 0.981 dm/(10.s)^2
-        self._robot = balancio.Balancio(self._p, time_step=self._time_step,
+        self.robot = balancio.Balancio(self._p, time_step=self._time_step,
                                         backlash=self._backlash)
         self._env_step_counter = 0
 
-        self.pitch_ri = self._robot.orientation_init_pitch
-        self._robot.linear_accel_reset()
+        self.pitch_ri = self.robot.orientation_init_pitch
+        self.robot.linear_accel_reset()
 
         self.pitch_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
         self.ax_buffer = deque(np.zeros(self._memory_buffer), self._memory_buffer)
@@ -209,7 +209,7 @@ class BalancioGymEnv(gym.Env):
 
         for i in range(5):
             self._p.stepSimulation()
-            self._robot.linear_accel_update()
+            self.robot.linear_accel_update()
         self._observation = self.get_observation_UPDATE()
 
         return self._observation
@@ -251,9 +251,9 @@ class BalancioGymEnv(gym.Env):
         else:
             denormalized_action = action
 
-        # self._robot.apply_action(denormalized_action)
+        # self.robot.apply_action(denormalized_action)
         for i in range(self._action_repeat):
-            self._robot.apply_action(denormalized_action)
+            self.robot.apply_action(denormalized_action)
             self._p.stepSimulation()
             if self._renders:
                 elapsed_time = time.time() - self.last_frame_time
@@ -261,7 +261,7 @@ class BalancioGymEnv(gym.Env):
                     time.sleep(self._time_step / 10 - elapsed_time)
                 self.last_frame_time = time.time()
 
-            self._robot.linear_accel_update()
+            self.robot.linear_accel_update()
             if i == self._action_repeat - 1:
                 self._observation = self.get_observation_UPDATE()
             if self._termination():
@@ -279,7 +279,7 @@ class BalancioGymEnv(gym.Env):
         """
         if mode != "rgb_array":
             return np.array([])
-        base_pos, orn = self._p.getBasePositionAndOrientation(self._robot.robotUniqueId)
+        base_pos, orn = self._p.getBasePositionAndOrientation(self.robot.robotUniqueId)
         view_matrix = self._p.computeViewMatrixFromYawPitchRoll(cameraTargetPosition=base_pos,
                                                                 distance=self._cam_dist,
                                                                 yaw=self._cam_yaw,
@@ -308,14 +308,14 @@ class BalancioGymEnv(gym.Env):
         """Check if episode has ended.
         @return: True if episode has terminated.
         """
-        self.pitch_angle = self._robot.get_pitch()[0]
+        self.pitch_angle = self.robot.get_pitch()[0]
         return self._env_step_counter > EPISODE_LENGTH or abs(self.pitch_angle) > 0.8
 
     def _reward(self) -> float:
         """Calculate reward in current timestep.
         @return reward: Computed reward.
         """
-        self.pitch_angle = self._robot.get_pitch()[0]
+        self.pitch_angle = self.robot.get_pitch()[0]
         reward = - np.square(self.pitch_angle)
         return reward
 
@@ -358,11 +358,11 @@ class BalancioGymEnv(gym.Env):
 
         sensor_obs = []
 
-        pitch = self._robot.get_pitch()
+        pitch = self.robot.get_pitch()
         sensor_obs.extend(pitch)
 
-        linear_accel = self._robot.get_linear_accel()  # Update it before calling this method!
-        angular_vel = self._robot.get_angular_vel()
+        linear_accel = self.robot.get_linear_accel()  # Update it before calling this method!
+        angular_vel = self.robot.get_angular_vel()
         if not self._only_pitch:
             sensor_obs.extend(linear_accel)
             sensor_obs.extend(angular_vel)
