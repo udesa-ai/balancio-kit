@@ -53,20 +53,20 @@ def main():
     c = re.sub(r'(0x..?, ){12}', lambda x: '%s\n\t' % x.group(0), c)
     c += '\nconst int rl_model_len = %d;' % (len(bytes))
     preamble = '''
-        // if having troubles with min/max, uncomment the following
-        // #undef min    
-        // #undef max
-        #ifdef __has_attribute
-        #define HAVE_ATTRIBUTE(x) __has_attribute(x)
-        #else
-        #define HAVE_ATTRIBUTE(x) 0
-        #endif
-        #if HAVE_ATTRIBUTE(aligned) || (defined(__GNUC__) && !defined(__clang__))
-        #define DATA_ALIGN_ATTRIBUTE __attribute__((aligned(4)))
-        #else
-        #define DATA_ALIGN_ATTRIBUTE
-        #endif \n
-        '''
+// if having troubles with min/max, uncomment the following
+// #undef min    
+// #undef max
+#ifdef __has_attribute
+#define HAVE_ATTRIBUTE(x) __has_attribute(x)
+#else
+#define HAVE_ATTRIBUTE(x) 0
+#endif
+#if HAVE_ATTRIBUTE(aligned) || (defined(__GNUC__) && !defined(__clang__))
+#define DATA_ALIGN_ATTRIBUTE __attribute__((aligned(4)))
+#else
+#define DATA_ALIGN_ATTRIBUTE
+#endif \n
+'''
     open(path2model_save + "/{}.h".format(folder_name), 'w').write(preamble + c)
 
 if __name__ == '__main__':
