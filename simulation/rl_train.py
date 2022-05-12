@@ -19,6 +19,7 @@ import logging
 tf.get_logger().setLevel(logging.ERROR)
 
 from balancio_lib.environments import balancioGymEnv
+from balancio_lib.wrappers import RewardWrappers
 from stable_baselines.common.policies import MlpPolicy
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines import A2C
@@ -34,12 +35,14 @@ parser.add_argument("-a", "--Algo", action='store', default='A2C', type=str,
                     help="Reinforcement Learning algorithm used during training [Default: 'A2C'].")
 parser.add_argument("-en", "--EnvName", action='store', default='p_1', type=str,
                     help="Environment name: 'pif_b' --> p if pitch, i if imu, f if feedback, b buffer length. [Default: 'p_1'].")
+parser.add_argument("-rw", "--RewardWrapper", action='store', default='None', type=str,
+                    help="Apply a reward wrapper to change the default reward [Optional].")
 args = parser.parse_args()
 
 
 # Policy hyperparameters
 MODEL_NAME = args.Algo.upper() + "_" + args.EnvName
-TIMESTEPS = 250000  # 1000000
+TIMESTEPS = 500000  # 1000000
 EVAL_FREQ = 5000
 NUM_CPU = 8  # Number of processes to uses -> More implies more samples per time, but less efficiency.
 
@@ -55,20 +58,22 @@ StepPeriod = (1 / 240) * 1 / 10  # s
 actions_per_step = int(round((1 / LoopFreq) / StepPeriod))  # For Microcontroller loop frequency compatibility
 
 
-def make_env(rank: int, seed: int = 0) -> Callable:
+def make_env(env_wrapper: Callable, rank: int, seed: int = 0) -> Callable:
     """
     Utility function for multiprocessed env.
 
-    @param rank: Index of the subprocess
-    @param seed: The initial seed for RNG
-    @return _init:
+    @param env_wrapper: Additional environment wrapper.
+    @param rank: Index of the subprocess.
+    @param seed: The initial seed for RNG.
+    @return _init: Function that creates an environment.
     """
 
     def _init():
-        env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
-                                            backlash=BACKLASH, seed=seed + rank, memory_buffer=memory_buffer,
-                                            only_pitch=only_pitch, policy_feedback=policy_feedback)
-        env.seed(seed + rank)
+        env = env_wrapper(balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False,
+                                                        normalize=NORMALIZE, backlash=BACKLASH,
+                                                        seed=seed + rank, memory_buffer=memory_buffer,
+                                                        only_pitch=only_pitch,
+                                                        policy_feedback=policy_feedback))
         return env
 
     set_global_seeds(seed)
@@ -85,13 +90,16 @@ def main():
     if not os.path.exists(training_log_path):
         os.makedirs(training_log_path)
 
+    # Add useful wrappers around the environment
+    reward_wrapper = RewardWrappers.get_reward_wrapper(args.RewardWrapper)
+
     # Wrapper of environments used for training.
-    train_env = SubprocVecEnv([make_env(rank=i, seed=SEED) for i in range(NUM_CPU)])
+    train_env = SubprocVecEnv([make_env(reward_wrapper, rank=i, seed=SEED) for i in range(NUM_CPU)])
     # Environment used for evaluation.
-    eval_env = DummyVecEnv([lambda: balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False,
-                                                                  normalize=NORMALIZE, backlash=BACKLASH,
-                                                                  memory_buffer=memory_buffer, only_pitch=only_pitch,
-                                                                  policy_feedback=policy_feedback)])
+    eval_env = DummyVecEnv([lambda: reward_wrapper(balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False,
+                                                                                 normalize=NORMALIZE, backlash=BACKLASH,
+                                                                                 memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                                                                 policy_feedback=policy_feedback))])
     eval_callback = EvalCallback(eval_env,
                                  eval_freq=int(EVAL_FREQ/NUM_CPU),
                                  best_model_save_path=training_save_path,
@@ -124,9 +132,9 @@ def main():
     else:
         raise Exception("Insert a compatible RL algorithm: A2C, ...")
 
-    test_env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
+    test_env = reward_wrapper(balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
                                              backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
-                                             policy_feedback=policy_feedback)
+                                             policy_feedback=policy_feedback))
     while True:
         obs = test_env.reset()
         done = False

@@ -24,6 +24,7 @@ import argparse
 from typing import Any, Dict
 import gym
 from balancio_lib.environments import balancioGymEnv
+from balancio_lib.wrappers import RewardWrappers
 from stable_baselines import A2C
 from stable_baselines.common.callbacks import EvalCallback
 from stable_baselines.common import set_global_seeds
@@ -38,6 +39,8 @@ parser.add_argument("-a", "--Algo", action='store', default='A2C', type=str,
                     help="Reinforcement Learning algorithm used during training [Default: 'A2C'].")
 parser.add_argument("-en", "--EnvName", action='store', default='p_1', type=str,
                     help="Environment name: 'pif_b' --> p if pitch, i if imu, f if feedback, b buffer length. [Default: 'p_1'].")
+parser.add_argument("-rw", "--RewardWrapper", action='store', default='None', type=str,
+                    help="Apply a reward wrapper to change the default reward [Optional].")
 args = parser.parse_args()
 
 
@@ -142,9 +145,12 @@ class TrialEvalCallback(EvalCallback):
 
 
 def objective(trial: optuna.Trial) -> float:
-    env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
-                                        backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
-                                        policy_feedback=policy_feedback)
+    # Add useful wrappers around the environment
+    reward_wrapper = RewardWrappers.get_reward_wrapper(args.RewardWrapper)
+
+    env = reward_wrapper(balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
+                                                       backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                                       policy_feedback=policy_feedback))
 
     DEFAULT_HYPERPARAMS = {
         "policy": "MlpPolicy",
@@ -162,9 +168,9 @@ def objective(trial: optuna.Trial) -> float:
         raise Exception("Insert a compatible RL algorithm: A2C, ...")
 
     # Create env used for evaluation
-    eval_env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
-                                             backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
-                                             policy_feedback=policy_feedback)
+    eval_env = reward_wrapper(balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=False, normalize=NORMALIZE,
+                                                            backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                                            policy_feedback=policy_feedback))
 
     # Create the callback that will periodically evaluate
     # and report the performance

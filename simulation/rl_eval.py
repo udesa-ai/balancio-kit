@@ -19,6 +19,7 @@ import logging
 tf.get_logger().setLevel(logging.ERROR)
 
 from balancio_lib.environments import balancioGymEnv
+from balancio_lib.wrappers import RewardWrappers
 from stable_baselines import A2C
 import argparse
 
@@ -33,6 +34,8 @@ parser.add_argument("-a", "--Algo", action='store', default='A2C', type=str,
                     help="Reinforcement Learning algorithm used during training [Default: 'A2C'].")
 parser.add_argument("-en", "--EnvName", action='store', default='p_1', type=str,
                     help="Environment name: 'pif_b' --> p if pitch, i if imu, f if feedback, b buffer length. [Default: 'p_1'].")
+parser.add_argument("-rw", "--RewardWrapper", action='store', default='None', type=str,
+                    help="Apply a reward wrapper to change the default reward [Optional].")
 args = parser.parse_args()
 
 # Params
@@ -61,9 +64,12 @@ def main():
     else:
         raise Exception("Insert a compatible RL algorithm: A2C, ...")
 
-    env = balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
-                                        backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
-                                        policy_feedback=policy_feedback)
+    # Add useful wrappers around the environment
+    reward_wrapper = RewardWrappers.get_reward_wrapper(args.RewardWrapper)
+
+    env = reward_wrapper(balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
+                                                       backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
+                                                       policy_feedback=policy_feedback))
 
     # Convert stable-baselines model to keras, for further lite conversion.
     if CONVERT2KERAS:
@@ -84,6 +90,7 @@ def main():
     while True:
         obs = env.reset()
         done = False
+        cumulative_reward = 0
         while done is False:
             if CONVERT2KERAS:
                 action = keras_model.predict(obs)[0]
@@ -94,7 +101,9 @@ def main():
             else:
                 action, _states = model.predict(obs, deterministic=True)
             obs, reward, done, info = env.step(action)
+            cumulative_reward += reward
             env.render()
+        print("Episode's accumulated reward: {}".format(cumulative_reward))
 
 
 if __name__ == '__main__':
