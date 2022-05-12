@@ -8,6 +8,9 @@
 // Control algorithm type
 #define CONTROL_ALGO "PID" // PID, RL, ...
 
+// Reinforcement Learning model name. Available models are located in the folder named "models".
+#define A2C_p_1
+
 // PID Constants for pitch control
 #define KP 2000  // 2000     //1200    //1750
 #define KI 22000 // 22000     //22000   //11000

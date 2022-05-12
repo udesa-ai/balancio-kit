@@ -3,7 +3,7 @@
 #  This code is licensed under MIT license (see LICENSE.txt for details)
 # ======================================================================
 """
-Script for converting a keras model into a C byte array.
+Script for converting a keras model into a C byte array, and storing it in the corresponding folder.
 Based on: https://github.com/eloquentarduino/tinymlgen/blob/master/tinymlgen/tinymlgen.pys.
 """
 
@@ -35,6 +35,7 @@ def main():
 
     path2model_load = os.path.join("../rl_data/models", folder_name)
     path2model_save = "../mcu/src/main/models"
+    path2model_save_all = "../mcu/src/main"
     if not os.path.exists(path2model_save):
         os.makedirs(path2model_save)
 
@@ -52,7 +53,10 @@ def main():
     c = c.replace('{', '{\n\t').replace('}', '\n}')
     c = re.sub(r'(0x..?, ){12}', lambda x: '%s\n\t' % x.group(0), c)
     c += '\nconst int rl_model_len = %d;' % (len(bytes))
-    preamble = '''
+    open(path2model_save + "/{}.h".format(folder_name), 'w').write(c)
+
+    # Update (or create) the file that contains all models.
+    preamble_all = '''#include "config.h"
 // if having troubles with min/max, uncomment the following
 // #undef min    
 // #undef max
@@ -67,7 +71,19 @@ def main():
 #define DATA_ALIGN_ATTRIBUTE
 #endif \n
 '''
-    open(path2model_save + "/{}.h".format(folder_name), 'w').write(preamble + c)
+
+    ending = "\n#endif \n"
+    c = preamble_all
+    list_models = os.listdir(path2model_save)
+    for model in list_models:
+        if model[0] != ".":
+            with open(path2model_save + "/" + model, 'r') as stream:
+                preamble = '''\n#ifdef {} \n'''.format(model[:-2])
+                c = c + preamble + stream.read() + ending
+                stream.close()
+
+    open(path2model_save_all + "/rl_model.h", 'w').write(c)
+
 
 if __name__ == '__main__':
     main()
