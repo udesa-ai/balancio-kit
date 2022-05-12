@@ -87,23 +87,26 @@ def main():
 
         keras_model.save(os.path.join(training_save_path, MODEL_NAME, 'model.h5'))
 
-    while True:
-        obs = env.reset()
-        done = False
-        cumulative_reward = 0
-        while done is False:
-            if CONVERT2KERAS:
-                action = keras_model.predict(obs)[0]
-                action.clip(-1, 1)
-                sb_action, _states = model.predict(obs, deterministic=True)
-                diff = action - sb_action
-                print("Diferencia entre predicciones: ", diff)
-            else:
-                action, _states = model.predict(obs, deterministic=True)
-            obs, reward, done, info = env.step(action)
-            cumulative_reward += reward
-            env.render()
-        print("Episode's accumulated reward: {}".format(cumulative_reward))
+    try:
+        while True:
+            obs = env.reset()
+            done = False
+            cumulative_reward = 0
+            while done is False:
+                if CONVERT2KERAS:
+                    action = keras_model.predict(obs)[0]
+                    action.clip(-1, 1)
+                    sb_action, _states = model.predict(obs, deterministic=True)
+                    diff = action - sb_action
+                    print("Diferencia entre predicciones: ", diff)
+                else:
+                    action, _states = model.predict(obs, deterministic=True)
+                obs, reward, done, info = env.step(action)
+                cumulative_reward += reward
+                env.render()
+            print("Episode's accumulated reward: {}".format(cumulative_reward))
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == '__main__':

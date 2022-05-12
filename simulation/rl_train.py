@@ -135,14 +135,16 @@ def main():
     test_env = reward_wrapper(balancioGymEnv.BalancioGymEnv(action_repeat=actions_per_step, renders=True, normalize=NORMALIZE,
                                              backlash=BACKLASH, memory_buffer=memory_buffer, only_pitch=only_pitch,
                                              policy_feedback=policy_feedback))
-    while True:
-        obs = test_env.reset()
-        done = False
-        while done is False:
-            action, _states = best_model.predict(obs, deterministic=True)
-            obs, reward, done, info = test_env.step(action)
-            test_env.render()
-
+    try:
+        while True:
+            obs = test_env.reset()
+            done = False
+            while done is False:
+                action, _states = best_model.predict(obs, deterministic=True)
+                obs, reward, done, info = test_env.step(action)
+                test_env.render()
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == '__main__':
     main()
