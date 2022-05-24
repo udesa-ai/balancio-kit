@@ -15,7 +15,13 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/balancio_gif.gif" width="124">
 </p>
 
+## Versiones
 
+|                      |      Estabilidad      |  Facilidad de Armado  | Requiere I3D |
+|:--------------------:|:---------------------:|:---------------------:|:------------:|
+| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  |      SI      |
+|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |      SI      |
+|         V 0.5        |         :star:        | :star: :star: :star:  |      SI      |
 
 ## Ensamblaje :wrench:
 
@@ -219,6 +225,8 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
     
 ## Bugs conocidos
 - Wheel spins on sturtup
+
+
 
     
 ## Contribuciones
