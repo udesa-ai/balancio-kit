@@ -34,11 +34,14 @@ El balancio-kit consta de los siguientes componentes:
 - 2 baterías 18650 con su correspondiente porta-pilas
 
 <p align="center">
-    <img src="resources/Balancio_plano.png" width="530">
+    <img src="resources/Balancio_plano.png" width="650">
 </p>
+
 ## Plano Electrico 
 <p align="center">
-    <img src="" width="200">
+    <img src="/resources/plano electrico balancio.png" width="400">
+</p>    
+    
 ## Ensamblaje Mecánico 
 1. Imprimir en 3D alguna de las [versiones](#versiones)
 1. Encastrar piezas en su posición final 
