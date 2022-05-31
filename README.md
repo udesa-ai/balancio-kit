@@ -10,8 +10,8 @@ Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capa
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
 <p align="center">
-    <img src="resources/balanciov3.jpg" width="200">
-    <img src="resources/Balanciov0_4.jpg" width="219">
+    <img src="Balancio 0.5.jpg" width="200">
+    <img src="Balancio 0.7.jpg" width="219">
     <img src="resources/balancio_gif.gif" width="124">
 </p>
 
