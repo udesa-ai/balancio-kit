@@ -39,14 +39,14 @@ El balancio-kit consta de los siguientes componentes:
 
 ## Plano Electrico 
 <p align="center">
-    <img src="/resources/plano electrico balancio.png" width="400">
+    <img src="/resources/plano electrico balancio.png" width="730">
 </p>    
     
 ## Ensamblaje Mecánico 
 1. Imprimir en 3D alguna de las [versiones](#versiones)
 1. Encastrar piezas en su posición final 
 1. Sostener los motores con precintos y/o pegamento 
-1. Conectar los componentes siguiendo el plano eléctrico 
+1. Conectar los componentes siguiendo el [plano electrico](#plano eléctrico) 
    
 ## Instalación :floppy_disk:
 
