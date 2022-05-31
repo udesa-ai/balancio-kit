@@ -37,6 +37,8 @@ El balancio-kit consta de los siguientes componentes:
     <img src="resources/Balancio_plano.png" width="650">
 </p>
 
+## Planos de Impresión 3D
+
 ## Plano Electrico 
 <p align="center">
     <img src="/Plano 1.png" width="730">
