@@ -39,7 +39,7 @@ El balancio-kit consta de los siguientes componentes:
 
 ## Plano Electrico 
 <p align="center">
-    <img src="/resources/plano electrico balancio.png" width="730">
+    <img src="/resources/plano 1.png" width="730">
 </p>    
     
 ## Ensamblaje Mecánico 
