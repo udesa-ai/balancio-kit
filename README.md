@@ -12,7 +12,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 <p align="center">
     <img src="resources/Balancio_0.5.jpg" width="200">
     <img src="resources/Balancio_0.71.jpg" width="219">
-    <img src="resources/balancio_gif.gif" width="124">
+    <img src="resources/balancio_gif.gif" width="165">
 </p>
 
 ## Versiones
@@ -39,10 +39,10 @@ El balancio-kit consta de los siguientes componentes:
 
 ## Planos de Impresión 3D
 
-Fusión
-Versión 0,7STL 
-Versión 0,6 STL 
-Versión 0,5 STL 
+-Fusión
+-Versión 0,7STL 
+-Versión 0,6 STL 
+-Versión 0,5 STL 
 
 ## Plano Electrico 
 <p align="center">
@@ -68,13 +68,13 @@ de cada uno de ellos se puede realizar en distinto orden.
 ### Microcontrolador
 
 <details open>
-<summary>Instalación IDE</summary> 
+<summary>Instalación de la IDE</summary> 
 Para programar y compilar el NodeMCU ESP32 usaremos la IDE de Arduino. Para esto se
 debe instalar la misma siguiendo los pasos que se especifican en el siguiente 
 [link](https://www.arduino.cc/en/software).
 </details> 
 <details open>
-<summary>Habilitación Microcrontolador</summary> 
+<summary>Configuración del Microcrontolador</summary> 
 Una vez instalada la IDE, se debe habilitar el microcontrolador que vamos a usar.
 Para esto se deben seguir los siguientes pasos:
     
@@ -107,7 +107,7 @@ Luego procederemos a instalar las librerías de arduino que vamos a utilizar:
     
 </details> 
 <details open>
-<summary>Ejecusión Prueba y Errores</summary> 
+<summary>Ejecución inicial</summary> 
 Para comprobar la instalación, ejecutaremos un ejemplo de prueba:
 - ir a 'File' → 'Examples' → 'WiFi' → 'WiFiScan'
 - En el sketch generado, presionar el botón de carga ('Upload')  :calling:
@@ -119,7 +119,7 @@ Posibles errores:
 
 ### Simulación
 <details open>
-<summary>Simulación e Instalación de Conda </summary> 
+ 
 La simulación corre en Python :snake:, y utiliza diversos paquetes. Para facilitar la instalación de los mismos, utilizaremos [Conda](https://docs.conda.io/en/latest/).
 
 Se debe seguir con los siguientes pasos:
@@ -156,7 +156,7 @@ Simplemente entrar al website e importar el .aia en `Balancio-kit/app/app.aia`. 
 Estas instrucciones asumen conocimiento del uso de la IDE arduino
 
 <details open>
-<summary>Compensación IMU</summary>
+<summary>Calibración del IMU</summary>
 1. Abrir `Balancio-kit/Mcu/Src/imu_calibration/imu_calibration.ino` con el IDE Arduino
 2. Colocar el robot con la IMU paralela al piso y mantenerlo firme
 
@@ -175,7 +175,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 </details>  
 
 <details open>
-<summary>Calibrar angulo de equilibrio</summary>
+<summary>Calibración del angulo de equilibrio</summary>
 1. Abrir `balancio-kit/mcu/src/main/main.ino`
 
 2. Sostener el robot en la posición de equilibrio
@@ -190,8 +190,8 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
  </details>   
  
 <details open>
-<summary>Calibración constantes PID</summary>    
-
+<summary>Calibración de las constantes PID</summary>
+    
 1. Sacar el jumper de 12v en el driver 
 
 2. Elegir parámetros por algún método, como por ejemplo Zigler-Nichols
@@ -207,11 +207,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 ```
 ---
 </details> 
-    
-## uso 
-<details open>
-<summary>Usos</summary> 
-
+     
 Una vez configurado correctamente el robot, se pueden seleccionar distintos parametros de configuracion en el archivo correspondiente (`config.h`). 
 
 Entre ellos, se puede seleccionar el tipo de controlador deseado para estabilizar el Balancio.
