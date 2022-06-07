@@ -17,11 +17,11 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 
 ## Versiones
 
-|                      |      Estabilidad      |  Facilidad de Armado  | Requiere I3D |
-|:--------------------:|:---------------------:|:---------------------:|:------------:|
-| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  |      SI      |
-|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |      SI      |
-|         V 0.5        |         :star:        | :star: :star: :star:  |      SI      |
+|                      |      Estabilidad      |  Facilidad de Armado  | Requiere I3D | Plano de Impresión 3D|
+|:--------------------:|:---------------------:|:---------------------:|:------------:|:--------------------:|
+| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  |      SI      |                      |
+|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |      SI      |                      |
+|         V 0.5        |         :star:        | :star: :star: :star:  |      SI      |                      |
 
 ## Ensamblaje :wrench:
 
@@ -37,16 +37,9 @@ El balancio-kit consta de los siguientes componentes:
     <img src="resources/Balancio_plano.png" width="650">
 </p>
 
-## Planos de Impresión 3D
-
--Fusión
--Versión 0,7STL 
--Versión 0,6 STL 
--Versión 0,5 STL 
-
 ## Plano Electrico 
 <p align="center">
-    <img src="/Plano 1.png" width="730">
+    <img src="resources/Plano_Eléctrico.png" width="730">
 </p>    
     
 ## Ensamblaje Mecánico 
@@ -54,6 +47,9 @@ El balancio-kit consta de los siguientes componentes:
 1. Encastrar piezas en su posición final.
 1. Sostener los motores con precintos y/o pegamento. 
 1. Conectar los componentes siguiendo el [plano electrico](#plano-electrico).  
+   <p align="center">
+    <img src="resources/ensamble.png" width="200">
+</p>
    
 ## Instalación :floppy_disk:
 
