@@ -48,10 +48,7 @@ El balancio-kit consta de los siguientes componentes:
 1. Encastrar piezas en su posición final.
 1. Sostener los motores con precintos y/o pegamento. 
 1. Conectar los componentes siguiendo el [plano electrico](#plano-electrico).  
-   <p align="center">
-    <img src="/resources/ensamble.jpg" width="200">
-</p>
-   
+     
 ## Instalación :floppy_disk:
 
 En primer lugar, se debe clonar el repositorio. Esto se puede realizar tanto descargando el mismo
