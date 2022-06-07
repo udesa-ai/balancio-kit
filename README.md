@@ -17,11 +17,11 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 
 ## Versiones
 
-|                      |      Estabilidad      |  Facilidad de Armado  | Requiere I3D | Plano de Impresión 3D|
-|:--------------------:|:---------------------:|:---------------------:|:------------:|:--------------------:|
-| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  |      SI      |                      |
-|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |      SI      |                      |
-|         V 0.5        |         :star:        | :star: :star: :star:  |      SI      |                      |
+|                      |      Estabilidad      |  Facilidad de Armado  | Requiere I3D | Plano de Impresión 3D|Foto de la versión|
+|:--------------------:|:---------------------:|:---------------------:|:------------:|:--------------------:|:----------------:|
+| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  |      SI      |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
+|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |      SI      |                      |<img src="resources/Balancio_0.5.jpg" width="60">|
+|         V 0.5        |         :star:        | :star: :star: :star:  |      SI      |                      |<img src="resources/balancio_gif.gif" width="60">|
 
 ## Ensamblaje :wrench:
 
@@ -190,17 +190,19 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
     
 1. Sacar el jumper de 12v en el driver 
 
-2. Elegir parámetros por algún método, como por ejemplo Zigler-Nichols
-
-3. Probar las constantes, si se sacó el jumper se puede probar incluso con el cable conectado. **Cuidado al hacer esto!**
-
-4. modificar las constantes del PID en el archivo `balancio-kit/mcu/src/main/config.h` en las líneas:
+2. Elegir parámetros PID
+    
+3. modificar las constantes del PID en el archivo `balancio-kit/mcu/src/main/config.h` en las líneas:
 ```c++
 // PID Constants for pitch control
 #define KP 2000
 #define KI 22000
 #define KD 20.0
-```
+```   
+
+4. Probar las constantes, si se sacó el jumper se puede probar incluso con el cable conectado. **Cuidado al hacer esto!**
+
+
 ---
 </details> 
      
