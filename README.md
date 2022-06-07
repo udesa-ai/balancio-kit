@@ -10,10 +10,10 @@ Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capa
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
 <p align="center">
-    <img src="resources/Balancio_0.6.jpg" width="380">
-    <img src="resources/Balancio_0.71.jpg" width="219">
-    <img src="resources/balancio_gif.gif" width="165">
-    <img src="resources/Balancio_walee" width="165">
+    <img src="resources/Balancio_0.6.jpg" width="350">
+    <img src="resources/Balancio_0.71.jpg" width="195">
+    <img src="resources/balancio_gif.gif" width="145">
+    <img src="resources/Balancio_walle.jpg" width="265">
 </p>
 
 ## Versiones
