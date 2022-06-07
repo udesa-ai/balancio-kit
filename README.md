@@ -10,7 +10,7 @@ Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capa
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
 <p align="center">
-    <img src="resources/Balancio_0.5.jpg" width="200">
+    <img src="resources/version_0.6.jpg" width="200">
     <img src="resources/Balancio_0.71.jpg" width="219">
     <img src="resources/balancio_gif.gif" width="165">
 </p>
@@ -21,7 +21,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 |:--------------------:|:---------------------:|:---------------------:|:------------:|:--------------------:|:----------------:|
 | V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  |      SI      |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
 |   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |      SI      |                      |<img src="resources/Balancio_0.5.jpg" width="60">|
-|         V 0.5        |         :star:        | :star: :star: :star:  |      SI      |                      |<img src="resources/balancio_gif.gif" width="60">|
+|         V 0.5        |         :star:        | :star: :star: :star:  |      SI      |                      |<img src="resources/balanciov3.jpg" width="60">|
 
 ## Ensamblaje :wrench:
 
