@@ -13,6 +13,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/Balancio_0.6.jpg" width="380">
     <img src="resources/Balancio_0.71.jpg" width="219">
     <img src="resources/balancio_gif.gif" width="165">
+    <img src="resources/Balancio_walee" width="165">
 </p>
 
 ## Versiones
