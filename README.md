@@ -184,7 +184,7 @@ Inercia de la rueda desde el centro de masa (kg.m2):
 
  La aplicación está creada en <A HREF="https://appinventor.mit.edu/"> MIT App Inventor </A>.
 
-Simplemente entrar al website e importar el .aia en <A HREF="https://appinventor.mit.edu/"> A </A>. Luego de esto, se puede usar la aplicación mediante bluethooth desde un celular.
+Simplemente entrar al website e importar el .aia en <A HREF="Balancio-kit/app/app.aia"> App Balancio  </A>. Luego de esto, se puede usar la aplicación mediante bluethooth desde un celular.
 
 
 ## Calibración
