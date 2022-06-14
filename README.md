@@ -15,7 +15,8 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/balancio_gif.gif" width="145">
     <img src="resources/Balancio_walle.jpg" width="265">
 </p>
-<A HREF="balancio-kit/Planos de Impresión 3D/Version 0.5/"> Versión 0.5 I3D</A>
+
+
 ## Versiones
 
 |                      |      Estabilidad      |  Facilidad de Armado  |Requiere I3D| Tiempo de I3D                        | Plano de Impresión 3D|Foto de la versión|
