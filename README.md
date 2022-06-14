@@ -18,11 +18,11 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 
 ## Versiones
 
-|                      |      Estabilidad      |  Facilidad de Armado  | Requiere I3D | Plano de Impresión 3D|Foto de la versión|
-|:--------------------:|:---------------------:|:---------------------:|:------------:|:--------------------:|:----------------:|
-| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  |      SI      |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
-|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |      SI      |                      |<img src="resources/Balancio_0.5.jpg" width="60">|
-|         V 0.5        |         :star:        | :star: :star: :star:  |      SI      |                      |<img src="resources/balanciov3.jpg" width="60">|
+|                      |      Estabilidad      |  Facilidad de Armado  | Requiere I3D                        | Plano de Impresión 3D|Foto de la versión|
+|:--------------------:|:---------------------:|:---------------------:|:-----------------------------------:|:--------------------:|:----------------:|
+| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | SI (Base_Baterias:47m Cuerpo:2h36m) |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
+|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        | SI Cuerpo_Inferior:5h25m Cuerpo_Superior:5h11m Placa_inferior:58m Placa_superior:55m Cabeza:3h19m)|                      |<img src="resources/Balancio_0.5.jpg" width="60">|
+|         V 0.5        |         :star:        | :star: :star: :star:  |      SI (Aro:49m Cuerpo:4h42m)      |                      |<img src="resources/balanciov3.jpg" width="60">|
 
 ## Ensamblaje :wrench:
 
@@ -136,6 +136,50 @@ Se debe seguir con los siguientes pasos:
 5. Probar la instalación, corriendo el siguiente [script](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/simulation/pid.py):
     `python pid.py`
     </details> 
+    
+
+### Variables Físicas de la versión 7
+#### Cuerpo
+Masa sin ruedas: 0.244 kg
+
+
+
+Posición del centro de masa con respecto al eje de los motores y el centro simétrico del cuerpo: 
+
+
+- x = 1.55 
+- y ~= 0 mm
+- z = 31 mm
+
+Inercia sin ruedas desde el centro de masa (kg.m2): 
+
+- Ixx = 0.0006945
+- Ixy ~= 0
+- Iyy = 0.0006536
+- Ixz = -0.000013447 
+- Iyz ~= 0
+- Izz = 0.0001937
+
+#### Rueda
+Masa de una rueda: 0.029 kg
+
+
+Posición del centro de masa con respecto al eje de los motores y el borde del agarre: 
+- x = 0 mm   
+- y = 15.6 mm 
+- z = 0 mm
+
+
+Inercia de la rueda desde el centro de masa (kg.m2):  
+
+- Ixx = 0.000011729 
+- Ixy ~= 0  
+- Iyy = 0.000021531 
+- Ixz ~= 0 
+- Iyz ~= 0 
+- Izz = 0.000011729
+
+
 ### Aplicación 
 
 
@@ -233,7 +277,7 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 
     
 ## Bugs conocidos
-- Wheel spins on sturtup
+- Wheel spins on startup
 
 
 
