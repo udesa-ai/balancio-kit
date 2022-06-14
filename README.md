@@ -17,13 +17,13 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 </p>
 
 
-## Versiones
 
-|                      |      Estabilidad      |  Facilidad de Armado  |Requiere I3D| Tiempo de I3D                        | Plano de Impresión 3D|Foto de la versión|
+## Versiones
+|                      |      Estabilidad      |  Facilidad de Armado  |Requiere I3D| Tiempo de I3D                       | Plano de Impresión 3D|Foto de la versión|
 |:--------------------:|:---------------------:|:---------------------:|:-----------|:-----------------------------------:|:--------------------:|:----------------:|
-| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | SI         |<ul> <li> Base_Baterias:47m </li> <li> Cuerpo:2h36m</li> </ul> </td> | <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/Version%200.7"> Versión 0.7 I3D</A>                      |<img src="resources/Balancio_0.71.jpg" width="70">|
-|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |     SI     |<ul> <li>Cuerpo_Inferior:5h25m</li> <li>Cuerpo_Superior:5h11m</li> <li>  Placa_inferior:58m</li> <li>Placa_superior:55m</li> <li> Cabeza:3h19m</li> </ul> </td> |    <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/Versi%C3%B3n%200.6"> Versión 0.6 I3D</A>                  |<img src="resources/Balancio_0.5.jpg" width="60">|
-|         V 0.5        |         :star:        | :star: :star: :star:  |   SI    |  <ul> <li>  Aro:49m  </li> <li> Cuerpo:4h42m</li> </ul> </td>        |  <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/versi%C3%B3n%200.5"> Versión 0.5 I3D</A>                    |<img src="resources/balanciov3.jpg" width="60">|
+| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | SI         |<ul> <li> Base Baterias 47m </li> <li> Cuerpo 2:36 h </li> </ul> </td> | <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/Version%200.7"> Versión 0.7 I3D</A>                      |<img src="resources/Balancio_0.71.jpg" width="70">|
+|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |     SI     |  <li> Cuerpo Inferior 5:25 h </li> <li> Cuerpo Superior 5:11 h </li> <li>  Placa inferior 58m</li> <li>Placa superior 55m</li> <li> Cabeza 3:19 h </li>  |    <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/Versi%C3%B3n%200.6"> Versión 0.6 I3D</A>                  |<img src="resources/Balancio_0.5.jpg" width="60">|
+|         V 0.5        |         :star:        | :star: :star: :star:  |   SI    |  <ul> <li>  Aro 49m  </li> <li> Cuerpo 4:42h</li> </ul> </td> |  <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/versi%C3%B3n%200.5"> Versión 0.5 I3D</A>                    |<img src="resources/balanciov3.jpg" width="60">|
 
 ## Ensamblaje :wrench:
 
@@ -34,6 +34,8 @@ El balancio-kit consta de los siguientes componentes:
 - 2 motorreductores de 6v
 - Puente-H L298N
 - 2 baterías 18650 con su correspondiente porta-pilas
+- BMS FCD-2S-2
+- Switch 
 
 <p align="center">
     <img src="resources/Balancio_plano.png" width="650">
