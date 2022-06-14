@@ -18,11 +18,11 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 
 ## Versiones
 
-|                      |      Estabilidad      |  Facilidad de Armado  | Tiempo de I3D                        | Plano de Impresión 3D|Foto de la versión|
-|:--------------------:|:---------------------:|:---------------------:|:-----------------------------------:|:--------------------:|:----------------:|
-| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | Base_Baterias:47m Cuerpo:2h36m |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
-|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        | Cuerpo_Inferior:5h25m Cuerpo_Superior:5h11m Placa_inferior:58m Placa_superior:55m Cabeza:3h19m |                      |<img src="resources/Balancio_0.5.jpg" width="60">|
-|         V 0.5        |         :star:        | :star: :star: :star:  |      Aro:49m Cuerpo:4h42m      |                      |<img src="resources/balanciov3.jpg" width="60">|
+|                      |      Estabilidad      |  Facilidad de Armado  |Requiere I3D| Tiempo de I3D                        | Plano de Impresión 3D|Foto de la versión|
+|:--------------------:|:---------------------:|:---------------------:|:-----------|:-----------------------------------:|:--------------------:|:----------------:|
+| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | SI         |Base_Baterias:47m Cuerpo:2h36m |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
+|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |     SI     |Cuerpo_Inferior:5h25m Cuerpo_Superior:5h11m Placa_inferior:58m Placa_superior:55m Cabeza:3h19m |                      |<img src="resources/Balancio_0.5.jpg" width="60">|
+|         V 0.5        |         :star:        | :star: :star: :star:  |   SI    |    Aro:49m Cuerpo:4h42m      |                      |<img src="resources/balanciov3.jpg" width="60">|
 
 ## Ensamblaje :wrench:
 
