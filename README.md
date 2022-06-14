@@ -281,8 +281,11 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 - [x] Desarrollar aplicación bluetooth
 - [x] Crear agente RL
 - [x] Diseño mecánico
+- [X] Publicar STL del diseño mecánico
 - [ ] Publicar STEP del diseño mecánico
-- [ ] Crear diagrama electrónico
+- [X] Crear diagrama electrónico
+
+
 
     
 ## Bugs conocidos
