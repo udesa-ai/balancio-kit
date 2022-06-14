@@ -20,9 +20,9 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 
 |                      |      Estabilidad      |  Facilidad de Armado  |Requiere I3D| Tiempo de I3D                        | Plano de Impresión 3D|Foto de la versión|
 |:--------------------:|:---------------------:|:---------------------:|:-----------|:-----------------------------------:|:--------------------:|:----------------:|
-| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | SI         |Base_Baterias:47m Cuerpo:2h36m |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
-|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |     SI     |Cuerpo_Inferior:5h25m Cuerpo_Superior:5h11m Placa_inferior:58m Placa_superior:55m Cabeza:3h19m |                      |<img src="resources/Balancio_0.5.jpg" width="60">|
-|         V 0.5        |         :star:        | :star: :star: :star:  |   SI    |    Aro:49m Cuerpo:4h42m      |                      |<img src="resources/balanciov3.jpg" width="60">|
+| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | SI         |<ul> <li> Base_Baterias:47m </li> <li> Cuerpo:2h36m</li> </ul> </td> |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
+|   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |     SI     |<ul> <li>Cuerpo_Inferior:5h25m</li> <li>Cuerpo_Superior:5h11m</li> <li>  Placa_inferior:58m</li> <li>Placa_superior:55m</li> <li> Cabeza:3h19m</li> </ul> </td> |                      |<img src="resources/Balancio_0.5.jpg" width="60">|
+|         V 0.5        |         :star:        | :star: :star: :star:  |   SI    |  <ul> <li>  Aro:49m  </li> <li> Cuerpo:4h42m</li> </ul> </td>        |                      |<img src="resources/balanciov3.jpg" width="60">|
 
 ## Ensamblaje :wrench:
 
@@ -138,7 +138,7 @@ Se debe seguir con los siguientes pasos:
     </details> 
     
 
-### Variables Físicas de la versión 7
+### Variables Físicas de la versión 0.7
 #### Cuerpo
 Masa sin ruedas: 0.244 kg
 
@@ -182,10 +182,9 @@ Inercia de la rueda desde el centro de masa (kg.m2):
 
 ### Aplicación 
 
+ La aplicación está creada en <A HREF="https://appinventor.mit.edu/"> MIT App Inventor </A>.
 
-    La aplicación está creada en [MIT App Inventor](https://appinventor.mit.edu/).
-
-Simplemente entrar al website e importar el .aia en `Balancio-kit/app/app.aia`. Luego de esto, se puede usar la aplicación mediante bluethooth desde un celular.
+Simplemente entrar al website e importar el .aia en <A HREF="https://appinventor.mit.edu/"> A </A>. Luego de esto, se puede usar la aplicación mediante bluethooth desde un celular.
 
 
 ## Calibración
