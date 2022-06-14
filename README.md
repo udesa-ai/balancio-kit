@@ -15,12 +15,12 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/balancio_gif.gif" width="145">
     <img src="resources/Balancio_walle.jpg" width="265">
 </p>
-
+<A HREF="balancio-kit/Planos de Impresión 3D/Version 0.7/"> Versión 0.7 I3D</A>
 ## Versiones
 
 |                      |      Estabilidad      |  Facilidad de Armado  |Requiere I3D| Tiempo de I3D                        | Plano de Impresión 3D|Foto de la versión|
 |:--------------------:|:---------------------:|:---------------------:|:-----------|:-----------------------------------:|:--------------------:|:----------------:|
-| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | SI         |<ul> <li> Base_Baterias:47m </li> <li> Cuerpo:2h36m</li> </ul> </td> |                      |<img src="resources/Balancio_0.71.jpg" width="70">|
+| V 0.7 (Recomendado)  | :star: :star: :star:  | :star: :star: :star:  | SI         |<ul> <li> Base_Baterias:47m </li> <li> Cuerpo:2h36m</li> </ul> </td> | <A HREF="balancio-kit/Planos de Impresión 3D/Version 0.7/"> Versión 0.7 I3D</A>                      |<img src="resources/Balancio_0.71.jpg" width="70">|
 |   V 0.6 AKA:Wall-e   | :star: :star: :star:  |         :star:        |     SI     |<ul> <li>Cuerpo_Inferior:5h25m</li> <li>Cuerpo_Superior:5h11m</li> <li>  Placa_inferior:58m</li> <li>Placa_superior:55m</li> <li> Cabeza:3h19m</li> </ul> </td> |                      |<img src="resources/Balancio_0.5.jpg" width="60">|
 |         V 0.5        |         :star:        | :star: :star: :star:  |   SI    |  <ul> <li>  Aro:49m  </li> <li> Cuerpo:4h42m</li> </ul> </td>        |                      |<img src="resources/balanciov3.jpg" width="60">|
 
