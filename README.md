@@ -1,22 +1,39 @@
-# Balacio-Kit
+# Balancio-Kit
 
 ![license_MIT](https://img.shields.io/github/license/udesa-ai/balancio-kit)
 ![stars](https://img.shields.io/github/stars/udesa-ai/balancio-kit)
 
-
 ## Información
-
+    
 Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capaz de correr una red neuronal para mantener el equilibrio y de ser controlado de manera inalámbrica  :trackball:.
 
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
 
 <p align="center">
-    <img src="resources/balanciov3.jpg" width="200">
-    <img src="resources/Balanciov0_4.jpg" width="219">
-    <img src="resources/balancio_gif.gif" width="124">
+    <img src="resources/Balancio_0.6.jpg" width="350">
+    <img src="resources/Balancio_0.71.jpg" width="195">
+    <img src="resources/balancio_gif.gif" width="145">
+    <img src="resources/Balancio_walle.jpg" width="265">
 </p>
 
+
+
+## Versiones
+|                     | Estabilidad          | Facilidad de Armado  | Requiere I3D | Tiempo de [I3D](#configuración-de-impresión)| Plano de Impresión 3D| Foto de la versión                                 |
+|:-------------------:|:--------------------:|:--------------------:|--------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------:|
+| V 0.7 (Recomendado) | :star: :star: :star: | :star: :star: :star: | SI           | <ul style="list-style-type:none;"> <li>  Baterias 47m </li> <li> Cuerpo 2:36 h </li> </ul>                                                                                                       | <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/Version%200.7"> Versión 0.7 I3D</A>      | <img src="resources/Balancio_0.71.jpg" width="70"> |
+| V 0.6 AKA:Wall-e    | :star: :star: :star: | :star:               | SI           | <ul style="list-style-type:none;"> <li> C_Inferior 5:25h </li> <li> C_Superior 5:11h </li> <li>P_inferior 58m</li> <li>P_superior 55m</li> <li> Cabeza 3:19 h </li> </ul> | <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/Versi%C3%B3n%200.6"> Versión 0.6 I3D</A> | <img src="resources/Balancio_0.5.jpg" width="60">  |
+| V 0.5               | :star:               | :star: :star: :star: | SI           |<ul> <li>Aro 49m </li> <li> Cuerpo 4:42h </li>                                                                                                                                                                            | <A HREF="https://github.com/AaronLoz/balancio-kit/tree/RL_1/Planos%20de%20Impresi%C3%B3n%203D/versi%C3%B3n%200.5"> Versión 0.5 I3D</A> | <img src="resources/balanciov3.jpg" width="60">    |
+    
+### Configuración de Impresión 
+- Espesor de boquilla: 0.4 mm
+- Altura de Capa: 0.3 mm 
+- Perimetros: 3 
+- Capas Solidas Top y Bottom:  3 
+- Infill: 20%
+
 ## Ensamblaje :wrench:
+
 El balancio-kit consta de los siguientes componentes:
 - Placa base (impresa en 3D o hecha con algún otro material) 
 - Microcontrolador NodeMCU ESP32
@@ -24,11 +41,24 @@ El balancio-kit consta de los siguientes componentes:
 - 2 motorreductores de 6v
 - Puente-H L298N
 - 2 baterías 18650 con su correspondiente porta-pilas
+- BMS FCD-2S-2
+- Switch 
 
 <p align="center">
-    <img src="resources/Balancio_plano.png" width="530">
+    <img src="resources/Balancio_plano.png" width="650">
 </p>
 
+## Plano Electrico 
+<p align="center">
+    <img src="resources/Plano_1.2.png" width="730">
+</p>    
+    
+## Ensamblaje Mecánico 
+1. Imprimir en 3D alguna de las [versiones](#versiones).
+1. Encastrar piezas en su posición final.
+1. Sostener los motores con precintos y/o pegamento. 
+1. Conectar los componentes siguiendo el [plano electrico](#plano-electrico).  
+     
 ## Instalación :floppy_disk:
 
 En primer lugar, se debe clonar el repositorio. Esto se puede realizar tanto descargando el mismo
@@ -37,29 +67,51 @@ como un .ZIP, o ejecutando `git clone https://github.com/UDESA-AI/balancio-kit.g
 La instalación consta de 3 módulos principales: Microcontrolador, simulación y aplicación.
 Éstos son fundamentales para el funcionamiento completo del proyecto, pero la instalación
 de cada uno de ellos se puede realizar en distinto orden.
-
+  
+  
 ### Microcontrolador
 
+<details open>
+<summary>Instalación de la IDE</summary> 
 Para programar y compilar el NodeMCU ESP32 usaremos la IDE de Arduino. Para esto se
 debe instalar la misma siguiendo los pasos que se especifican en el siguiente 
 [link](https://www.arduino.cc/en/software).
-
+</details> 
+<details open>
+<summary>Configuración del Microcrontolador</summary> 
 Una vez instalada la IDE, se debe habilitar el microcontrolador que vamos a usar.
 Para esto se deben seguir los siguientes pasos:
+    
 1. En la IDE, ir a 'File' (Archivos) → 'Preferences' (Preferencias)
+    
 2. En el campo "Additional Boards Manager URLs", agregar lo siguiente: https://dl.espressif.com/dl/package_esp32_index.json. (Luego clickear 'OK').
 3. Ir a 'Tools' → 'Board: ' → 'Boards Manager…' 
+    
 4. Buscar "esp32", e instalar "esp32 by Espressif Systems" presionando el botón 'Install'.
+    
 5. Indicarle a la IDE que vamos a utilizar un esp32. Ir a 'Tools' → 'Board:' → 'ESP32 Arduino' → 'NodeMCU-32S'
+    
 6. En 'Tools' → 'Port', seleccionar el puerto correspondiente a donde está conectado el microcontrolador.
 
+</details> 
+
+<details open>
+<summary>Librerias de Arduino</summary> 
 Luego procederemos a instalar las librerías de arduino que vamos a utilizar:
+    
+   
 - Para eso ir a 'Sketch' → 'Include Library' → 'Manage Libraries…'
+    
+    
 - Buscar e instalar las siguientes librerias, especificando la versión correspondiente:
     - MPU6050 by Electronic Cats (version 0.5.0)
     - PS3 Controller Host by Jeffrey van Pernis (version 1.1.0)
     - EloquentTinyML by Simone Salerno (version 0.0.7)
-
+    
+    
+</details> 
+<details open>
+<summary>Ejecución inicial</summary> 
 Para comprobar la instalación, ejecutaremos un ejemplo de prueba:
 - ir a 'File' → 'Examples' → 'WiFi' → 'WiFiScan'
 - En el sketch generado, presionar el botón de carga ('Upload')  :calling:
@@ -67,10 +119,11 @@ Para comprobar la instalación, ejecutaremos un ejemplo de prueba:
 
 Posibles errores:
 - Si no se puede cargar el programa al microcontrolador, intentar mantener presionado el botón "boot" presente en la placa, mientras se realiza la carga. Esto se debería realizar solo la primera vez.
-
+</details> 
 
 ### Simulación
-
+<details open>
+ 
 La simulación corre en Python :snake:, y utiliza diversos paquetes. Para facilitar la instalación de los mismos, utilizaremos [Conda](https://docs.conda.io/en/latest/).
 
 Se debe seguir con los siguientes pasos:
@@ -92,17 +145,65 @@ Se debe seguir con los siguientes pasos:
     `python setup.py`
 5. Probar la instalación, corriendo el siguiente [script](https://github.com/UDESA-AI/balancio-kit/blob/RL_1/simulation/pid.py):
     `python pid.py`
+    </details> 
+    
 
-### Aplicación
-La aplicación está creada en [MIT App Inventor](https://appinventor.mit.edu/).
+### Variables Físicas de la versión 0.7
+#### Cuerpo
+Masa sin ruedas: 0.244 kg
 
-Simplemente entrar al website e importar el .aia en `Balancio-kit/app/app.aia`. Luego de esto, se puede usar la aplicación mediante bluethooth desde un celular.
+
+
+Posición del centro de masa con respecto al eje de los motores y el centro simétrico del cuerpo: 
+
+
+- x = 1.55 
+- y ~= 0 mm
+- z = 31 mm
+
+Inercia sin ruedas desde el centro de masa (kg.m2): 
+
+- Ixx = 0.0006945
+- Ixy ~= 0
+- Iyy = 0.0006536
+- Ixz = -0.000013447 
+- Iyz ~= 0
+- Izz = 0.0001937
+
+#### Rueda
+Masa de una rueda: 0.029 kg
+
+
+Posición del centro de masa con respecto al eje de los motores y el borde del agarre: 
+- x = 0 mm   
+- y = 15.6 mm 
+- z = 0 mm
+
+
+Inercia de la rueda desde el centro de masa (kg.m2):  
+
+- Ixx = 0.000011729 
+- Ixy ~= 0  
+- Iyy = 0.000021531 
+- Ixz ~= 0 
+- Iyz ~= 0 
+- Izz = 0.000011729
+
+
+### Aplicación 
+
+ La aplicación está creada en <A HREF="https://appinventor.mit.edu/"> MIT App Inventor </A>.
+
+Simplemente entrar al website e importar el .aia en <A HREF="Balancio-kit/app/app.aia"> App Balancio  </A>. Luego de esto, se puede usar la aplicación mediante bluethooth desde un celular.
 
 
 ## Calibración
 
+
 Estas instrucciones asumen conocimiento del uso de la IDE arduino
-### Compensación IMU
+
+<details open>
+<summary>Calibración del IMU</summary>
 1. Abrir `Balancio-kit/Mcu/Src/imu_calibration/imu_calibration.ino` con el IDE Arduino
 2. Colocar el robot con la IMU paralela al piso y mantenerlo firme
 
@@ -118,9 +219,10 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 #define Y_GYRO_OFFSET   77
 #define Z_GYRO_OFFSET   60
 ```
+</details>  
 
-
-### Calibrar angulo de equilibrio
+<details open>
+<summary>Calibración del angulo de equilibrio</summary>
 1. Abrir `balancio-kit/mcu/src/main/main.ino`
 
 2. Sostener el robot en la posición de equilibrio
@@ -132,24 +234,29 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 // Angle of (approximate) static equilibrium
 #define STATIC_ANGLE -0.04 // Calibrated point
 ```
-### Calibración constantes PID
+ </details>   
+ 
+<details open>
+<summary>Calibración de las constantes PID</summary>
+    
 1. Sacar el jumper de 12v en el driver 
 
-2. Elegir parámetros por algún método, como por ejemplo Zigler-Nichols
-
-3. Probar las constantes, si se sacó el jumper se puede probar incluso con el cable conectado. **Cuidado al hacer esto!**
-
-4. modificar las constantes del PID en el archivo `balancio-kit/mcu/src/main/config.h` en las líneas:
+2. Elegir parámetros PID
+    
+3. modificar las constantes del PID en el archivo `balancio-kit/mcu/src/main/config.h` en las líneas:
 ```c++
 // PID Constants for pitch control
 #define KP 2000
 #define KI 22000
 #define KD 20.0
-```
+```   
+
+4. Probar las constantes, si se sacó el jumper se puede probar incluso con el cable conectado. **Cuidado al hacer esto!**
+
+
 ---
-
-## Uso
-
+</details> 
+     
 Una vez configurado correctamente el robot, se pueden seleccionar distintos parametros de configuracion en el archivo correspondiente (`config.h`). 
 
 Entre ellos, se puede seleccionar el tipo de controlador deseado para estabilizar el Balancio.
@@ -165,7 +272,7 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 // Control algorithm type
 #define CONTROL_ALGO "RL"
 ```
-
+</details> 
 
 ---
 ## TODO
@@ -174,14 +281,21 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 - [x] Desarrollar aplicación bluetooth
 - [x] Crear agente RL
 - [x] Diseño mecánico
+- [X] Publicar STL del diseño mecánico
 - [ ] Publicar STEP del diseño mecánico
-- [ ] Crear diagrama electrónico
+- [X] Crear diagrama electrónico
 
+
+
+    
 ## Bugs conocidos
+- Wheel spins on startup
 
-- Wheel spins on sturtup
 
+
+    
 ## Contribuciones
+ 
 Las *pull requests* son bienvenidas, para cambios mayores, por favor abrir un *issue* para discutir los cambios deseados
 
 ## Licencia
