@@ -8,11 +8,11 @@
 // Defines
 #define IN1 18
 #define IN2 19
-#define ENA 5
+#define ENA 17
 
 #define IN3 0
 #define IN4 2
-#define ENB 15
+#define ENB 4
 
 // Global Function Protoyes
 /**
