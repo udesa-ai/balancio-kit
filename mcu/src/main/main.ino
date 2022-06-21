@@ -37,7 +37,8 @@ int pwmL = 0, pwmR = 0;
 volatile bool controlFlag = false;
 float fwd = 0;
 float rot = 0;
-int time_ctr = 0, time_ctr2 = 0;
+int time_ctr1, time_ctr2, time_ctr3;
+int delay_startup_time = 2000;
 bool stop_command = false;
 bool x_down;
 
@@ -66,6 +67,9 @@ void setup()
 
   // Timer init. (ISR at 1/LOOP_PERIOD Hz)
   timer_init();
+  time_ctr1 = micros();
+  time_ctr2 = millis();
+  time_ctr3 = millis();
 
   // Controllers init
   pitch_control = Controller::init_algo(control_algo, pitch_controller_data);
@@ -95,7 +99,7 @@ void loop()
     currentAngle = updatePitch(currentAngle);
     yaw = updateYaw(yaw);
 
-    if (stop_command || (currentAngle > angle_limit) || (currentAngle < -angle_limit))
+    if (stop_command || (currentAngle > angle_limit) || (currentAngle < -angle_limit) || (millis() - time_ctr3 <= delay_startup_time))
     {
       // Stop motors
       stop_motor();
@@ -149,8 +153,8 @@ void loop()
         Serial.print("  PWM: ");
         Serial.print(pwmL);
         Serial.print(" Loop time: ");
-        Serial.println(micros() - time_ctr);
-        time_ctr = micros();
+        Serial.println(micros() - time_ctr1);
+        time_ctr1 = micros();
       }
     }
 
