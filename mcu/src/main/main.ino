@@ -31,13 +31,13 @@
 #include "Wire.h"
 #include "commander.h"
 
-float currentAngle = 0.0, targetAngle = 0.0, angle_limit = 0.5;
+float currentAngle, targetAngle = 0.0, angle_limit = 0.5;
 float yaw = 0.0, targetYaw = 0.0, yawCommand = 0.0;
 int pwmL = 0, pwmR = 0;
 volatile bool controlFlag = false;
 float fwd = 0;
 float rot = 0;
-int time_ctr1, time_ctr2, time_ctr3;
+int time_ctr1, time_ctr2;
 int delay_startup_time = 2000;
 bool stop_command = false;
 bool x_down;
@@ -69,11 +69,13 @@ void setup()
   timer_init();
   time_ctr1 = micros();
   time_ctr2 = millis();
-  time_ctr3 = millis();
 
   // Controllers init
   pitch_control = Controller::init_algo(control_algo, pitch_controller_data);
   yaw_control = Controller::init_algo("PID", yaw_controller_data);
+
+  // Angle initialization
+  currentAngle = -getAccelPitch();
 }
 
 // ISR at 1/LOOP_PERIOD Hz
@@ -99,7 +101,7 @@ void loop()
     currentAngle = updatePitch(currentAngle);
     yaw = updateYaw(yaw);
 
-    if (stop_command || (currentAngle > angle_limit) || (currentAngle < -angle_limit) || (millis() - time_ctr3 <= delay_startup_time))
+    if (stop_command || (currentAngle > angle_limit) || (currentAngle < -angle_limit))
     {
       // Stop motors
       stop_motor();
@@ -141,9 +143,11 @@ void loop()
       L_motor(pwmL + int(rot)); // -255 to 255
       R_motor(pwmR - int(rot)); // -255 to 255
 
-      // Print relevant data.
-      if (true)
-      {
+
+    }
+    // Print relevant data.
+    if (true)
+    {
         Serial.print("  targetAngle: ");
         Serial.print(targetAngle);
         Serial.print("  targetYaw: ");
@@ -155,9 +159,7 @@ void loop()
         Serial.print(" Loop time: ");
         Serial.println(micros() - time_ctr1);
         time_ctr1 = micros();
-      }
     }
-
     controlFlag = false;
   }
   else

@@ -26,6 +26,12 @@ void imu_setup(void);
 void getAccelGyro(float *ay, float *az, float *gx, float *gz);
 
 /**
+ * Get robot's pitch based on accelerometer data.
+ *
+ */
+float getAccelPitch();
+
+/**
  * Estimate robot's pitch angle (in radians) based on accelerometer and
  * gyroscope data, using a complementary filter.
  *

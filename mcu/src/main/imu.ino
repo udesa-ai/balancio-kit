@@ -93,6 +93,12 @@ void getAccelGyro(float *ay, float *az, float *gx, float *gz)
   gz[0] = 2 * 250 * (gz_b / (65535.0));                     // deg/s
 }
 
+float getAccelPitch(){
+  getAccelGyro(&ay, &az, &gx, &gz);
+  float accel_pitch = atan2(ay, az);
+  return accel_pitch;
+}
+
 float updatePitch(float currentAngle)
 {
   // Convert pitch from radians to degrees.
@@ -100,7 +106,7 @@ float updatePitch(float currentAngle)
   // Get imu data.
   getAccelGyro(&ay, &az, &gx, &gz);
   // Pitch estimation from accelerometer.
-  accelPitch = atan2(ay, az) * RAD_TO_DEG;
+  accelPitch = getAccelPitch()* RAD_TO_DEG;
   // Complementary filter between acceleration and gyroscopic pitch estimation.
   pitch_deg = (tau) * (currentAngle_deg + (gx)*LOOP_PERIOD) + (1 - tau) * (accelPitch);
   // Degrees to radians.
