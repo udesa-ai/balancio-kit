@@ -1,10 +1,14 @@
 # Balancio-Kit
 
-![license_MIT](https://img.shields.io/github/license/udesa-ai/balancio-kit)
-![stars](https://img.shields.io/github/stars/udesa-ai/balancio-kit)
+[![license_MIT](https://img.shields.io/github/license/udesa-ai/balancio-kit)](https://github.com/udesa-ai/balancio-kit/blob/main/LICENSE)
+&nbsp;
+[![stars](https://img.shields.io/github/stars/udesa-ai/balancio-kit)](https://github.com/udesa-ai/balancio-kit/stargazers)
+&nbsp;
+[![language_en](https://img.shields.io/badge/language-english-a0b0ba)](README_EN.md)
+[![language_sp](https://img.shields.io/badge/spanish-1081c2)](README.md)
 
-## Información
-    
+#### [README in English](README_EN.md)
+----
 Proyecto educativo de un robot :robot: de autobalanceo de ultra bajo costo, capaz de correr una red neuronal para mantener el equilibrio y de ser controlado de manera inalámbrica  :trackball:.
 
 Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y control.
@@ -75,9 +79,9 @@ de cada uno de ellos se puede realizar en distinto orden.
 
 <details open>
 <summary>Instalación de la IDE</summary> 
-Para programar y compilar el NodeMCU ESP32 usaremos la IDE de Arduino. Para esto se
+Para programar y compilar el NodeMCU ESP32 usaremos la IDE 2 de Arduino. Para esto se
 debe instalar la misma siguiendo los pasos que se especifican en el siguiente 
-[link](https://www.arduino.cc/en/software).
+[link](https://www.arduino.cc/en/software) .
 </details> 
 <details open>
 <summary>Configuración del Microcrontolador</summary> 
@@ -207,11 +211,12 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 <details open>
 <summary>Calibración del IMU</summary>
 1. Abrir `Balancio-kit/Mcu/Src/imu_calibration/imu_calibration.ino` con el IDE Arduino
+    
 2. Colocar el robot con la IMU paralela al piso y mantenerlo firme
 
 3. Subir el programa a la placa y usar el monitor serial para obtener las compensaciones de la IMU
 
-4. Modificar las compensaciones en el archivo `balancio-kit/mcu/src/main/config.h` en:
+4. Modificar las compensaciones de giróscopo en el archivo `balancio-kit/mcu/src/main/config.h` en:
 ```c++
 // IMU calibration parameters
 #define X_ACCEL_OFFSET -1775
@@ -221,6 +226,7 @@ Estas instrucciones asumen conocimiento del uso de la IDE arduino
 #define Y_GYRO_OFFSET   77
 #define Z_GYRO_OFFSET   60
 ```
+5. Para las compensaciones de Acelerómetro debe ser tenido en cuenta la gravedad, solo midiendo las compensaciones con la gravedad perpendicualar a esa direcci 
 </details>  
 
 <details open>
@@ -286,12 +292,13 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 - [X] Publicar STL del diseño mecánico
 - [ ] Publicar STEP del diseño mecánico
 - [X] Crear diagrama electrónico
+- [ ] Aclarar que datos levantar del imu calibration.
 
 
 
     
 ## Bugs conocidos
-- Wheel spins on startup
+- [x] Wheel spins on startup
 
 
 
