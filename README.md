@@ -293,7 +293,7 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 
     
 ## Bugs conocidos
-- Wheel spins on startup
+- [x] Wheel spins on startup
 
 
 
