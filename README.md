@@ -286,7 +286,7 @@ En caso de querer utilzar un agente de aprendizaje por refuerzo:
 - [X] Publicar STL del diseño mecánico
 - [ ] Publicar STEP del diseño mecánico
 - [X] Crear diagrama electrónico
-- [ ] Arreglar conexioando.
+- [ ] Arreglar conexioando. Motores y actualizar pines.
 - [ ] Agregar nota en caso de que no se suba el codigo al ardunio.
 - [ ] Aclarar que datos levantar del imu calibration.
 
