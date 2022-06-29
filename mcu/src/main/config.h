@@ -6,7 +6,7 @@
 */
 
 // Control algorithm type
-#define CONTROL_ALGO "PID" // PID, RL, ...
+#define CONTROL_ALGO "Clautrol" // PID, RL, Clautrol, ...
 
 // Reinforcement Learning model name. Available models are located in the folder named "models".
 #define A2C_p_1

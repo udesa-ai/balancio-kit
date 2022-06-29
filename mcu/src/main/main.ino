@@ -120,7 +120,7 @@ void loop()
     else
     {
       // Pitch control.
-      if (control_algo.equals("PID"))
+      if (control_algo.equals("PID") || control_algo.equals("Clautrol"))
       {
         // PID control.
         pwm = pitch_control->update(currentAngle, targetAngle);

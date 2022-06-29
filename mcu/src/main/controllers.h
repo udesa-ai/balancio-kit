@@ -10,6 +10,7 @@
 
 #include "config.h"
 #include <EloquentTinyML.h>
+#include <deque>
 
 /**
  * Struct datatype to store PID related parameters.
@@ -27,6 +28,9 @@ struct controller_data_t
 class Controller
 {
 public:
+    /*Class Constructor*/
+    Controller(int buf_size);
+
     /**
      * Class method that calculates a new output of the controller
      * based on a new inputted state.
@@ -45,6 +49,18 @@ public:
      * @param  {controller_data_t} controller_data : Struct containing controller specific data.
      */
     static Controller *init_algo(String algo, controller_data_t controller_data);
+
+    /**
+     * Method that stores in memory a buffer of N_memory instances of the current state, 
+     * the target state, and the outputs.
+     *
+     */
+    void update_buffer(String data_key, float data_value);
+    
+    /* Variables */
+    int buffer_size;
+    std::deque<float> pitch_error_buff; 
+    std::deque<float> pwm_buff; 
 };
 
 class RlSingleInput : public Controller
@@ -113,6 +129,43 @@ public:
      * @param  {float} previous_state : Current state
      */
     void reset(float previous_state);
+};
+
+class Clautrol : public Controller
+{
+private:
+    // std::vector<float> e_vec = {-260.8, 473.2, -214.6, -0.08983, 0.0};
+    // std::vector<float> u_vec = {-2.0, 1.0, 0.0, 0.0, 0.0};
+
+    // std::vector<float> e_vec = {0.0, -1162.0, 2109.0, -957.0, 0.0};
+    // std::vector<float> u_vec = {-2.007, 1.013, -0.006738, 0.0, 0.0};
+    
+    std::vector<float> e_vec = {-542.7, -104.8, 975.7, 94.65, -443};
+    std::vector<float> u_vec = {-0.0667, -1.222, 0.444, 0.444, 0.0};
+
+    // float A = -2000 - (20/LOOP_PERIOD) - 22000 * LOOP_PERIOD;
+    // float B = (20/LOOP_PERIOD) - 22000 * LOOP_PERIOD;
+    // float C =  - 22000 * LOOP_PERIOD;
+    //
+    // std::vector<float> e_vec = {A, B, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C};
+    // std::vector<float> u_vec = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+public:
+    /**
+     * Class constructor.
+     *
+     * Controller specific parameters are loaded.
+     *
+     */
+    Clautrol();
+
+    /**
+     * Controller update and output.
+     *
+     * @param  {float} current_state : Current state.
+     * @param  {float} target_state  : Target state.
+     * @return {std::vector<float>}  : Controller output.
+     */
+    std::vector<float> update(float current_state, float target_state) override;
 };
 
 #endif
