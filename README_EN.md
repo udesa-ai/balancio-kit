@@ -169,7 +169,8 @@ The following steps must be followed:
     </details> 
 
 ### Physical Variables of version 0.7
-#### Body
+ 
+#### Structure
 Mass without wheels: 0.244 kg
 
 Position of the centre of mass relative to the axis of the engines and the symmetrical centre of the body: 
