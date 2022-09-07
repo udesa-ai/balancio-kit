@@ -317,5 +317,5 @@ In case you want to use a reinforcement learning agent:
  
 Pull requests are welcome, for major changes, please open a *issue* to discuss the desired changes.
 
-## Licency
+## License
 [MIT](https://choosealicense.com/licenses/mit/)
