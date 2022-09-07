@@ -295,14 +295,14 @@ In case you want to use a reinforcement learning agent:
 ---
 ## Overview
 
--[x] initial commit
--[x] Develop bluetooth application
--[x] Create RL agent
--[x] Mechanical design
--[X] Publish STL of mechanical design
--[ ] Publish STEP of mechanical design
--[X] Create electronic diagram
--[ ] Clarify which data to lift from imu calibration.
+- [x] initial commit
+- [x] Develop bluetooth application
+- [x] Create RL agent
+- [x] Mechanical design
+- [X] Publish STL of mechanical design
+- [ ] Publish STEP of mechanical design
+- [X] Create electronic diagram
+- [ ] Clarify which data to lift from imu calibration.
 
 
 
