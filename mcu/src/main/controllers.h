@@ -7,7 +7,7 @@
 
 #ifndef controllers_h
 #define controllers_h
-
+#include <vector>
 #include "config.h"
 #include <EloquentTinyML.h>
 
