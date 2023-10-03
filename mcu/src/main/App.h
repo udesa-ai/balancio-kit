@@ -6,34 +6,31 @@
 */
 #pragma once
 
-#ifndef commander_h
-#define commander_h
+#ifndef App_h
+#define App_h
 
-#include <Ps3Controller.h>
 #include "config.h"
 #include "InputDevice.h"
 
 // PS3 Controller related functions.
 
-class PS3Joystick : public InputDevice {
+class App : public InputDevice {
     public: 
-        /**
-        * Connect board to PS3 joystick via bluetooth.
-        * The targeted device is specified via the MAC address.
-        */
-        PS3Joystick();
-        void setup(void);
+
+        App();
         /**
         * Callback executed when the joystick connects to the board.
         */
+        void setup(void);
+
 
         /**
-        * Devuelve en formato pitch,yaw
+        * Return by interface in the array that was indicated as parameter what was sent from the app. Format: [pitch,yaw].
         */
-        void parse_input(float fill_arr[2] );
+        void parse_input(float pitch_yaw[2] );
 
         /**
-        * Get the commanded pitch value from the PS3 joystick.
+        * Adjusts the read pitch and returns it .
         * 
         * @return Pitch target
         */
@@ -48,11 +45,11 @@ class PS3Joystick : public InputDevice {
         float get_yaw_command(float prev_target,float read);
         
         /**
-        * Get if the x button of the PS3 joystick is pressed.
+        * Checks  if the x button is pressed (Currently not implemented here, but it is in the PS3 controller).
         * 
-        * @return True if the x button is pressed. False if not.
+        * @return True if the x button is pressed. False if not. (Currentyl returning only false)
         */
         bool x_button_pressed(void);
 };
-
 #endif
+

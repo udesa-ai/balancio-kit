@@ -10,6 +10,7 @@
 #include "rl_model.h"
 #include <EloquentTinyML.h>
 #include <vector>
+#include "Arduino.h"
 
 /* Controller Abstract Class*/
 
