@@ -4,10 +4,12 @@
  This code is licensed under MIT license (see LICENSE.txt for details)
 ======================================================================
 */
-
+#pragma once
 // Control algorithm type
 #define CONTROL_ALGO "PID" // PID, RL, ...
+#include <string>
 
+String CONTROLLER_DEVICE = "APP"; //"APP , PS3, ..."
 // Reinforcement Learning model name. Available models are located in the folder named "models".
 #define A2C_p_1
 
@@ -31,13 +33,12 @@
 // Loop period in seconds
 #define LOOP_PERIOD 0.01 // 100 Hz
 
-// Angle of (approximate) static equilibrium
 #define STATIC_ANGLE -0.04 // Calibrated point
 
 // IMU calibration parameters
-#define X_ACCEL_OFFSET -1775
-#define Y_ACCEL_OFFSET 756
-#define Z_ACCEL_OFFSET 2706
-#define X_GYRO_OFFSET 181
-#define Y_GYRO_OFFSET 77
-#define Z_GYRO_OFFSET 60
+#define X_ACCEL_OFFSET -825
+#define Y_ACCEL_OFFSET -568
+#define Z_ACCEL_OFFSET  1146
+#define X_GYRO_OFFSET 38
+#define Y_GYRO_OFFSET 38
+#define Z_GYRO_OFFSET 9

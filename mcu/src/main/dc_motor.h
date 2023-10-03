@@ -6,8 +6,8 @@
 */
 
 // Defines
-#define IN1 18
-#define IN2 19
+#define IN1 19
+#define IN2 18
 #define ENA 17
 
 #define IN3 0
