@@ -44,7 +44,7 @@ El balancio-kit consta de los siguientes componentes:
 - Placa base (impresa en 3D o hecha con algún otro material) 
 - Microcontrolador NodeMCU ESP32
 - IMU MPU 6050
-- 2 motorreductores de 6v
+- 2 motorreductores de 6v con rueda "para Arduino"
 - Puente-H L298N
 - 2 baterías 18650 con su correspondiente porta-pilas
 - BMS FCD-2S-2
