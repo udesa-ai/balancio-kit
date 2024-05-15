@@ -30,7 +30,8 @@
 #include "timer.h"
 #include "Wire.h"
 #include "commander.h"
-
+#include "InputDevice.h"
+#include "App.h"
 float currentAngle, targetAngle = 0.0, angle_limit = 0.5;
 float yaw = 0.0, targetYaw = 0.0, yawCommand = 0.0;
 int pwmL = 0, pwmR = 0;
@@ -50,20 +51,26 @@ Controller *yaw_control;
 Controller *pitch_control;
 std::vector<float> pwm;
 std::vector<float> rot_v;
+InputDevice* inp_device; 
+float p_y[2];
 
+// ISR at 1/LOOP_PERIOD H
 void setup()
 {
   // UART PC connection
   Serial.begin(115200);
-
   // Motor initialization
   motor_init();
-
   // IMU init
   imu_setup();
-
+  if (CONTROLLER_DEVICE == "APP") { //modificar de config.h
+        inp_device = new App();
+        }
+  else if(CONTROLLER_DEVICE == "PS3" ){
+        inp_device = new PS3Joystick();
+    }  
   // Bluetooth init
-  ps3_setup();
+  inp_device->setup();
 
   // Timer init. (ISR at 1/LOOP_PERIOD Hz)
   timer_init();
@@ -76,7 +83,9 @@ void setup()
 
   // Angle initialization
   currentAngle = -getAccelPitch();
+
 }
+
 
 // ISR at 1/LOOP_PERIOD Hz
 void IRAM_ATTR onTime()
@@ -90,7 +99,7 @@ void loop()
   if (controlFlag)
   {
     // Get if X button was pressed
-    x_down = x_button_pressed();
+    x_down = inp_device->x_button_pressed();
     if (x_down and (millis() - time_ctr2) >= 500)
     {
       stop_command = abs(stop_command - 1);
@@ -158,6 +167,7 @@ void loop()
         Serial.print(pwmL);
         Serial.print(" Loop time: ");
         Serial.println(micros() - time_ctr1);
+      
         time_ctr1 = micros();
     }
     controlFlag = false;
@@ -166,8 +176,22 @@ void loop()
   {
     return;
   }
+  
+  inp_device->parse_input(p_y);
 
   // Get joystick commands.
-  targetAngle = get_pitch_command();
-  targetYaw = get_yaw_command(targetYaw);
+  targetAngle = inp_device->get_pitch_command(p_y[0]);
+  targetYaw = inp_device->get_yaw_command(targetYaw,p_y[1]);
+}
+int main() {
+  setup();
+
+  while (true) {
+    loop();
+  }
+
+  // Cleanup memory
+  delete inp_device;
+
+  return 0;
 }
