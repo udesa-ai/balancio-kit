@@ -93,7 +93,7 @@ Para esto se deben seguir los siguientes pasos:
 2. En el campo "Additional Boards Manager URLs", agregar lo siguiente: https://dl.espressif.com/dl/package_esp32_index.json. (Luego clickear 'OK').
 3. Ir a 'Tools' → 'Board: ' → 'Boards Manager…' 
     
-4. Buscar "esp32", e instalar "esp32 by Espressif Systems" presionando el botón 'Install'.
+4. Buscar "esp32", e instalar "esp32 by Espressif Systems" (version 2.x) presionando el botón 'Install'.
     
 5. Indicarle a la IDE que vamos a utilizar un esp32. Ir a 'Tools' → 'Board:' → 'ESP32 Arduino' → 'NodeMCU-32S'
     
