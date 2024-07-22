@@ -38,13 +38,12 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 - Capas Solidas Top y Bottom:  3 
 - Infill: 20%
 
-## Ensamblaje :wrench:
 
 ## Componentes
 | Componente        | Imagen del Componente                                                                                   |
 |:-----------------:|:------------------------------------------------------------------------------------------------------:|
-| Placa base (estructura en impresion 3D) | <img src="ruta_a_la_imagen_del_componente1.jpg" width="70">                                             |
-| Microcontrolador NodeMCU ESP32 | <img src="ruta_a_la_imagen_del_componente2.jpg" width="70">                                             |
+| Placa base (estructura en impresion 3D) | <img src="F96DBF88-4693-43AA-BD21-7BA362C4711F_1_105_c.jpeg" width="70">                                             |
+| Microcontrolador NodeMCU ESP32 | <img src="5C46DD2A-501A-4643-A7DC-159205664334_4_5005_c" width="70">                                             |
 | IMU MPU 6050 | <img src="ruta_a_la_imagen_del_componente3.jpg" width="70">                                             |
 | 2 motorreductores de 6v con rueda "para Arduino" | <img src="ruta_a_la_imagen_del_componente4.jpg" width="70">                                             |
 | Puente-H L298N | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
