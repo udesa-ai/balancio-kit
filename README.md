@@ -51,7 +51,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 | BMS FCD-2S-2 | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
 | Switch | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
 | Cables DuPont | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
-| Cables eléctricos bifilares (50 cm. c/u) | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
+| Cables eléctricos bifilares (50 cm. c/u) | <img src="resources/6C6550A4-3079-4E1E-B1EE-0F5E0EAF8C07_1_105_c.jpeg" width="70">                                             |
 
 
 <p align="center">
