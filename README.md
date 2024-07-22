@@ -40,15 +40,20 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 
 ## Ensamblaje :wrench:
 
-El balancio-kit consta de los siguientes componentes:
-- Placa base (impresa en 3D o hecha con algún otro material) 
-- Microcontrolador NodeMCU ESP32
-- IMU MPU 6050
-- 2 motorreductores de 6v con rueda "para Arduino"
-- Puente-H L298N
-- 2 baterías 18650 con su correspondiente porta-pilas
-- BMS FCD-2S-2
-- Switch 
+## Componentes
+| Componente        | Imagen del Componente                                                                                   |
+|:-----------------:|:------------------------------------------------------------------------------------------------------:|
+| Placa base (estructura en impresion 3D) | <img src="ruta_a_la_imagen_del_componente1.jpg" width="70">                                             |
+| Microcontrolador NodeMCU ESP32 | <img src="ruta_a_la_imagen_del_componente2.jpg" width="70">                                             |
+| IMU MPU 6050 | <img src="ruta_a_la_imagen_del_componente3.jpg" width="70">                                             |
+| 2 motorreductores de 6v con rueda "para Arduino" | <img src="ruta_a_la_imagen_del_componente4.jpg" width="70">                                             |
+| Puente-H L298N | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
+| 2 baterías 18650 con su correspondiente porta-pilas | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
+| BMS FCD-2S-2 | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
+| Switch | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
+| Cables DuPont | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
+| Cables eléctricos bifilares (50 cm. c/u) | <img src="ruta_a_la_imagen_del_componente5.jpg" width="70">                                             |
+
 
 <p align="center">
     <img src="resources/Balancio_plano.png" width="650">
