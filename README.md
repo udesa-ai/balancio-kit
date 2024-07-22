@@ -20,6 +20,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/balancio_gif.gif" height="200">
     <img src="resources/Balancio_walle.jpg" height="200">
     <img src="resources/ensamble.jpg" height="200">
+    <img src = "resources/3DD23364-78C3-4205-BB20-A5A8C2ACAACB_1_105_c.jpeg" height = "200">
 </p>
 
 
