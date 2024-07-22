@@ -133,7 +133,7 @@ Posibles errores:
 </details> 
 
 ### Simulación
-# La simulación es opcional, no es necesaria para el funcionamiento y armado del robot.
+# La simulación es opcional, no es necesaria para el funcionamiento y armado del robot. Se puede pasar directamente a la parte de calibración.
 <details open>
  
 La simulación corre en Python :snake:, y utiliza diversos paquetes. Para facilitar la instalación de los mismos, utilizaremos [Conda](https://docs.conda.io/en/latest/).
