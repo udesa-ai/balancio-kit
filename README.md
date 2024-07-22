@@ -61,7 +61,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 
 ## Plano Electrico 
 <p align="center">
-    <img src="resources/Plano_1.2.png" width="730">
+    <img src="resources/Plano_1.3.png" width="730">
 </p>    
     
 ## Ensamblaje Mecánico 
