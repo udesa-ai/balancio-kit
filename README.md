@@ -20,6 +20,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
     <img src="resources/balancio_gif.gif" height="200">
     <img src="resources/Balancio_walle.jpg" height="200">
     <img src="resources/ensamble.jpg" height="200">
+    <img src = "resources/3DD23364-78C3-4205-BB20-A5A8C2ACAACB_1_105_c.jpeg" height = "200">
 </p>
 
 
@@ -38,17 +39,22 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 - Capas Solidas Top y Bottom:  3 
 - Infill: 20%
 
-## Ensamblaje :wrench:
 
-El balancio-kit consta de los siguientes componentes:
-- Placa base (impresa en 3D o hecha con algún otro material) 
-- Microcontrolador NodeMCU ESP32
-- IMU MPU 6050
-- 2 motorreductores de 6v con rueda "para Arduino"
-- Puente-H L298N
-- 2 baterías 18650 con su correspondiente porta-pilas
-- BMS FCD-2S-2
-- Switch 
+## Componentes
+| Componente        | Imagen del Componente                                                                                   |
+|:-----------------:|:------------------------------------------------------------------------------------------------------:|
+| Placa base (estructura en impresion 3D) | <img src="resources/6D4F0806-B9EC-4AC4-8C3D-3CFF4A61EA02_1_105_c.jpeg" width="70">                                             |
+| Microcontrolador NodeMCU ESP32 | <img src="resources/5C46DD2A-501A-4643-A7DC-159205664334_4_5005_c.jpeg" width="70">                                             |
+| IMU MPU 6050 | <img src="resources/2CEC56FD-5F0F-4A58-AA3B-EB302D20FE31_4_5005_c.jpeg" width="70">                                             |
+| 2 motorreductores de 6v con rueda "para Arduino" | <img src="resources/1701DEAB-A46C-4236-A983-E3C4270301A2_4_5005_c.jpeg" width="70">                                             |
+| Puente-H L298N | <img src="resources/DA9AAA6E-92C4-4F05-AEAD-B6C834C8055B_4_5005_c.jpeg" width="70">                                             |
+| 2 baterías 18650 con su correspondiente porta-pilas | <img src="resources/E30C2B73-9F67-4EAD-9B90-C8F0F0D67486_4_5005_c.jpeg" width="70">                                             |
+| Cargador de baterias doble | <img src="resources/49A2AA11-48FB-4626-BE4D-3F666C9C9D7A_4_5005_c.jpeg" width="70">                                             |
+| BMS FCD-2S-2 | <img src="resources/EC2FCAEF-AD10-4285-9255-656C09E6BECC_4_5005_c.jpeg" width="70">                                             |
+| Switch | <img src="resources/173F8BFA-CFD3-4A2C-BAB3-88E42BB8DA0F_4_5005_c.jpeg" width="70">                                             |
+| 10 Cables DuPont | <img src="resources/5087FB85-E7A6-4EE5-AFD4-251F3EDD570A_4_5005_c.jpeg" width="70">                                             |
+| 1m Cable eléctrico unipolar (2x50 cm. c/u) | <img src="resources/6C6550A4-3079-4E1E-B1EE-0F5E0EAF8C07_1_105_c.jpeg" width="70">                                             |
+
 
 <p align="center">
     <img src="resources/Balancio_plano.png" width="650">
@@ -56,7 +62,7 @@ El balancio-kit consta de los siguientes componentes:
 
 ## Plano Electrico 
 <p align="center">
-    <img src="resources/Plano_1.2.png" width="730">
+    <img src="resources/Plano_1.3.png" width="730">
 </p>    
     
 ## Ensamblaje Mecánico 
@@ -110,7 +116,7 @@ Luego procederemos a instalar las librerías de arduino que vamos a utilizar:
     
     
 - Buscar e instalar las siguientes librerias, especificando la versión correspondiente:
-    - MPU6050 by Electronic Cats (version 0.5.0)
+    - MPU6050 by Electronic Cats (version 1.0.0)
     - PS3 Controller Host by Jeffrey van Pernis (version 1.1.0)
     - EloquentTinyML by Simone Salerno (version 0.0.7)
     
@@ -128,6 +134,7 @@ Posibles errores:
 </details> 
 
 ### Simulación
+La simulación es opcional, no es necesaria para el funcionamiento y armado del robot. Se puede pasar directamente a la parte de calibración.
 <details open>
  
 La simulación corre en Python :snake:, y utiliza diversos paquetes. Para facilitar la instalación de los mismos, utilizaremos [Conda](https://docs.conda.io/en/latest/).
