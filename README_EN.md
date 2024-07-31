@@ -59,7 +59,7 @@ The Balancio-Kit has the following components:
 
 ## Wiring Diagram
 <p align="center">
-    <img src="resources/Plano_1.2.png" width="730">
+    <img src="resources/Plano_1.3.png" width="730">
 </p>    
     
 ## Mechanical Assembly
