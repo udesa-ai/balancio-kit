@@ -52,7 +52,7 @@ Desarrollado con fines didácticos para enseñar conceptos de RL, ML, AI y contr
 | Cargador de baterias doble | <img src="resources/49A2AA11-48FB-4626-BE4D-3F666C9C9D7A_4_5005_c.jpeg" width="70">                                             |
 | BMS FCD-2S-2 | <img src="resources/EC2FCAEF-AD10-4285-9255-656C09E6BECC_4_5005_c.jpeg" width="70">                                             |
 | Switch | <img src="resources/173F8BFA-CFD3-4A2C-BAB3-88E42BB8DA0F_4_5005_c.jpeg" width="70">                                             |
-| Cables DuPont | <img src="resources/5087FB85-E7A6-4EE5-AFD4-251F3EDD570A_4_5005_c.jpeg" width="70">                                             |
+| 10 Cables DuPont | <img src="resources/5087FB85-E7A6-4EE5-AFD4-251F3EDD570A_4_5005_c.jpeg" width="70">                                             |
 | Cables eléctricos bifilares (50 cm. c/u) | <img src="resources/6C6550A4-3079-4E1E-B1EE-0F5E0EAF8C07_1_105_c.jpeg" width="70">                                             |
 
 
