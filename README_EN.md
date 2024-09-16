@@ -21,6 +21,7 @@ Developed for educational purposes to teach RL, ML, AI and control theory.
     <img src="resources/balancio_gif.gif" height="200">
     <img src="resources/Balancio_walle.jpg" height="200">
     <img src="resources/ensamble.jpg" height="200">
+    <img src = "resources/3DD23364-78C3-4205-BB20-A5A8C2ACAACB_1_105_c.jpeg" height = "200">
 </p>
 
 
@@ -28,29 +29,33 @@ Developed for educational purposes to teach RL, ML, AI and control theory.
 ## Models 
 |                     | Stabilty         | Ease of Assembly  | 3D Printing Requirement | 3D Printing time [](#printing-setting)|  3D printing diagram | Image                                 |
 |:-------------------:|:--------------------:|:--------------------:|--------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------:|
-| V 0.7 (Recommended) | :star: :star: :star: | :star: :star: :star: | Yes           | <ul style="list-style-type:none;"> <li>  Batteries 47m </li> <li> Structure 2:36 h </li> </ul>                                                                                                       | <A HREF="Planos%20de%20Impresión%203D/Version%200.7"> 0.7 I3D</A>      | <img src="resources/Balancio_0.71.jpg" width="70"> |
-| V 0.6 AKA:Wall-e    | :star: :star: :star: | :star:               | Yes           | <ul style="list-style-type:none;"> <li> Underside 5:25h </li> <li> Upperside 5:11h </li> <li> Under structure 58m</li> <li>Upper Structure 55m</li> <li> Head 3:19 h </li> </ul> | <A HREF="Planos%20de%20Impresión%203D/Versión%200.6"> 0.6 I3D</A> | <img src="resources/Balancio_0.5.jpg" width="60">  |
-| V 0.5               | :star:               | :star: :star: :star: | Yes           |<ul> <li> Rim 49m </li> <li> Structure 4:42h </li>                                                                                                                                                                            | <A HREF="Planos%20de%20Impresión%203D/versión%200.5"> 0.5 I3D</A> | <img src="resources/balanciov3.jpg" width="60">    |
+| V 0.7 (Recommended) | :star: :star: :star: | :star: :star: :star: | Yes           | <ul style="list-style-type:none;"> <li>  Batteries 47m </li> <li> Structure 2:36 h </li> </ul>                                                                                                       | <A HREF="Planos%20de%20Impresión%203D/Version%200.7"> 0.7 3D stl</A>      | <img src="resources/Balancio_0.71.jpg" width="70"> |
+| V 0.6 AKA:Wall-e    | :star: :star: :star: | :star:               | Yes           | <ul style="list-style-type:none;"> <li> Underside 5:25h </li> <li> Upperside 5:11h </li> <li> Under structure 58m</li> <li>Upper Structure 55m</li> <li> Head 3:19 h </li> </ul> | <A HREF="Planos%20de%20Impresión%203D/Versión%200.6"> 0.6 3D stl</A> | <img src="resources/Balancio_0.5.jpg" width="60">  |
+| V 0.5               | :star:               | :star: :star: :star: | Yes           |<ul> <li> Rim 49m </li> <li> Structure 4:42h </li>                                                                                                                                                                            | <A HREF="Planos%20de%20Impresión%203D/versión%200.5"> 0.5 3D stl</A> | <img src="resources/balanciov3.jpg" width="60">    |
     
-### Printing setting
+### Printing settings
 
 - Nozzle Thickness : 0.4 mm
 - Layer Height : 0.3 mm 
-- Perimeter: 3 
+- Perimeters: 3 
 - Top and Bottom Solid Layer:  3 
 - Infill: 20%
 
 ## Assembly :wrench:
 
-The Balancio-Kit has the following components:
-- Structure (3D printed or custom made) 
-- Node MCU ESP32 microcontroller
-- IMU MPU 6050
-- 2 x 6v geared motors
-- L298N H-Bridge
-- 2 x 18650 batteries with corresponding battery holder
-- BMS FCD-2S-2
-- Switch 
+| Component        | Component Image                                                                                   |
+|:-----------------:|:------------------------------------------------------------------------------------------------------:|
+| Base plate (3D printed structure) | <img src="resources/6D4F0806-B9EC-4AC4-8C3D-3CFF4A61EA02_1_105_c.jpeg" width="70">                                             |
+| NodeMCU ESP32 microcontroller | <img src="resources/5C46DD2A-501A-4643-A7DC-159205664334_4_5005_c.jpeg" width="70">                                             |
+| IMU MPU 6050 | <img src="resources/2CEC56FD-5F0F-4A58-AA3B-EB302D20FE31_4_5005_c.jpeg" width="70">                                             |
+| 2 - 6v gear motors with wheel "for Arduino" | <img src="resources/1701DEAB-A46C-4236-A983-E3C4270301A2_4_5005_c.jpeg" width="70">                                             |
+| H-Bridge L298N | <img src="resources/DA9AAA6E-92C4-4F05-AEAD-B6C834C8055B_4_5005_c.jpeg" width="70">                                             |
+| 2 - 18650 batteries with corresponding battery holder | <img src="resources/E30C2B73-9F67-4EAD-9B90-C8F0F0D67486_4_5005_c.jpeg" width="70">                                             |
+| Battery charger | <img src="resources/49A2AA11-48FB-4626-BE4D-3F666C9C9D7A_4_5005_c.jpeg" width="70">                                             |
+| BMS FCD-2S-2 | <img src="resources/EC2FCAEF-AD10-4285-9255-656C09E6BECC_4_5005_c.jpeg" width="70">                                             |
+| Switch | <img src="resources/173F8BFA-CFD3-4A2C-BAB3-88E42BB8DA0F_4_5005_c.jpeg" width="70">                                             |
+| 10 - DuPont wires | <img src="resources/5087FB85-E7A6-4EE5-AFD4-251F3EDD570A_4_5005_c.jpeg" width="70">                                             |
+| 1m electrical wire (2x50 cm each) | <img src="resources/6C6550A4-3079-4E1E-B1EE-0F5E0EAF8C07_1_105_c.jpeg" width="70">                                             |
 
 
 <p align="center">
@@ -115,7 +120,7 @@ We will then proceed to install the arduino libraries we are going to use:
 - For that go to 'Sketch' → 'Include Library' → 'Manage Libraries...'.
     
 - Search for and install the following libraries, specifying the corresponding version:
-    - MPU6050 by Electronic Cats (version 0.5.0)
+    - MPU6050 by Electronic Cats (version 1.0.0)
     - PS3 Controller Host by Jeffrey van Pernis (version 1.1.0)
     - EloquentTinyML by Simone Salerno (version 0.0.7)
     
@@ -135,8 +140,11 @@ Possible errors:
 </details> 
 
 ### Simulation
-<details open>
- 
+
+The simulation is optional; it is not necessary for the robot's operation and assembly. You can skip directly to the calibration phase.
+
+<details close>
+
 The simulation runs in Python :snake:, and uses several packages. For ease of installation, we will use [Conda](https://docs.conda.io/en/latest/).
 
 The following steps must be followed:
